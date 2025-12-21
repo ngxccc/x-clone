@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    /* 1. Thiết lập môi trường Output */
+    "target": "ES2022", // Node 18+ hỗ trợ tốt ES2022
+    "module": "NodeNext", // Quan trọng: Sử dụng chuẩn module của Node
+    "moduleResolution": "NodeNext", // Quan trọng: Để Node hiểu cách resolve module
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "sourceMap": true, // Hỗ trợ debug (nhảy từ JS về TS khi lỗi)
+
+    /* 2. Các thư viện */
+    "lib": ["ESNext"],
+
+    /* 3. Interop (Tương thích) */
+    "esModuleInterop": true, // Giúp import các thư viện CommonJS cũ (như express) dễ dàng hơn
+    "forceConsistentCasingInFileNames": true,
+
+    /* 4. Strict Mode */
+    "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+
+    /* 5. Clean up code */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    "paths": {
+      "@/*": ["./src/*"],
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]
+}
