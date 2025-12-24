@@ -1,3 +1,4 @@
+import { UserVerifyStatus } from "@/constants/enums.js";
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
@@ -8,7 +9,7 @@ const UserSchema = new Schema(
       required: true,
       unique: true,
       trim: true,
-      minLength: [5, "Username phải dài hơn 5 ký tự"],
+      minLength: [3, "Username phải dài hơn 3 ký tự"],
     },
     email: {
       type: String,
@@ -22,12 +23,39 @@ const UserSchema = new Schema(
     password: {
       type: String,
       required: true,
-      select: false, // Mặc định ẩn password khi query
+      select: false, // Ẩn password khi query
+    },
+    dateOfBirth: {
+      type: Date, // Múi giờ UTC (GMT+0)
+      required: true,
+    },
+    emailVerifyToken: {
+      type: String,
+      default: "",
+      select: false,
+    },
+    verify: {
+      type: Number,
+      // Phải filter vì TypeScipt comlile thành Object với reverse mapping
+      enum: Object.values(UserVerifyStatus).filter(
+        (v) => typeof v === "number",
+      ),
+      default: UserVerifyStatus.Unverified,
     },
     bio: {
       type: String,
       default: "",
       maxLength: 160,
+    },
+    forgotPasswordToken: {
+      type: String,
+      default: "",
+      select: false,
+    },
+    forgotPasswordExpire: {
+      type: Date,
+      default: null,
+      select: false,
     },
     avatar: {
       type: String,
@@ -39,9 +67,9 @@ const UserSchema = new Schema(
     },
     // Cache số liệu để hiển thị nhanh trên Profile
     stats: {
-      followers_count: { type: Number, default: 0 },
-      following_count: { type: Number, default: 0 },
-      tweet_count: { type: Number, default: 0 },
+      followersCount: { type: Number, default: 0 },
+      followingCount: { type: Number, default: 0 },
+      tweetCount: { type: Number, default: 0 },
     },
   },
   {
