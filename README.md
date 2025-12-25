@@ -92,35 +92,7 @@ npm install
 
 ## ⚙️ Cấu hình
 
-Tạo file `.env` ở thư mục gốc:
-
-```env
-# Server
-PORT=4000
-NODE_ENV=development
-
-# Database
-MONGO_URI=mongodb://localhost:27017/x-clone
-# Hoặc nếu dùng MongoDB Atlas:
-# MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/x-clone
-
-# JWT
-JWT_ACCESS_SECRET=your_access_token_secret_here
-JWT_REFRESH_SECRET=your_refresh_token_secret_here
-JWT_ACCESS_EXPIRE=15m
-JWT_REFRESH_EXPIRE=7d
-
-# Email
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_app_password
-
-# Client URL (cho CORS)
-CLIENT_URL=http://localhost:3000
-```
-
-> 💡 **Lưu ý:** Đừng commit file `.env` lên Git! File này đã được thêm vào `.gitignore`.
+Chi tiết: [.env.example](.env.example)
 
 ## 🚀 Chạy dự án
 
