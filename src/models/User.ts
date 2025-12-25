@@ -1,4 +1,4 @@
-import { UserVerifyStatus } from "@/constants/enums.js";
+import { USER_VERIFY_STATUS } from "@/constants/enums.js";
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
@@ -36,11 +36,8 @@ const UserSchema = new Schema(
     },
     verify: {
       type: Number,
-      // Phải filter vì TypeScipt comlile thành Object với reverse mapping
-      enum: Object.values(UserVerifyStatus).filter(
-        (v) => typeof v === "number",
-      ),
-      default: UserVerifyStatus.Unverified,
+      enum: Object.values(USER_VERIFY_STATUS),
+      default: USER_VERIFY_STATUS.UNVERIFIED,
     },
     bio: {
       type: String,
