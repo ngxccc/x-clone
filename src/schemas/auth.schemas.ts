@@ -23,4 +23,10 @@ export const RegisterReqBody = z
     path: ["confirmPassword"], // Đánh dấu lỗi sẽ hiện ở trường confirmPassword
   });
 
+export const LoginReqBody = z.object({
+  email: z.email("Email không hợp lệ, vui lòng kiểm tra lại!"),
+  password: z.string("Mật khẩu không được để trống"),
+});
+
+export type LoginReqType = z.infer<typeof LoginReqBody>;
 export type RegisterReqType = z.infer<typeof RegisterReqBody>;
