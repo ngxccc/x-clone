@@ -1,5 +1,5 @@
 import { User } from "@/models.js";
-import { RegisterBodyType } from "@/requests/auth.requests.js";
+import { RegisterReqType } from "@/schemas/auth.schemas.js";
 import bcrypt from "bcrypt";
 
 class UserService {
@@ -10,7 +10,7 @@ class UserService {
     return Boolean(user);
   }
 
-  async register(payload: RegisterBodyType) {
+  async register(payload: RegisterReqType) {
     const { username, email, password, dateOfBirth } = payload;
 
     const hashedPassword = await bcrypt.hash(password, 10);

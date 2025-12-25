@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const RegisterBody = z
+export const RegisterReqBody = z
   .object({
     username: z
       .string()
@@ -23,4 +23,4 @@ export const RegisterBody = z
     path: ["confirmPassword"], // Đánh dấu lỗi sẽ hiện ở trường confirmPassword
   });
 
-export type RegisterBodyType = z.infer<typeof RegisterBody>;
+export type RegisterReqType = z.infer<typeof RegisterReqBody>;

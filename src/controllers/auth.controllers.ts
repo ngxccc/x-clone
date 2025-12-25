@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { RegisterBodyType } from "@/requests/auth.requests.js";
+import { RegisterReqType } from "@/schemas/auth.schemas.js";
 import usersService from "@/services/users.services.js";
 
 export const loginController = (req: Request, res: Response) => {
@@ -23,7 +23,7 @@ export const registerController = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   try {
-    const { email } = req.body as RegisterBodyType;
+    const { email } = req.body as RegisterReqType;
 
     if (await usersService.checkEmailExist(email)) {
       return res.status(409).json({ message: "Email này đã được sử dụng" });
