@@ -1,6 +1,7 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import "dotenv/config";
 import { TokenPayload } from "@/types/common.types.js";
+import { StringValue } from "ms";
 
 interface SignTokenParams {
   payload: string | Buffer | object;
@@ -11,11 +12,9 @@ interface SignTokenParams {
 export const signAccessToken = (payload: TokenPayload) => {
   return signToken({
     payload,
-    privateKey: process.env.JWT_SECRET_ACCESS_TOKEN as string,
+    privateKey: process.env.JWT_ACCESS_SECRET as string,
     options: {
-      algorithm: "HS256",
-      expiresIn:
-        (process.env.JWT_ACCESS_EXPIRE as SignOptions["expiresIn"]) || "15m",
+      expiresIn: (process.env.JWT_ACCESS_EXPIRE as StringValue) || "15m",
     },
   });
 };
@@ -25,9 +24,7 @@ export const signRefreshToken = (payload: TokenPayload) => {
     payload,
     privateKey: process.env.JWT_REFRESH_SECRET as string,
     options: {
-      algorithm: "HS256",
-      expiresIn:
-        (process.env.JWT_REFRESH_EXPIRE as SignOptions["expiresIn"]) || "100d",
+      expiresIn: (process.env.JWT_REFRESH_EXPIRE as StringValue) || "100d",
     },
   });
 };
