@@ -26,6 +26,14 @@ class UserService {
 
     return newUser.toObject();
   }
+
+  async findUserByEmail(email: string) {
+    return await User.findOne({ email });
+  }
+
+  async findUserByEmailWithPassword(email: string) {
+    return await User.findOne({ email }).select("+password");
+  }
 }
 
 const usersService = new UserService();
