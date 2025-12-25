@@ -1,5 +1,17 @@
-export enum UserVerifyStatus {
-  Unverified = 0,
-  Verified = 1,
-  Banned = 2,
-}
+export const USER_VERIFY_STATUS = {
+  UNVERIFIED: 0,
+  VERIFIED: 1,
+  BANNED: 2,
+} as const;
+
+export const TOKEN_TYPES = {
+  ACCESS_TOKEN: 0,
+  REFRESH_TOKEN: 1,
+  FORGOT_PASSWORD_TOKEN: 2,
+  EMAIL_VERIFY_TOKEN: 3,
+} as const;
+
+export type TokenType = (typeof TOKEN_TYPES)[keyof typeof TOKEN_TYPES];
+
+export type UserVerifyStatusType =
+  (typeof USER_VERIFY_STATUS)[keyof typeof USER_VERIFY_STATUS];
