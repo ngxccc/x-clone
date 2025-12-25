@@ -6,13 +6,13 @@ export const loginController = (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (email === "ngxc@gmail.com" && password === "123123") {
-    return res.json({
+    return res.status(200).json({
       message: "Login success!",
     });
   }
 
-  return res.json({
-    error: "Login failed!",
+  return res.status(401).json({
+    error: "Email hoặc mật khẩu không chính xác",
   });
 };
 
