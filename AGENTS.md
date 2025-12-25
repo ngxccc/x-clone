@@ -36,6 +36,7 @@ The project uses bun as the runtime. Key commands:
 - Follow ESLint and Prettier configurations
 - Use ES modules (`import/export`) syntax
 - Use path aliases: `@/` maps to `src/`
+- ES modules are used throughout (`"type": "module"`)
 
 ### Database
 
