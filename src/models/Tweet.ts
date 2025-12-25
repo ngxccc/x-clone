@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const TweetSchema = new Schema(
   {
-    user_id: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -25,7 +25,7 @@ const TweetSchema = new Schema(
       trim: true,
     },
     // Đệ quy: Tham chiếu đến chính bảng Tweet (Dùng cho Retweet/Comment/Quote)
-    parent_id: {
+    parentId: {
       type: Schema.Types.ObjectId,
       ref: "Tweet",
       default: null,
@@ -54,11 +54,11 @@ const TweetSchema = new Schema(
     ],
 
     // --- TÍNH NĂNG EDIT ---
-    is_edited: {
+    isEdited: {
       type: Boolean,
       default: false,
     },
-    edited_at: {
+    editedAt: {
       type: Date,
       default: null,
     },

@@ -13,13 +13,13 @@ const HashtagSchema = new Schema({
     default: 0,
   },
   // Quan trọng cho Trending: Tag nào được dùng nhiều nhất GẦN ĐÂY
-  last_updated: {
+  lastUpdated: {
     type: Date,
     default: Date.now,
   },
 });
 
 // Index sort cho Trending: Lấy count cao nhất + thời gian mới nhất
-HashtagSchema.index({ count: -1, last_updated: -1 });
+HashtagSchema.index({ count: -1, lastUpdated: -1 });
 
 export default mongoose.model("Hashtag", HashtagSchema);

@@ -9,12 +9,12 @@ const RefreshTokenSchema = new Schema(
       unique: true,
       index: true,
     },
-    user_id: {
+    userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    device_info: {
+    deviceInfo: {
       type: String, // VD: "Chrome on Windows 10"
       default: "Unknown Device",
     },
