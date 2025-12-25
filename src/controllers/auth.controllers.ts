@@ -1,32 +1,41 @@
 import { NextFunction, Request, Response } from "express";
 import { RegisterReqType } from "@/schemas/auth.schemas.js";
 import usersService from "@/services/users.services.js";
+import authService from "@/services/auth.services.js";
 
-export const loginController = (req: Request, res: Response) => {
-  const { email, password } = req.body;
+export const loginController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { email, password } = req.body;
 
-  if (email === "ngxc@gmail.com" && password === "123123") {
+    const result = await authService.login(
+      email,
+      password,
+      req.headers["user-agent"],
+    );
+
     return res.status(200).json({
       message: "Đăng nhập thành công!",
+      data: result,
     });
+  } catch (error) {
+    next(error);
   }
-
-  return res.status(401).json({
-    message: "Sai thông tin đăng nhập",
-    error: "Email hoặc mật khẩu không chính xác",
-  });
 };
 
 export const registerController = async (
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<Response | void> => {
+) => {
   try {
     const { email } = req.body as RegisterReqType;
 
     if (await usersService.checkEmailExist(email)) {
-      return res.status(409).json({ message: "Email này đã được sử dụng" });
+      return res.status(409).json({ message: "Email này đã được sử dụng!" });
     }
 
     const newUser = await usersService.register(req.body);
