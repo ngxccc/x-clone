@@ -13,7 +13,6 @@
 - [Scripts](#-scripts)
 - [API Documentation](#-api-documentation)
 - [Cấu trúc dự án](#-cấu-trúc-dự-án)
-- [Database Models](#️-database-models)
 
 ## ✨ Tính năng
 
@@ -168,7 +167,7 @@ bun run db:index
 
 ## 📚 API Documentation
 
-Chi tiết API endpoints xem tại: [docs/all.md](docs/all.md)
+Chi tiết API endpoints xem tại: [docs/api.md](docs/api.md)
 
 ### Quick overview
 
@@ -208,41 +207,6 @@ x-clone/
 ├── tsconfig.json         # TypeScript config
 └── eslint.config.ts      # ESLint config
 ```
-
-## 🗄️ Database Models
-
-### User
-
-- `username` - Tên người dùng (unique)
-- `email` - Email (unique)
-- `password` - Mật khẩu (hashed)
-- `bio` - Tiểu sử (max 160 ký tự)
-- `avatar` - URL ảnh đại diện
-- `website` - Website cá nhân
-- `stats` - Thống kê (followers, following, tweets)
-
-### RefreshToken
-
-- `token` - Refresh token string
-- `userId` - Tham chiếu đến User
-- `expiresAt` - Thời gian hết hạn
-
-### Tweet
-
-- `content` - Nội dung tweet
-- `userId` - Tác giả
-- `media` - Array URLs của ảnh/video
-- `hashtags` - Array hashtags
-- `stats` - Thống kê (likes, retweets, replies)
-
-### Follower
-
-- `followerId` - User đang follow
-- `followingId` - User được follow
-
-### Like, Bookmark, Hashtag
-
-- Xem chi tiết tại [src/models/](src/models/)
 
 ## 🔒 Security
 
