@@ -1,15 +1,18 @@
+import { USERS_MESSAGES } from "@/constants/messages.js";
 import { NextFunction, Request, Response } from "express";
-import { MongoError } from "@/types/common.types.js"; // Import type bạn đã định nghĩa
 
 export const defaultErrorHandler = (
-  err: MongoError,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  err: any,
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   if (err.name === "ValidationError") {
-    // TODO: Sẽ format cho dễ nhìn sau
-    const errors = Object.values(err);
+    const errors: Record<string, string> = {};
+    Object.keys(err.errors).forEach((key) => {
+      errors[key] = err.errors[key].message;
+    });
 
     return res.status(422).json({
       message: "Lỗi validation dữ liệu (Mongoose)",
@@ -19,16 +22,30 @@ export const defaultErrorHandler = (
 
   // 11000 là mã lỗi Duplicate Key Error của MongoDB
   if (err.code === 11000) {
+    const field = Object.keys(err.keyValue)[0];
+
     return res.status(409).json({
-      message: `${err.keyValue} đã tồn tại trong hệ thống`,
+      message: `${field} đã tồn tại trong hệ thống`,
       errors: err.keyValue,
     });
   }
 
+  // Login handle error
+  if (
+    err.message === USERS_MESSAGES.EMAIL_NOT_FOUND ||
+    err.message === USERS_MESSAGES.PASSWORD_INCORRECT
+  ) {
+    return res.status(401).json({
+      message: "Đăng nhập thất bại",
+      errors: { emailOrPassword: "Email hoặc mật khẩu không đúng" },
+    });
+  }
+
   // Các lỗi không xác định (Internal Server Error)
-  console.error("Error:", err);
+  console.error("Internal Server Error:", err);
+
   return res.status(500).json({
     message: "Lỗi server nội bộ",
-    ...(process.env.NODE_ENV === "development" && { error: err.message }),
+    error: process.env.NODE_ENV === "development" ? err.message : undefined,
   });
 };
