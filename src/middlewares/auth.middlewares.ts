@@ -27,6 +27,6 @@ export const accessTokenValidator = (
   } catch {
     return res
       .status(HTTP_STATUS.UNAUTHORIZED)
-      .json({ message: "Token hết hạn hoặc không hợp lệ" });
+      .json({ message: "Access Token hết hạn hoặc không hợp lệ" });
   }
 };
