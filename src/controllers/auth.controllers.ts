@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { RegisterReqType } from "@/schemas/auth.schemas.js";
+import { LogoutReqType, RegisterReqType } from "@/schemas/auth.schemas.js";
 import usersService from "@/services/users.services.js";
 import authService from "@/services/auth.services.js";
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
@@ -54,6 +54,24 @@ export const registerController = async (
     });
   } catch (error) {
     // Đẩy toàn bộ lỗi sang defaultErrorHandler xử lý
+    next(error);
+  }
+};
+
+export const logoutController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { refreshToken } = req.body as LogoutReqType;
+
+    await authService.logout(refreshToken);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: "Đăng xuất thành công!",
+    });
+  } catch (error) {
     next(error);
   }
 };

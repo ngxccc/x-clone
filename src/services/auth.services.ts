@@ -45,6 +45,14 @@ class AuthService {
       refreshToken,
     };
   }
+
+  async logout(refreshToken: string) {
+    // Idempotent (Tính lũy đẳng)
+    // Dù gọi 1 hay n lần thì kết quả res là như nhau (User đã đăng xuất)
+    const result = await RefreshToken.deleteOne({ token: refreshToken });
+
+    return result;
+  }
 }
 const authService = new AuthService();
 export default authService;
