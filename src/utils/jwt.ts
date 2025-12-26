@@ -1,4 +1,4 @@
-import jwt, { SignOptions } from "jsonwebtoken";
+import jwt, { JsonWebTokenError, SignOptions } from "jsonwebtoken";
 import "dotenv/config";
 import { TokenPayload } from "@/types/common.types.js";
 import { StringValue } from "ms";
@@ -40,8 +40,8 @@ export const verifyToken = (token: string, type: "access" | "refresh") => {
     ) as TokenPayload;
   } catch {
     const msg = "không hợp lệ hoặc đã hết hạn!";
-    if (isAccessToken) throw new Error(`Access Token ${msg}`);
-    throw new Error(`Refresh Token ${msg}`);
+    if (isAccessToken) throw new JsonWebTokenError(`Access Token ${msg}`);
+    throw new JsonWebTokenError(`Refresh Token ${msg}`);
   }
 };
 
