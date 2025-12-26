@@ -1,15 +1,26 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ENV_CONFIG } from "@/constants/config.js";
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import { NextFunction, Request, Response } from "express";
 
 export const defaultErrorHandler = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   err: any,
   _req: Request,
   res: Response,
   _next: NextFunction,
 ) => {
+  // Xử lý lỗi Malformed JSON (Do express.json() throw ra)
+  if (
+    err instanceof SyntaxError &&
+    "body" in err &&
+    (err as any).status === 400
+  ) {
+    return res.status(HTTP_STATUS.BAD_REQUEST).json({
+      message: "Dữ liệu gửi lên không đúng định dạng JSON (Syntax Error)",
+    });
+  }
+
   if (err.name === USERS_MESSAGES.VALIDATION_ERROR) {
     const errors: Record<string, string> = {};
     Object.keys(err.errors).forEach((key) => {

@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { NextFunction, Request, Response } from "express";
 import z, { ZodObject } from "zod";
 
@@ -5,6 +6,13 @@ export const validate =
   (schema: ZodObject) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      if (!req.is("application/json")) {
+        return res.status(HTTP_STATUS.UNSUPPORTED_MEDIA_TYPE).json({
+          message:
+            "Vui lòng gửi định dạng JSON (Content-Type: application/json)",
+        });
+      }
+
       const data = await schema.safeParseAsync(req.body);
 
       if (!data.success) {

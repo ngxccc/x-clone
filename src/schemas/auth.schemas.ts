@@ -1,15 +1,18 @@
+import { requiredString } from "@/utils/validation.js";
 import { z } from "zod";
 
 export const RegisterReqBody = z
   .object({
     username: z
-      .string()
+      .string("Username là bắt buộc")
       .trim()
       .min(3, "Username phải có ít nhất 3 ký tự")
       .max(255, "Username không được quá 255 ký tự"),
     email: z.email("Email không hợp lệ, vui lòng kiểm tra lại!"),
-    password: z.string().min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
-    confirmPassword: z.string("Xác nhận mật khẩu là bắt buộc"),
+    password: z
+      .string("Mật khẩu là bắt buộc")
+      .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
+    confirmPassword: requiredString("Xác nhận mật khẩu là bắt buộc"),
     // z.coerce tự động ép kiểu String -> Date
     dateOfBirth: z.coerce.date({
       error: (issue) =>
@@ -25,11 +28,11 @@ export const RegisterReqBody = z
 
 export const LoginReqBody = z.object({
   email: z.email("Email không hợp lệ, vui lòng kiểm tra lại!"),
-  password: z.string("Mật khẩu không được để trống"),
+  password: requiredString("Mật khẩu không được để trống"),
 });
 
 export const LogoutReqBody = z.object({
-  refreshToken: z.string("Refresh Token là bắt buộc"),
+  refreshToken: requiredString("Refresh Token là bắt buộc"),
 });
 
 export type LogoutReqType = z.infer<typeof LogoutReqBody>;
