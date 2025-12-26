@@ -23,7 +23,7 @@ The project uses bun as the runtime. Key commands:
 - `src/services/` - Business logic & database services
 - `src/models/` - Mongoose schemas & models
 - `src/middlewares/` - Express middlewares (auth, validation, error handling)
-- `src/requests/` - Zod validation schemas for requests
+- `src/schemas/` - Zod validation schemas for requests
 - `src/types/` - TypeScript type definitions
 - `src/constants/` - Enums and constants
 - `src/utils/` - Utility functions
@@ -50,7 +50,7 @@ The project uses bun as the runtime. Key commands:
 
 - Controllers handle HTTP logic (in `src/controllers/`)
 - Services contain business logic (in `src/services/`)
-- Use Zod for request validation (schemas in `src/requests/`)
+- Use Zod for request validation (schemas in `src/schemas/`)
 - Apply validation middleware: `validate(schema)` from `src/middlewares/validate.middleware.ts`
 - Follow RESTful conventions
 
