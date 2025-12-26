@@ -1,5 +1,4 @@
 import { TokenType } from "@/constants/enums.js";
-import { JwtPayload } from "jsonwebtoken";
 import { Types } from "mongoose";
 
 export interface MongoError extends Error {
@@ -15,7 +14,7 @@ export interface TokenPayload {
 // Declaration Merging (Gộp định nghĩa)
 declare module "express" {
   interface Request {
-    user?: TokenPayload;
-    decodedRefreshToken?: JwtPayload;
+    decodedAccessToken?: TokenPayload;
+    decodedRefreshToken?: TokenPayload;
   }
 }

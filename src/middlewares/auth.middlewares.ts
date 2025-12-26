@@ -22,7 +22,7 @@ export const accessTokenValidator = (
     const decoded = verifyToken(token, "access");
 
     // Gán thông tin user vào req để dùng ở Controller sau
-    req.user = decoded;
+    req.decodedAccessToken = decoded;
 
     next();
   } catch (error) {
