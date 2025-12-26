@@ -3,7 +3,10 @@ import {
   logoutController,
   registerController,
 } from "@/controllers/auth.controllers.js";
-import { accessTokenValidator } from "@/middlewares/auth.middlewares.js";
+import {
+  accessTokenValidator,
+  refreshTokenValidator,
+} from "@/middlewares/auth.middlewares.js";
 import { validate } from "@/middlewares/validate.middleware.js";
 import {
   LoginReqBody,
@@ -18,8 +21,9 @@ authRouter.post("/login", validate(LoginReqBody), loginController);
 authRouter.post("/register", validate(RegisterReqBody), registerController);
 authRouter.post(
   "/logout",
-  accessTokenValidator,
   validate(LogoutReqBody),
+  accessTokenValidator,
+  refreshTokenValidator,
   logoutController,
 );
 
