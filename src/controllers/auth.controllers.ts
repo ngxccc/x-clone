@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { RegisterReqType } from "@/schemas/auth.schemas.js";
 import usersService from "@/services/users.services.js";
 import authService from "@/services/auth.services.js";
+import { HTTP_STATUS } from "@/constants/httpStatus.js";
 
 export const loginController = async (
   req: Request,
@@ -17,7 +18,7 @@ export const loginController = async (
       req.headers["user-agent"],
     );
 
-    return res.status(200).json({
+    return res.status(HTTP_STATUS.OK).json({
       message: "Đăng nhập thành công!",
       data: result,
     });
@@ -35,12 +36,14 @@ export const registerController = async (
     const { email } = req.body as RegisterReqType;
 
     if (await usersService.checkEmailExist(email)) {
-      return res.status(409).json({ message: "Email này đã được sử dụng!" });
+      return res
+        .status(HTTP_STATUS.CONFLICT)
+        .json({ message: "Email này đã được sử dụng!" });
     }
 
     const newUser = await usersService.register(req.body);
 
-    return res.status(201).json({
+    return res.status(HTTP_STATUS.CREATED).json({
       message: "Đăng ký thành công!",
       data: {
         _id: newUser._id,

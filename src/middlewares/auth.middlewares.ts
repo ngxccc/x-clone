@@ -1,3 +1,4 @@
+import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { verifyAccessToken } from "@/utils/jwt.js";
 import { NextFunction, Request, Response } from "express";
 
@@ -24,6 +25,8 @@ export const accessTokenValidator = (
 
     next();
   } catch {
-    return res.status(401).json({ message: "Token hết hạn hoặc không hợp lệ" });
+    return res
+      .status(HTTP_STATUS.UNAUTHORIZED)
+      .json({ message: "Token hết hạn hoặc không hợp lệ" });
   }
 };
