@@ -1,4 +1,5 @@
 import { TokenType } from "@/constants/enums.js";
+import { JwtPayload } from "jsonwebtoken";
 import { Types } from "mongoose";
 
 export interface MongoError extends Error {
@@ -15,5 +16,6 @@ export interface TokenPayload {
 declare module "express" {
   interface Request {
     user?: TokenPayload;
+    decodedRefreshToken?: JwtPayload;
   }
 }
