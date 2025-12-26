@@ -3,6 +3,7 @@ import { ENV_CONFIG } from "@/constants/config.js";
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import { NextFunction, Request, Response } from "express";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 export const defaultErrorHandler = (
   err: any,
@@ -51,6 +52,13 @@ export const defaultErrorHandler = (
     return res.status(HTTP_STATUS.UNAUTHORIZED).json({
       message: "Đăng nhập thất bại",
       errors: { emailOrPassword: "Email hoặc mật khẩu không đúng" },
+    });
+  }
+
+  if (err instanceof JsonWebTokenError) {
+    return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+      message: "Token hết hạn hoặc không hợp lệ",
+      error: err.message,
     });
   }
 
