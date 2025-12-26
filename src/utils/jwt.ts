@@ -9,52 +9,45 @@ interface SignTokenParams {
   options?: SignOptions;
 }
 
-export const signAccessToken = (payload: TokenPayload) => {
-  return signToken({
+export const signToken = (
+  payload: TokenPayload,
+  type: "access" | "refresh",
+) => {
+  const isAccessToken = type === "access";
+
+  return signTokenIn({
     payload,
-    privateKey: process.env.JWT_ACCESS_SECRET as string,
+    privateKey: (isAccessToken
+      ? process.env.JWT_ACCESS_SECRET
+      : process.env.JWT_REFRESH_SECRET) as string,
     options: {
-      expiresIn: (process.env.JWT_ACCESS_EXPIRE as StringValue) || "15m",
+      expiresIn: (isAccessToken
+        ? process.env.JWT_ACCESS_EXPIRE || "15m"
+        : process.env.JWT_REFRESH_EXPIRE || "100d") as StringValue,
     },
   });
 };
 
-export const signRefreshToken = (payload: TokenPayload) => {
-  return signToken({
-    payload,
-    privateKey: process.env.JWT_REFRESH_SECRET as string,
-    options: {
-      expiresIn: (process.env.JWT_REFRESH_EXPIRE as StringValue) || "100d",
-    },
-  });
-};
+export const verifyToken = (token: string, type: "access" | "refresh") => {
+  const isAccessToken = type === "access";
 
-export const verifyAccessToken = (token: string) => {
   try {
     return jwt.verify(
       token,
-      process.env.JWT_ACCESS_SECRET as string,
+      (isAccessToken
+        ? process.env.JWT_ACCESS_SECRET
+        : process.env.JWT_REFRESH_SECRET) as string,
     ) as TokenPayload;
   } catch {
-    throw new Error("Token không hợp lệ hoặc đã hết hạn!");
-  }
-};
-
-export const verifyRefreshToken = (token: string) => {
-  try {
-    return jwt.verify(
-      token,
-      process.env.JWT_REFRESH_SECRET as string,
-    ) as TokenPayload;
-  } catch {
-    throw new Error("Refresh Token không hợp lệ hoặc đã hết hạn!");
+    const msg = "không hợp lệ hoặc đã hết hạn!";
+    if (isAccessToken) throw new Error(`Access Token ${msg}`);
+    throw new Error(`Refresh Token ${msg}`);
   }
 };
 
 // Promisification (Biến đổi thành Promise)
 // Để dùng được await (Tránh Callback Hell)
-// DRY - Don't Repeat Yourself
-const signToken = ({ payload, privateKey, options }: SignTokenParams) => {
+const signTokenIn = ({ payload, privateKey, options }: SignTokenParams) => {
   return new Promise<string>((resolve, reject) => {
     jwt.sign(payload, privateKey, options || {}, (error, token) => {
       if (error) reject(error);

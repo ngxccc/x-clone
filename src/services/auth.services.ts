@@ -1,7 +1,7 @@
 import { TOKEN_TYPES } from "@/constants/enums.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import { RefreshToken } from "@/models.js";
-import { signAccessToken, signRefreshToken } from "@/utils/jwt.js";
+import { signToken } from "@/utils/jwt.js";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import ms, { StringValue } from "ms";
@@ -20,14 +20,20 @@ class AuthService {
     };
 
     const [accessToken, refreshToken] = await Promise.all([
-      signAccessToken({
-        ...payload,
-        tokenType: TOKEN_TYPES.ACCESS_TOKEN,
-      }),
-      signRefreshToken({
-        ...payload,
-        tokenType: TOKEN_TYPES.REFRESH_TOKEN,
-      }),
+      signToken(
+        {
+          ...payload,
+          tokenType: TOKEN_TYPES.ACCESS_TOKEN,
+        },
+        "access",
+      ),
+      signToken(
+        {
+          ...payload,
+          tokenType: TOKEN_TYPES.REFRESH_TOKEN,
+        },
+        "refresh",
+      ),
     ]);
 
     const expiresIn = process.env.JWT_REFRESH_EXPIRE || "100d";
