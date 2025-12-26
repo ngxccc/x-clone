@@ -39,7 +39,7 @@ export const verifyToken = (token: string, type: "access" | "refresh") => {
         : process.env.JWT_REFRESH_SECRET) as string,
     ) as TokenPayload;
   } catch {
-    const msg = "không hợp lệ hoặc đã hết hạn!";
+    const msg = "không hợp lệ hoặc đã hết hạn";
     if (isAccessToken) throw new JsonWebTokenError(`Access Token ${msg}`);
     throw new JsonWebTokenError(`Refresh Token ${msg}`);
   }

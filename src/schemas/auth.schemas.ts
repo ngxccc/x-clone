@@ -8,7 +8,7 @@ export const RegisterReqBody = z
       .trim()
       .min(3, "Username phải có ít nhất 3 ký tự")
       .max(255, "Username không được quá 255 ký tự"),
-    email: z.email("Email không hợp lệ, vui lòng kiểm tra lại!"),
+    email: z.email("Email không hợp lệ, vui lòng kiểm tra lại"),
     password: z
       .string("Mật khẩu là bắt buộc")
       .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
@@ -27,7 +27,7 @@ export const RegisterReqBody = z
   });
 
 export const LoginReqBody = z.object({
-  email: z.email("Email không hợp lệ, vui lòng kiểm tra lại!"),
+  email: z.email("Email không hợp lệ, vui lòng kiểm tra lại"),
   password: requiredString("Mật khẩu không được để trống"),
 });
 
