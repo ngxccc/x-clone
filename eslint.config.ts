@@ -14,6 +14,11 @@ export default defineConfig([
     languageOptions: { globals: globals.node },
   },
 
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
+  // Tắt các rule xung đột với Prettier
+  eslintConfigPrettier,
+
   {
     plugins: {
       prettier: eslintPluginPrettier,
@@ -41,9 +46,4 @@ export default defineConfig([
     },
     ignores: ["**/node_modules/", "**/dist/"],
   },
-
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  // Tắt các rule xung đột với Prettier
-  eslintConfigPrettier,
 ]);
