@@ -43,7 +43,7 @@ export const refreshTokenValidator = async (
 
     if (!foundToken) {
       return res.status(HTTP_STATUS.UNAUTHORIZED).json({
-        message: "Refresh token không hợp lệ hoặc không tồn tại",
+        message: "Refresh token đã sử dụng hoặc không tồn tại",
       });
     }
 
