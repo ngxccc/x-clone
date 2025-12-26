@@ -28,5 +28,10 @@ export const LoginReqBody = z.object({
   password: z.string("Mật khẩu không được để trống"),
 });
 
+export const LogoutReqBody = z.object({
+  refreshToken: z.string("Refresh Token là bắt buộc"),
+});
+
+export type LogoutReqType = z.infer<typeof LogoutReqBody>;
 export type LoginReqType = z.infer<typeof LoginReqBody>;
 export type RegisterReqType = z.infer<typeof RegisterReqBody>;
