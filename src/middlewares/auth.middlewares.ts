@@ -1,5 +1,6 @@
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
-import { verifyAccessToken } from "@/utils/jwt.js";
+import { RefreshToken } from "@/models.js";
+import { verifyToken } from "@/utils/jwt.js";
 import { NextFunction, Request, Response } from "express";
 
 export const accessTokenValidator = (
@@ -18,15 +19,39 @@ export const accessTokenValidator = (
   const token = authHeader.split(" ")[1]!;
 
   try {
-    const decoded = verifyAccessToken(token);
+    const decoded = verifyToken(token, "access");
 
     // Gán thông tin user vào req để dùng ở Controller sau
     req.user = decoded;
 
     next();
-  } catch {
-    return res
-      .status(HTTP_STATUS.UNAUTHORIZED)
-      .json({ message: "Access Token hết hạn hoặc không hợp lệ" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const refreshTokenValidator = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { refreshToken } = req.body;
+
+  try {
+    const decoded = verifyToken(refreshToken, "refresh");
+    const foundToken = await RefreshToken.findOne({ token: refreshToken });
+
+    if (!foundToken) {
+      return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+        message: "Refresh token không hợp lệ hoặc không tồn tại",
+      });
+    }
+
+    // Gán thông tin user vào req để dùng ở Controller sau
+    req.decodedRefreshToken = decoded;
+
+    next();
+  } catch (error) {
+    next(error);
   }
 };
