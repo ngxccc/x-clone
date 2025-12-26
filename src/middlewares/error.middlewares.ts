@@ -1,3 +1,4 @@
+import { ENV_CONFIG } from "@/constants/config.js";
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import { NextFunction, Request, Response } from "express";
@@ -9,7 +10,7 @@ export const defaultErrorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  if (err.name === "ValidationError") {
+  if (err.name === USERS_MESSAGES.VALIDATION_ERROR) {
     const errors: Record<string, string> = {};
     Object.keys(err.errors).forEach((key) => {
       errors[key] = err.errors[key].message;
@@ -47,6 +48,7 @@ export const defaultErrorHandler = (
 
   return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
     message: "Lỗi server nội bộ",
-    error: process.env.NODE_ENV === "development" ? err.message : undefined,
+    error:
+      process.env.NODE_ENV === ENV_CONFIG.DEVELOPMENT ? err.message : undefined,
   });
 };
