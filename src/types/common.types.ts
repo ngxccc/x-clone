@@ -1,5 +1,4 @@
 import { TokenType } from "@/constants/enums.js";
-import { Types } from "mongoose";
 
 export interface MongoError extends Error {
   code?: number;
@@ -7,7 +6,7 @@ export interface MongoError extends Error {
 }
 
 export interface TokenPayload {
-  userId: Types.ObjectId;
+  userId: string;
   tokenType: TokenType;
 }
 
@@ -16,5 +15,6 @@ declare module "express" {
   interface Request {
     decodedAccessToken?: TokenPayload;
     decodedRefreshToken?: TokenPayload;
+    decodedEmailVerifyToken?: TokenPayload;
   }
 }

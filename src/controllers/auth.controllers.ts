@@ -51,6 +51,7 @@ export const registerController = async (
         username: newUser.username,
         email: newUser.email,
         dateOfBirth: newUser.dateOfBirth,
+        emailVerifyToken: newUser.emailVerifyToken,
       },
     });
   } catch (error) {
@@ -71,6 +72,22 @@ export const logoutController = async (
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.LOGOUT_SUCCESS,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verifyEmailController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    await authService.verifyEmail(req.decodedEmailVerifyToken!.userId);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.EMAIL_VERIFY_SUCCESS,
     });
   } catch (error) {
     next(error);

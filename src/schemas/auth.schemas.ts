@@ -38,6 +38,13 @@ export const LogoutReqBody = z.object({
   refreshToken: requiredString(USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED),
 });
 
+export const VerifyEmailReqBody = z.object({
+  emailVerifyToken: requiredString(
+    USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_REQUIRED,
+  ),
+});
+
+export type VerifyEmailReqType = z.infer<typeof VerifyEmailReqBody>;
 export type LogoutReqType = z.infer<typeof LogoutReqBody>;
 export type LoginReqType = z.infer<typeof LoginReqBody>;
 export type RegisterReqType = z.infer<typeof RegisterReqBody>;

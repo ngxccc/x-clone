@@ -2,8 +2,11 @@
 import { ENV_CONFIG } from "@/constants/config.js";
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { ERROR_CODES, USERS_MESSAGES } from "@/constants/messages.js";
+import { ErrorWithStatus } from "@/utils/errors.js";
 import { NextFunction, Request, Response } from "express";
-import { JsonWebTokenError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+
+const { JsonWebTokenError } = jwt;
 
 export const defaultErrorHandler = (
   err: any,
@@ -11,6 +14,14 @@ export const defaultErrorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
+  // Xử lý ErrorWithStatus
+  if (err instanceof ErrorWithStatus) {
+    return res.status(err.status).json({
+      message: err.message,
+      ...(err.errorCode && { errorCode: err.errorCode }),
+    });
+  }
+
   // Xử lý lỗi Malformed JSON (Do express.json() throw ra)
   if (
     err instanceof SyntaxError &&
@@ -40,17 +51,6 @@ export const defaultErrorHandler = (
     return res.status(HTTP_STATUS.CONFLICT).json({
       message: USERS_MESSAGES.FIELD_ALREADY_EXISTS(field || ""),
       errors: err.keyValue,
-    });
-  }
-
-  // Login handle error
-  if (
-    err.message === ERROR_CODES.EMAIL_NOT_FOUND ||
-    err.message === ERROR_CODES.PASSWORD_INCORRECT
-  ) {
-    return res.status(HTTP_STATUS.UNAUTHORIZED).json({
-      message: USERS_MESSAGES.LOGIN_FAILED,
-      errors: { emailOrPassword: USERS_MESSAGES.EMAIL_OR_PASSWORD_INCORRECT },
     });
   }
 

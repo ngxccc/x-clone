@@ -1,5 +1,7 @@
+import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/constants/enums.js";
 import { User } from "@/models.js";
 import { RegisterReqType } from "@/schemas/auth.schemas.js";
+import { signToken } from "@/utils/jwt.js";
 import bcrypt from "bcrypt";
 
 class UserService {
@@ -15,6 +17,14 @@ class UserService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const emailVerifyToken = await signToken(
+      {
+        userId: "",
+        tokenType: TOKEN_TYPES.EMAIL_VERIFY_TOKEN,
+      },
+      "email",
+    );
+
     // Dùng .create() để kích hoạt Mongoose Validation & Hooks
     // Không dùng .insertOne vì nó không có Validation
     const newUser = await User.create({
@@ -22,6 +32,7 @@ class UserService {
       email,
       password: hashedPassword,
       dateOfBirth,
+      emailVerifyToken,
     });
 
     return newUser.toObject();
@@ -33,6 +44,31 @@ class UserService {
 
   async findUserByEmailWithPassword(email: string) {
     return await User.findOne({ email }).select("+password");
+  }
+
+  async findUserByEmailVerifyToken(token: string) {
+    return await User.findOne({ emailVerifyToken: token }).select(
+      "+emailVerifyToken",
+    );
+  }
+
+  async findUserByForgotPasswordToken(token: string) {
+    return await User.findOne({ forgotPasswordToken: token }).select(
+      "+forgotPasswordToken",
+    );
+  }
+
+  async updateVerifyStatus(userId: string) {
+    return await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          verify: USER_VERIFY_STATUS.VERIFIED,
+          emailVerifyToken: "",
+        },
+      },
+      { new: true, runValidators: true },
+    );
   }
 }
 

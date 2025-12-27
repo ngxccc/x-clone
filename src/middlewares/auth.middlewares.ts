@@ -1,6 +1,7 @@
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import { RefreshToken } from "@/models.js";
+import usersService from "@/services/users.services.js";
 import { verifyToken } from "@/utils/jwt.js";
 import { NextFunction, Request, Response } from "express";
 
@@ -50,6 +51,32 @@ export const refreshTokenValidator = async (
 
     // Gán thông tin user vào req để dùng ở Controller sau
     req.decodedRefreshToken = decoded;
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const emailVerifyTokenValidator = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { emailVerifyToken } = req.body;
+
+  try {
+    const decoded = verifyToken(emailVerifyToken, "email");
+    const foundToken =
+      await usersService.findUserByEmailVerifyToken(emailVerifyToken);
+
+    if (!foundToken) {
+      return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+        message: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_USED_OR_NOT_EXIST,
+      });
+    }
+
+    req.decodedEmailVerifyToken = { ...decoded, userId: foundToken.id };
 
     next();
   } catch (error) {
