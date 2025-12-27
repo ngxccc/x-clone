@@ -7,8 +7,8 @@ export const USER_VERIFY_STATUS = {
 export const TOKEN_TYPES = {
   ACCESS_TOKEN: 0,
   REFRESH_TOKEN: 1,
-  FORGOT_PASSWORD_TOKEN: 2,
-  EMAIL_VERIFY_TOKEN: 3,
+  EMAIL_VERIFY_TOKEN: 2,
+  FORGOT_PASSWORD_TOKEN: 3,
 } as const;
 
 export type TokenType = (typeof TOKEN_TYPES)[keyof typeof TOKEN_TYPES];
