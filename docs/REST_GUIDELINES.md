@@ -48,6 +48,7 @@ Dùng đúng ý nghĩa của method để thao tác với dữ liệu:
 - `403 Forbidden`: Đã đăng nhập nhưng không có quyền (Authorization).
 - `404 Not Found`: Không tìm thấy ID hoặc Resource.
 - `409 Conflict`: Dữ liệu bị trùng (VD: Trùng email khi đăng ký).
+- `415 Unsupported Media Type`: Định dạng file gửi lên không hợp lệ.
 - `422 Unprocessable Entity`: Lỗi Validation (VD: Password ngắn, Email sai định dạng).
 
 **Nhóm lỗi Server (5xx):**
