@@ -1,8 +1,10 @@
-import jwt, { JsonWebTokenError, SignOptions } from "jsonwebtoken";
+import jwt, { SignOptions } from "jsonwebtoken";
 import "dotenv/config";
 import { TokenPayload } from "@/types/common.types.js";
 import { StringValue } from "ms";
 import { USERS_MESSAGES } from "@/constants/messages.js";
+
+const { JsonWebTokenError } = jwt;
 
 interface SignTokenParams {
   payload: string | Buffer | object;
@@ -10,43 +12,45 @@ interface SignTokenParams {
   options?: SignOptions;
 }
 
-export const signToken = (
-  payload: TokenPayload,
-  type: "access" | "refresh",
-) => {
-  const isAccessToken = type === "access";
+type TokenType = "access" | "refresh" | "email";
+
+const TOKEN_CONFIG = {
+  access: {
+    secret: () => process.env.JWT_ACCESS_SECRET as string,
+    expire: () => (process.env.JWT_ACCESS_EXPIRE || "15m") as StringValue,
+    errorMessage: USERS_MESSAGES.ACCESS_TOKEN_INVALID_OR_EXPIRED,
+  },
+  refresh: {
+    secret: () => process.env.JWT_REFRESH_SECRET as string,
+    expire: () => (process.env.JWT_REFRESH_EXPIRE || "100d") as StringValue,
+    errorMessage: USERS_MESSAGES.REFRESH_TOKEN_INVALID_OR_EXPIRED,
+  },
+  email: {
+    secret: () => process.env.JWT_EMAIL_VERIFY_SECRET as string,
+    expire: () => (process.env.JWT_EMAIL_VERIFY_EXPIRE || "10m") as StringValue,
+    errorMessage: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_INVALID_OR_EXPIRED,
+  },
+} as const;
+
+export const signToken = (payload: TokenPayload, type: TokenType) => {
+  const config = TOKEN_CONFIG[type];
 
   return signTokenIn({
     payload,
-    privateKey: (isAccessToken
-      ? process.env.JWT_ACCESS_SECRET
-      : process.env.JWT_REFRESH_SECRET) as string,
+    privateKey: config.secret(),
     options: {
-      expiresIn: (isAccessToken
-        ? process.env.JWT_ACCESS_EXPIRE || "15m"
-        : process.env.JWT_REFRESH_EXPIRE || "100d") as StringValue,
+      expiresIn: config.expire(),
     },
   });
 };
 
-export const verifyToken = (token: string, type: "access" | "refresh") => {
-  const isAccessToken = type === "access";
+export const verifyToken = (token: string, type: TokenType) => {
+  const config = TOKEN_CONFIG[type];
 
   try {
-    return jwt.verify(
-      token,
-      (isAccessToken
-        ? process.env.JWT_ACCESS_SECRET
-        : process.env.JWT_REFRESH_SECRET) as string,
-    ) as TokenPayload;
+    return jwt.verify(token, config.secret()) as TokenPayload;
   } catch {
-    if (isAccessToken)
-      throw new JsonWebTokenError(
-        USERS_MESSAGES.ACCESS_TOKEN_INVALID_OR_EXPIRED,
-      );
-    throw new JsonWebTokenError(
-      USERS_MESSAGES.REFRESH_TOKEN_INVALID_OR_EXPIRED,
-    );
+    throw new JsonWebTokenError(config.errorMessage);
   }
 };
 
