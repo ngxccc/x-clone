@@ -3,6 +3,7 @@ import { LogoutReqType, RegisterReqType } from "@/schemas/auth.schemas.js";
 import usersService from "@/services/users.services.js";
 import authService from "@/services/auth.services.js";
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
+import { USERS_MESSAGES } from "@/constants/messages.js";
 
 export const loginController = async (
   req: Request,
@@ -19,7 +20,7 @@ export const loginController = async (
     );
 
     return res.status(HTTP_STATUS.OK).json({
-      message: "Đăng nhập thành công",
+      message: USERS_MESSAGES.LOGIN_SUCCESS,
       data: result,
     });
   } catch (error) {
@@ -38,13 +39,13 @@ export const registerController = async (
     if (await usersService.checkEmailExist(email)) {
       return res
         .status(HTTP_STATUS.CONFLICT)
-        .json({ message: "Email này đã được sử dụng" });
+        .json({ message: USERS_MESSAGES.EMAIL_ALREADY_EXISTS });
     }
 
     const newUser = await usersService.register(req.body);
 
     return res.status(HTTP_STATUS.CREATED).json({
-      message: "Đăng ký thành công",
+      message: USERS_MESSAGES.REGISTER_SUCCESS,
       data: {
         _id: newUser._id,
         username: newUser.username,
@@ -69,7 +70,7 @@ export const logoutController = async (
     await authService.logout(refreshToken);
 
     return res.status(HTTP_STATUS.OK).json({
-      message: "Đăng xuất thành công",
+      message: USERS_MESSAGES.LOGOUT_SUCCESS,
     });
   } catch (error) {
     next(error);

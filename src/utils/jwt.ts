@@ -2,6 +2,7 @@ import jwt, { JsonWebTokenError, SignOptions } from "jsonwebtoken";
 import "dotenv/config";
 import { TokenPayload } from "@/types/common.types.js";
 import { StringValue } from "ms";
+import { USERS_MESSAGES } from "@/constants/messages.js";
 
 interface SignTokenParams {
   payload: string | Buffer | object;
@@ -39,9 +40,13 @@ export const verifyToken = (token: string, type: "access" | "refresh") => {
         : process.env.JWT_REFRESH_SECRET) as string,
     ) as TokenPayload;
   } catch {
-    const msg = "không hợp lệ hoặc đã hết hạn";
-    if (isAccessToken) throw new JsonWebTokenError(`Access Token ${msg}`);
-    throw new JsonWebTokenError(`Refresh Token ${msg}`);
+    if (isAccessToken)
+      throw new JsonWebTokenError(
+        USERS_MESSAGES.ACCESS_TOKEN_INVALID_OR_EXPIRED,
+      );
+    throw new JsonWebTokenError(
+      USERS_MESSAGES.REFRESH_TOKEN_INVALID_OR_EXPIRED,
+    );
   }
 };
 

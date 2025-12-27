@@ -1,38 +1,41 @@
+import { USERS_MESSAGES } from "@/constants/messages.js";
 import { requiredString } from "@/utils/validation.js";
 import { z } from "zod";
 
 export const RegisterReqBody = z
   .object({
     username: z
-      .string("Username là bắt buộc")
+      .string(USERS_MESSAGES.USERNAME_IS_REQUIRED)
       .trim()
-      .min(3, "Username phải có ít nhất 3 ký tự")
-      .max(255, "Username không được quá 255 ký tự"),
-    email: z.email("Email không hợp lệ, vui lòng kiểm tra lại"),
+      .min(3, USERS_MESSAGES.USERNAME_MIN_LENGTH)
+      .max(255, USERS_MESSAGES.USERNAME_MAX_LENGTH),
+    email: z.email(USERS_MESSAGES.EMAIL_INVALID_FORMAT),
     password: z
-      .string("Mật khẩu là bắt buộc")
-      .min(6, "Mật khẩu phải có ít nhất 6 ký tự"),
-    confirmPassword: requiredString("Xác nhận mật khẩu là bắt buộc"),
+      .string(USERS_MESSAGES.PASSWORD_IS_REQUIRED)
+      .min(6, USERS_MESSAGES.PASSWORD_MIN_LENGTH),
+    confirmPassword: requiredString(
+      USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED,
+    ),
     // z.coerce tự động ép kiểu String -> Date
     dateOfBirth: z.coerce.date({
       error: (issue) =>
         issue.code === "invalid_type"
-          ? "Ngày sinh không hợp lệ"
-          : "Lỗi không xác định",
+          ? USERS_MESSAGES.DATE_OF_BIRTH_INVALID
+          : USERS_MESSAGES.UNKNOWN_ERROR,
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    error: "Xác nhận mật khẩu không khớp",
+    error: USERS_MESSAGES.CONFIRM_PASSWORD_NOT_MATCH,
     path: ["confirmPassword"], // Đánh dấu lỗi sẽ hiện ở trường confirmPassword
   });
 
 export const LoginReqBody = z.object({
-  email: z.email("Email không hợp lệ, vui lòng kiểm tra lại"),
-  password: requiredString("Mật khẩu không được để trống"),
+  email: z.email(USERS_MESSAGES.EMAIL_INVALID_FORMAT),
+  password: requiredString(USERS_MESSAGES.PASSWORD_MUST_NOT_BE_EMPTY),
 });
 
 export const LogoutReqBody = z.object({
-  refreshToken: requiredString("Refresh Token là bắt buộc"),
+  refreshToken: requiredString(USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED),
 });
 
 export type LogoutReqType = z.infer<typeof LogoutReqBody>;

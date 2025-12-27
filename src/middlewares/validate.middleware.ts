@@ -1,4 +1,5 @@
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
+import { USERS_MESSAGES } from "@/constants/messages.js";
 import { NextFunction, Request, Response } from "express";
 import z, { ZodObject } from "zod";
 
@@ -8,8 +9,7 @@ export const validate =
     try {
       if (!req.is("application/json")) {
         return res.status(HTTP_STATUS.UNSUPPORTED_MEDIA_TYPE).json({
-          message:
-            "Vui lòng gửi định dạng JSON (Content-Type: application/json)",
+          message: USERS_MESSAGES.INVALID_CONTENT_TYPE,
         });
       }
 
@@ -17,7 +17,7 @@ export const validate =
 
       if (!data.success) {
         return res.status(HTTP_STATUS.BAD_REQUEST).json({
-          message: "Lỗi dữ liệu đầu vào",
+          message: USERS_MESSAGES.INVALID_INPUT_DATA,
           errors: z.flattenError(data.error).fieldErrors, // Format lỗi gọn gàng
         });
       }

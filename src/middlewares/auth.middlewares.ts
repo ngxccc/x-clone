@@ -1,4 +1,5 @@
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
+import { USERS_MESSAGES } from "@/constants/messages.js";
 import { RefreshToken } from "@/models.js";
 import { verifyToken } from "@/utils/jwt.js";
 import { NextFunction, Request, Response } from "express";
@@ -13,7 +14,7 @@ export const accessTokenValidator = (
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res
       .status(401)
-      .json({ message: "Yêu cầu Access Token (Bearer Token)" });
+      .json({ message: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED });
   }
 
   const token = authHeader.split(" ")[1]!;
@@ -43,7 +44,7 @@ export const refreshTokenValidator = async (
 
     if (!foundToken) {
       return res.status(HTTP_STATUS.UNAUTHORIZED).json({
-        message: "Refresh token đã sử dụng hoặc không tồn tại",
+        message: USERS_MESSAGES.REFRESH_TOKEN_IS_USED_OR_NOT_EXIST,
       });
     }
 
