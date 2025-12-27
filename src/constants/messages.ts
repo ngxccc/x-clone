@@ -1,5 +1,7 @@
 export const ERROR_CODES = {
   EMAIL_NOT_FOUND: "EMAIL_NOT_FOUND",
+  EMAIL_NOT_VERIFIED: "EMAIL_NOT_VERIFIED",
+  ACCOUNT_IS_BANNED: "ACCOUNT_IS_BANNED",
   PASSWORD_INCORRECT: "PASSWORD_INCORRECT",
   VALIDATION_ERROR: "ValidationError",
   MONGO_DUPLICATE_KEY: 11000,
@@ -13,7 +15,9 @@ export const USERS_MESSAGES = {
   EMAIL_IS_REQUIRED: "Email không được để trống",
   EMAIL_IS_INVALID: "Email không hợp lệ",
   EMAIL_INVALID_FORMAT: "Email không hợp lệ, vui lòng kiểm tra lại",
+  EMAIL_NOT_VERIFIED: "Email chưa được xác thực",
   EMAIL_OR_PASSWORD_INCORRECT: "Email hoặc mật khẩu không đúng",
+  ACCOUNT_IS_BANNED: "Tài khoản này đã bị khoá",
   PASSWORD_IS_REQUIRED: "Mật khẩu là bắt buộc",
   PASSWORD_MIN_LENGTH: "Mật khẩu phải có ít nhất 6 ký tự",
   PASSWORD_MUST_NOT_BE_EMPTY: "Mật khẩu không được để trống",
@@ -30,13 +34,19 @@ export const USERS_MESSAGES = {
   LOGIN_FAILED: "Đăng nhập thất bại",
   LOGOUT_SUCCESS: "Đăng xuất thành công",
   REGISTER_SUCCESS: "Đăng ký thành công",
+  EMAIL_VERIFY_SUCCESS: "Xác thực email thành công",
   ACCESS_TOKEN_IS_REQUIRED: "Yêu cầu Access Token",
   ACCESS_TOKEN_INVALID_OR_EXPIRED: "Access Token không hợp lệ hoặc đã hết hạn",
   REFRESH_TOKEN_IS_REQUIRED: "Refresh Token là bắt buộc",
   REFRESH_TOKEN_INVALID_OR_EXPIRED:
     "Refresh Token không hợp lệ hoặc đã hết hạn",
+  EMAIL_VERIFY_TOKEN_IS_REQUIRED: "Yêu cầu Email Verify Token",
+  EMAIL_VERIFY_TOKEN_INVALID_OR_EXPIRED:
+    "Email Verify Token không hợp lệ hoặc đã hết hạn",
   REFRESH_TOKEN_IS_USED_OR_NOT_EXIST:
-    "Refresh token đã được sử dụng hoặc không tồn tại",
+    "Refresh Token đã được sử dụng hoặc không tồn tại",
+  EMAIL_VERIFY_TOKEN_IS_USED_OR_NOT_EXIST:
+    "Email Verify Token đã được sử dụng hoặc không tồn tại",
   INVALID_JSON_SYNTAX:
     "Dữ liệu gửi lên không đúng định dạng JSON (Syntax Error)",
   VALIDATION_DATA_ERROR: "Lỗi validation dữ liệu (Mongoose)",
@@ -46,4 +56,5 @@ export const USERS_MESSAGES = {
   INVALID_CONTENT_TYPE:
     "Vui lòng gửi định dạng JSON (Content-Type: application/json)",
   INVALID_INPUT_DATA: "Lỗi dữ liệu đầu vào",
+  UNKNOWN_DEVICE: "Thiết bị không xác định",
 } as const;

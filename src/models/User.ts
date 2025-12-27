@@ -1,4 +1,5 @@
 import { USER_VERIFY_STATUS } from "@/constants/enums.js";
+import { USERS_MESSAGES } from "@/constants/messages.js";
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
@@ -9,7 +10,8 @@ const UserSchema = new Schema(
       required: true,
       unique: true,
       trim: true,
-      minLength: [3, "Username phải dài hơn 3 ký tự"],
+      minLength: [3, USERS_MESSAGES.USERNAME_MIN_LENGTH],
+      maxLength: [255, USERS_MESSAGES.USERNAME_MAX_LENGTH],
     },
     email: {
       type: String,
@@ -17,7 +19,7 @@ const UserSchema = new Schema(
       unique: true,
       match: [
         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-        "Email không hợp lệ",
+        USERS_MESSAGES.EMAIL_IS_INVALID,
       ],
     },
     password: {
@@ -34,6 +36,11 @@ const UserSchema = new Schema(
       default: "",
       select: false,
     },
+    forgotPasswordToken: {
+      type: String,
+      default: "",
+      select: false,
+    },
     verify: {
       type: Number,
       enum: Object.values(USER_VERIFY_STATUS),
@@ -43,16 +50,6 @@ const UserSchema = new Schema(
       type: String,
       default: "",
       maxLength: 160,
-    },
-    forgotPasswordToken: {
-      type: String,
-      default: "",
-      select: false,
-    },
-    forgotPasswordExpire: {
-      type: Date,
-      default: null,
-      select: false,
     },
     avatar: {
       type: String,
@@ -74,7 +71,11 @@ const UserSchema = new Schema(
   },
 );
 
-// Index text để phục vụ chức năng tìm kiếm User
-UserSchema.index({ username: "text", email: "text" });
+UserSchema.index({
+  username: 1,
+  email: 1,
+  emailVerifyToken: 1,
+  forgotPasswordToken: 1,
+});
 
 export default mongoose.model("User", UserSchema);

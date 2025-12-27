@@ -1,3 +1,4 @@
+import { USERS_MESSAGES } from "@/constants/messages.js";
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
@@ -16,7 +17,7 @@ const RefreshTokenSchema = new Schema(
     },
     deviceInfo: {
       type: String, // VD: "Chrome on Windows 10"
-      default: "Unknown Device",
+      default: USERS_MESSAGES.UNKNOWN_DEVICE,
     },
     // Thời điểm token hết hạn (Tính toán logic lúc login)
     expiryDate: {
