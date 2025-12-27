@@ -16,7 +16,7 @@ export const validate =
       const data = await schema.safeParseAsync(req.body);
 
       if (!data.success) {
-        return res.status(400).json({
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
           message: "Lỗi dữ liệu đầu vào",
           errors: z.flattenError(data.error).fieldErrors, // Format lỗi gọn gàng
         });

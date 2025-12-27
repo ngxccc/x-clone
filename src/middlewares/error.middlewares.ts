@@ -15,7 +15,7 @@ export const defaultErrorHandler = (
   if (
     err instanceof SyntaxError &&
     "body" in err &&
-    (err as any).status === 400
+    (err as any).status === HTTP_STATUS.BAD_REQUEST
   ) {
     return res.status(HTTP_STATUS.BAD_REQUEST).json({
       message: "Dữ liệu gửi lên không đúng định dạng JSON (Syntax Error)",
