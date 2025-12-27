@@ -55,7 +55,7 @@
 ### 1. Clone repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/ngxccc/x-clone
 cd x-clone
 ```
 
@@ -71,6 +71,7 @@ Hoặc sử dụng npm:
 
 ```bash
 npm install
+npm install tsx # Hỗ trợ chạy các file .ts
 ```
 
 ### 3. Thiết lập MongoDB
@@ -99,7 +100,11 @@ Chi tiết: [.env.example](.env.example)
 ### Development mode (với hot reload)
 
 ```bash
+# Bun
 bun dev
+
+# Npm
+npm run dev:node
 ```
 
 Server sẽ chạy tại: <http://localhost:4000>
@@ -121,42 +126,31 @@ bun start
 ### Đồng bộ database indexes
 
 ```bash
+# Bun
 bun run db:index
+
+#Npm
+npm run db:index:node
 ```
 
 ## 📜 Scripts
 
-| Script                 | Mô tả                            |
-| ---------------------- | -------------------------------- |
-| `bun dev`              | Chạy dev server với hot reload   |
-| `bun run build`        | Build TypeScript sang JavaScript |
-| `bun start`            | Chạy production build            |
-| `bun run lint`         | Kiểm tra code style với ESLint   |
-| `bun run lint:fix`     | Tự động fix lỗi ESLint           |
-| `bun run prettier`     | Kiểm tra format code             |
-| `bun run prettier:fix` | Tự động format code              |
-| `bun run db:index`     | Đồng bộ database indexes         |
+| Script                  | Mô tả                                           |
+| ----------------------- | ----------------------------------------------- |
+| `bun dev`               | Chạy dev server với hot reload                  |
+| `npm run dev:node`      | Giống như `bun dev` nhưng dành cho npm          |
+| `bun run build`         | Build TypeScript sang JavaScript                |
+| `bun start`             | Chạy production build                           |
+| `bun run lint`          | Kiểm tra code style với ESLint                  |
+| `bun run lint:fix`      | Tự động fix lỗi ESLint                          |
+| `bun run prettier`      | Kiểm tra format code                            |
+| `bun run prettier:fix`  | Tự động format code                             |
+| `bun run db:index`      | Đồng bộ database indexes                        |
+| `npm run db:index:node` | Giống như `bun run db:index` nhưng dành cho npm |
 
 ## 📚 API Documentation
 
-Chi tiết API endpoints xem tại: [docs/api.md](docs/api.md)
-
-### Quick overview
-
-**Authentication:**
-
-- `POST /api/auth/register` - Đăng ký
-- `POST /api/auth/login` - Đăng nhập
-- `POST /api/auth/logout` - Đăng xuất
-- `POST /api/auth/refresh-token` - Làm mới token
-
-**Users:**
-
-- `GET /api/users/me` - Lấy thông tin user hiện tại
-- `GET /api/users/:username` - Xem profile
-- `PATCH /api/users/me` - Cập nhật profile
-- `POST /api/users/follow` - Follow user
-- `DELETE /api/users/follow/:userId` - Unfollow
+Chi tiết API endpoints xem tại: [docs/API.md](docs/API.md)
 
 ## 📁 Cấu trúc dự án
 

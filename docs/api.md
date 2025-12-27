@@ -11,17 +11,18 @@
 
 ## HTTP Status Codes
 
-| Code | Ý nghĩa               | Mô tả                                   |
-| ---- | --------------------- | --------------------------------------- |
-| 200  | OK                    | Request thành công                      |
-| 201  | Created               | Tạo resource thành công                 |
-| 400  | Bad Request           | Dữ liệu không hợp lệ hoặc thiếu         |
-| 401  | Unauthorized          | Chưa đăng nhập hoặc token không hợp lệ  |
-| 403  | Forbidden             | Không có quyền truy cập                 |
-| 404  | Not Found             | Không tìm thấy resource                 |
-| 409  | Conflict              | Xung đột dữ liệu (VD: email đã tồn tại) |
-| 422  | Unprocessable Entity  | Validation error                        |
-| 500  | Internal Server Error | Lỗi máy chủ                             |
+| Code | Ý nghĩa                | Mô tả                                               |
+| ---- | ---------------------- | --------------------------------------------------- |
+| 200  | OK                     | Request thành công                                  |
+| 201  | Created                | Tạo resource thành công                             |
+| 400  | Bad Request            | Dữ liệu không hợp lệ hoặc thiếu                     |
+| 401  | Unauthorized           | Chưa đăng nhập hoặc token không hợp lệ              |
+| 403  | Forbidden              | Không có quyền truy cập                             |
+| 404  | Not Found              | Không tìm thấy resource                             |
+| 409  | Conflict               | Xung đột dữ liệu (VD: email đã tồn tại)             |
+| 415  | Unsupported Media Type | Phương tiện không được hỗ trợ (VD: không phải json) |
+| 422  | Unprocessable Entity   | Validation error                                    |
+| 500  | Internal Server Error  | Lỗi máy chủ                                         |
 
 ---
 
@@ -41,7 +42,9 @@
 {
   "username": "johndoe",
   "email": "john@example.com",
-  "password": "SecurePass123"
+  "password": "SecurePass123",
+  "confirmPassword": "123123",
+  "dateOfBirth": "2006-10-21"
 }
 ```
 
@@ -163,7 +166,7 @@ Authorization: Bearer {accessToken}
 
 ```json
 {
-  "token": "verification_token_here"
+  "emailVerifyToken": "verification_token_here"
 }
 ```
 
