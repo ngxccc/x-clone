@@ -8,6 +8,8 @@ export interface MongoError extends Error {
 export interface TokenPayload {
   userId: string;
   tokenType: TokenType;
+  iat?: number;
+  exp?: number;
 }
 
 // Declaration Merging (Gộp định nghĩa)
