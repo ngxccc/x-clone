@@ -1,8 +1,10 @@
 import {
+  forgotPasswordController,
   loginController,
   logoutController,
   registerController,
   resendVerificationEmailController,
+  resetPasswordController,
   verifyEmailController,
 } from "@/controllers/auth.controllers.js";
 import {
@@ -13,10 +15,12 @@ import {
 import { resendEmailLimiter } from "@/middlewares/rateLimit.middlewares.js";
 import { validate } from "@/middlewares/validate.middleware.js";
 import {
+  ForgotPasswordReqBody,
   LoginReqBody,
   LogoutReqBody,
   RegisterReqBody,
   ResendVerificationEmailReqBody,
+  ResetPasswordReqBody,
   VerifyEmailReqBody,
 } from "@/schemas/auth.schemas.js";
 import { Router } from "express";
@@ -45,6 +49,19 @@ authRouter.post(
   resendEmailLimiter,
   validate(ResendVerificationEmailReqBody),
   resendVerificationEmailController,
+);
+
+authRouter.post(
+  "/forgot-password",
+  resendEmailLimiter,
+  validate(ForgotPasswordReqBody),
+  forgotPasswordController,
+);
+
+authRouter.post(
+  "/reset-password",
+  validate(ResetPasswordReqBody),
+  resetPasswordController,
 );
 
 export default authRouter;

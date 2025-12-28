@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { LogoutReqType, RegisterReqType } from "@/schemas/auth.schemas.js";
+import { RegisterReqType } from "@/schemas/auth.schemas.js";
 import usersService from "@/services/users.services.js";
 import authService from "@/services/auth.services.js";
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
@@ -11,13 +11,7 @@ export const loginController = async (
   next: NextFunction,
 ) => {
   try {
-    const { email, password } = req.body;
-
-    const result = await authService.login(
-      email,
-      password,
-      req.headers["user-agent"],
-    );
+    const result = await authService.login(req.body, req.headers["user-agent"]);
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.LOGIN_SUCCESS,
@@ -68,9 +62,7 @@ export const logoutController = async (
   next: NextFunction,
 ) => {
   try {
-    const { refreshToken } = req.body as LogoutReqType;
-
-    await authService.logout(refreshToken);
+    await authService.logout(req.body);
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.LOGOUT_SUCCESS,
@@ -102,12 +94,42 @@ export const resendVerificationEmailController = async (
   next: NextFunction,
 ) => {
   try {
-    const { email } = req.body;
-
-    await authService.resendVerificationEmail(email);
+    await authService.resendVerificationEmail(req.body);
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.CHECK_EMAIL_TO_VERIFY,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const forgotPasswordController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    await authService.forgotPassword(req.body);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPasswordController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    await authService.resetPassword(req.body);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.PASSWORD_RESET_SUCCESS,
     });
   } catch (error) {
     next(error);

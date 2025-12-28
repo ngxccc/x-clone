@@ -12,7 +12,7 @@ interface SignTokenParams {
   options?: SignOptions;
 }
 
-type TokenType = "access" | "refresh" | "email";
+type TokenType = "access" | "refresh" | "email" | "forgotPassword";
 
 const TOKEN_CONFIG = {
   access: {
@@ -29,6 +29,12 @@ const TOKEN_CONFIG = {
     secret: () => process.env.JWT_EMAIL_VERIFY_SECRET as string,
     expire: () => (process.env.JWT_EMAIL_VERIFY_EXPIRE || "10m") as StringValue,
     errorMessage: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_INVALID_OR_EXPIRED,
+  },
+  forgotPassword: {
+    secret: () => process.env.JWT_FORGOT_PASSWORD_SECRET as string,
+    expire: () =>
+      (process.env.JWT_FORGOT_PASSWORD_EXPIRE || "10m") as StringValue,
+    errorMessage: USERS_MESSAGES.FORGOT_PASSWORD_TOKEN_INVALID_OR_EXPIRED,
   },
 } as const;
 

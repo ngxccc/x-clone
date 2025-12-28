@@ -48,6 +48,29 @@ export const ResendVerificationEmailReqBody = z.object({
   email: z.email(USERS_MESSAGES.EMAIL_INVALID_FORMAT),
 });
 
+export const ForgotPasswordReqBody = z.object({
+  email: z.email(USERS_MESSAGES.EMAIL_INVALID_FORMAT),
+});
+
+export const ResetPasswordReqBody = z
+  .object({
+    forgotPasswordToken: requiredString(
+      USERS_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
+    ),
+    password: z
+      .string(USERS_MESSAGES.PASSWORD_IS_REQUIRED)
+      .min(6, USERS_MESSAGES.PASSWORD_MIN_LENGTH),
+    confirmPassword: requiredString(
+      USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED,
+    ),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    error: USERS_MESSAGES.CONFIRM_PASSWORD_NOT_MATCH,
+    path: ["confirmPassword"],
+  });
+
+export type ForgotPasswordReqType = z.infer<typeof ForgotPasswordReqBody>;
+export type ResetPasswordReqType = z.infer<typeof ResetPasswordReqBody>;
 export type ResendVerificationEmailReqType = z.infer<
   typeof ResendVerificationEmailReqBody
 >;

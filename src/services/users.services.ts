@@ -47,15 +47,11 @@ class UserService {
   }
 
   async findUserByEmailVerifyToken(token: string) {
-    return await User.findOne({ emailVerifyToken: token }).select(
-      "+emailVerifyToken",
-    );
+    return await User.findOne({ emailVerifyToken: token });
   }
 
   async findUserByForgotPasswordToken(token: string) {
-    return await User.findOne({ forgotPasswordToken: token }).select(
-      "+forgotPasswordToken",
-    );
+    return await User.findOne({ forgotPasswordToken: token });
   }
 
   async updateVerifyStatus(userId: string) {
@@ -74,9 +70,15 @@ class UserService {
   async updateEmailVerifyToken(userId: string, token: string) {
     return await User.findByIdAndUpdate(
       userId,
-      {
-        $set: { emailVerifyToken: token },
-      },
+      { $set: { emailVerifyToken: token } },
+      { new: true },
+    );
+  }
+
+  async updateForgotPasswordToken(userId: string, token: string) {
+    return await User.findByIdAndUpdate(
+      userId,
+      { $set: { forgotPasswordToken: token } },
       { new: true },
     );
   }
