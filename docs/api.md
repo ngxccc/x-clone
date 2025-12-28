@@ -223,6 +223,26 @@ Authorization: Bearer {accessToken}
 }
 ```
 
+### 8. Gửi lại email kích hoạt
+
+**Endpoint:** `POST /api/auth/resend-verification-email`
+
+**Request Body:**
+
+```json
+{
+  "email": "nguoidung@example.com"
+}
+```
+
+**Response (200):**
+
+```json
+{
+  "message": "Đã gửi lại email xác thực, vui lòng kiểm tra hộp thư"
+}
+```
+
 ---
 
 ## Users API
