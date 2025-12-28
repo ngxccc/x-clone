@@ -2,6 +2,7 @@ import {
   loginController,
   logoutController,
   registerController,
+  resendVerificationEmailController,
   verifyEmailController,
 } from "@/controllers/auth.controllers.js";
 import {
@@ -9,11 +10,13 @@ import {
   emailVerifyTokenValidator,
   refreshTokenValidator,
 } from "@/middlewares/auth.middlewares.js";
+import { resendEmailLimiter } from "@/middlewares/rateLimit.middlewares.js";
 import { validate } from "@/middlewares/validate.middleware.js";
 import {
   LoginReqBody,
   LogoutReqBody,
   RegisterReqBody,
+  ResendVerificationEmailReqBody,
   VerifyEmailReqBody,
 } from "@/schemas/auth.schemas.js";
 import { Router } from "express";
@@ -35,6 +38,13 @@ authRouter.post(
   validate(VerifyEmailReqBody),
   emailVerifyTokenValidator,
   verifyEmailController,
+);
+
+authRouter.post(
+  "/resend-verification-email",
+  resendEmailLimiter,
+  validate(ResendVerificationEmailReqBody),
+  resendVerificationEmailController,
 );
 
 export default authRouter;

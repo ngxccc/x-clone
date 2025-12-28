@@ -8,6 +8,9 @@ const port = process.env.PORT;
 
 databaseService.connect();
 
+// Bỏ qua lớp trung gian (Cloudflare / Nginx)
+app.set("trust proxy", 1);
+
 // Middelware parse JSON from client
 app.use(express.json());
 

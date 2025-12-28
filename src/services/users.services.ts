@@ -70,6 +70,16 @@ class UserService {
       { new: true, runValidators: true },
     );
   }
+
+  async updateEmailVerifyToken(userId: string, token: string) {
+    return await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: { emailVerifyToken: token },
+      },
+      { new: true },
+    );
+  }
 }
 
 const usersService = new UserService();

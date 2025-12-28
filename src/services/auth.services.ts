@@ -1,8 +1,13 @@
 import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/constants/enums.js";
 import { ERROR_CODES, USERS_MESSAGES } from "@/constants/messages.js";
 import { RefreshToken } from "@/models.js";
-import { signToken } from "@/utils/jwt.js";
-import { UnauthorizedError, ForbiddenError } from "@/utils/errors.js";
+import { signToken, verifyToken } from "@/utils/jwt.js";
+import {
+  UnauthorizedError,
+  ForbiddenError,
+  NotFoundError,
+  ConflictError,
+} from "@/utils/errors.js";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import ms, { StringValue } from "ms";
@@ -87,6 +92,38 @@ class AuthService {
     const updateRes = await usersService.updateVerifyStatus(userId);
 
     return updateRes;
+  }
+
+  async resendVerificationEmail(email: string) {
+    const user = await usersService.findUserByEmail(email);
+
+    if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
+
+    if (user.verify === USER_VERIFY_STATUS.VERIFIED)
+      throw new ConflictError(USERS_MESSAGES.EMAIL_ALREADY_VERIFIED_BEFORE);
+
+    if (user.emailVerifyToken) {
+      const decoded = verifyToken(user.emailVerifyToken, "email");
+      const now = Math.floor(Date.now() / 1000);
+
+      if (now - decoded.iat! < 60)
+        throw new ConflictError(USERS_MESSAGES.RESEND_EMAIL_TOO_FAST);
+    }
+
+    const emailVerifyToken = await signToken(
+      {
+        userId: user.id,
+        tokenType: TOKEN_TYPES.EMAIL_VERIFY_TOKEN,
+      },
+      "email",
+    );
+
+    await usersService.updateEmailVerifyToken(user.id, emailVerifyToken);
+
+    // TODO: Gửi email cho user
+    console.log(`RESEND EMAIL TO [${email}]: ${emailVerifyToken}`);
+
+    return { success: true };
   }
 }
 

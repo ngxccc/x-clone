@@ -44,6 +44,9 @@ export const registerController = async (
 
     const newUser = await usersService.register(req.body);
 
+    // TODO: Sẽ gửi mail cho user
+    console.log(newUser.emailVerifyToken);
+
     return res.status(HTTP_STATUS.CREATED).json({
       message: USERS_MESSAGES.REGISTER_SUCCESS,
       data: {
@@ -51,7 +54,6 @@ export const registerController = async (
         username: newUser.username,
         email: newUser.email,
         dateOfBirth: newUser.dateOfBirth,
-        emailVerifyToken: newUser.emailVerifyToken,
       },
     });
   } catch (error) {
@@ -88,6 +90,24 @@ export const verifyEmailController = async (
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.EMAIL_VERIFY_SUCCESS,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resendVerificationEmailController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { email } = req.body;
+
+    await authService.resendVerificationEmail(email);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.CHECK_EMAIL_TO_VERIFY,
     });
   } catch (error) {
     next(error);

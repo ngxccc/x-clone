@@ -44,6 +44,13 @@ export const VerifyEmailReqBody = z.object({
   ),
 });
 
+export const ResendVerificationEmailReqBody = z.object({
+  email: z.email(USERS_MESSAGES.EMAIL_INVALID_FORMAT),
+});
+
+export type ResendVerificationEmailReqType = z.infer<
+  typeof ResendVerificationEmailReqBody
+>;
 export type VerifyEmailReqType = z.infer<typeof VerifyEmailReqBody>;
 export type LogoutReqType = z.infer<typeof LogoutReqBody>;
 export type LoginReqType = z.infer<typeof LoginReqBody>;
