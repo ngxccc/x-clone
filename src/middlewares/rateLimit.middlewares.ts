@@ -14,5 +14,5 @@ export const resendEmailLimiter = rateLimit({
     });
   },
 
-  skip: (req) => req.ip === "127.0.0.1",
+  skip: (req) => req.ip === "::1" || req.ip === "127.0.0.1",
 });
