@@ -45,6 +45,9 @@ export const USERS_MESSAGES = {
   LOGIN_FAILED: "Đăng nhập thất bại",
   LOGOUT_SUCCESS: "Đăng xuất thành công",
   REGISTER_SUCCESS: "Đăng ký thành công",
+  EMAIL_VERIFY_SUCCESS: "Xác thực email thành công",
+  REFRESH_TOKEN_SUCCESS: "Làm mới Refresh Token thành công",
+  PASSWORD_RESET_SUCCESS: "Đặt lại mật khẩu thành công",
 
   ACCESS_TOKEN_IS_REQUIRED: "Yêu cầu Access Token",
   ACCESS_TOKEN_INVALID_OR_EXPIRED: "Access Token không hợp lệ hoặc đã hết hạn",
@@ -59,7 +62,6 @@ export const USERS_MESSAGES = {
   EMAIL_VERIFY_TOKEN_IS_USED_OR_NOT_EXIST:
     "Email Verify Token đã được sử dụng hoặc không tồn tại",
   CHECK_EMAIL_TO_VERIFY: "Đã gửi lại email xác thực, vui lòng kiểm tra hộp thư",
-  EMAIL_VERIFY_SUCCESS: "Xác thực email thành công",
 
   FORGOT_PASSWORD_TOKEN_IS_REQUIRED: "Yêu cầu Forgot Password Token",
   FORGOT_PASSWORD_TOKEN_INVALID_OR_EXPIRED:
@@ -67,7 +69,6 @@ export const USERS_MESSAGES = {
   FORGOT_PASSWORD_TOKEN_IS_USED_OR_NOT_EXIST:
     "Forgot Password Token đã được sử dụng hoặc không tồn tại",
   CHECK_EMAIL_TO_RESET_PASSWORD: "Vui lòng kiểm tra email để đặt lại mật khẩu",
-  PASSWORD_RESET_SUCCESS: "Đặt lại mật khẩu thành công",
 
   RESEND_EMAIL_TOO_FAST: "Vui lòng đợi 1 phút trước khi yêu cầu gửi lại.",
 

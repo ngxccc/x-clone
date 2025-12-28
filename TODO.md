@@ -30,7 +30,7 @@
 
 ### Security Enhancement
 
-- [ ] **Rate Limiting** - Giới hạn số lượng request
+- [x] **Rate Limiting** - Giới hạn số lượng request
 - [ ] **Helmet.js** - Bảo mật HTTP headers
 
 ### Deployment
@@ -54,3 +54,8 @@
 ## 4. Quy ước (Conventions)
 
 - [x] **Terminology** - Rà soát toàn bộ code/API: Sử dụng thống nhất thuật ngữ `register/login` (thay vì `signup/signin`)
+
+## Others
+
+- [ ] **Refactor** - Sửa lại định dạng JSON error thống nhất
+- [ ] **Refresh Token** - Thêm rate limit

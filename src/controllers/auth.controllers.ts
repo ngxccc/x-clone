@@ -11,7 +11,10 @@ export const loginController = async (
   next: NextFunction,
 ) => {
   try {
-    const result = await authService.login(req.body, req.headers["user-agent"]);
+    const { email, password } = req.body;
+    const deviceInfo = req.headers["user-agent"];
+
+    const result = await authService.login(email, password, deviceInfo);
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.LOGIN_SUCCESS,
@@ -62,7 +65,9 @@ export const logoutController = async (
   next: NextFunction,
 ) => {
   try {
-    await authService.logout(req.body);
+    const { refreshToken } = req.body;
+
+    await authService.logout(refreshToken);
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.LOGOUT_SUCCESS,
@@ -128,12 +133,38 @@ export const resetPasswordController = async (
   next: NextFunction,
 ) => {
   try {
+    const { password } = req.body;
     const { userId } = req.decodedForgotPasswordToken!;
 
-    await authService.resetPassword(userId, req.body);
+    await authService.resetPassword(userId, password);
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.PASSWORD_RESET_SUCCESS,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const refreshTokenController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { refreshToken } = req.body;
+    const { userId } = req.decodedRefreshToken!;
+    const deviceInfo = req.headers["user-agent"];
+
+    const result = await authService.refreshToken(
+      userId,
+      refreshToken,
+      deviceInfo,
+    );
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
+      data: result,
     });
   } catch (error) {
     next(error);

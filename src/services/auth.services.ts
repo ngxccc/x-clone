@@ -14,16 +14,49 @@ import ms, { StringValue } from "ms";
 import usersService from "./users.services.js";
 import {
   ForgotPasswordReqType,
-  LoginReqType,
-  LogoutReqType,
   ResendVerificationEmailReqType,
-  ResetPasswordReqType,
 } from "@/schemas/auth.schemas.js";
 
 class AuthService {
-  async login(payload: LoginReqType, deviceInfo?: string) {
-    const { email, password } = payload;
+  private async signAccessAndRefreshToken(userId: string, deviceInfo?: string) {
+    const jwtPayload = {
+      userId: userId,
+    };
 
+    const [accessToken, refreshToken] = await Promise.all([
+      signToken(
+        {
+          ...jwtPayload,
+          tokenType: TOKEN_TYPES.ACCESS_TOKEN,
+        },
+        "access",
+      ),
+      signToken(
+        {
+          ...jwtPayload,
+          tokenType: TOKEN_TYPES.REFRESH_TOKEN,
+        },
+        "refresh",
+      ),
+    ]);
+
+    const expiresIn = process.env.JWT_REFRESH_EXPIRE || "100d";
+    const expiresMilliseconds = ms(expiresIn as StringValue);
+
+    await RefreshToken.create({
+      token: refreshToken,
+      userId: userId,
+      deviceInfo,
+      expiryDate: new Date(Date.now() + expiresMilliseconds),
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async login(email: string, password: string, deviceInfo?: string) {
     const user = await usersService.findUserByEmailWithPassword(email);
     if (!user)
       throw new UnauthorizedError(
@@ -49,45 +82,10 @@ class AuthService {
         ERROR_CODES.ACCOUNT_IS_BANNED,
       );
 
-    const jwtPayload = {
-      userId: user.id,
-    };
-
-    const [accessToken, refreshToken] = await Promise.all([
-      signToken(
-        {
-          ...jwtPayload,
-          tokenType: TOKEN_TYPES.ACCESS_TOKEN,
-        },
-        "access",
-      ),
-      signToken(
-        {
-          ...jwtPayload,
-          tokenType: TOKEN_TYPES.REFRESH_TOKEN,
-        },
-        "refresh",
-      ),
-    ]);
-
-    const expiresIn = process.env.JWT_REFRESH_EXPIRE || "100d";
-    const expiresMilliseconds = ms(expiresIn as StringValue);
-
-    await RefreshToken.create({
-      token: refreshToken,
-      userId: user._id,
-      deviceInfo,
-      expiryDate: new Date(Date.now() + expiresMilliseconds),
-    });
-
-    return {
-      accessToken,
-      refreshToken,
-    };
+    return await this.signAccessAndRefreshToken(user.id, deviceInfo);
   }
 
-  async logout(payload: LogoutReqType) {
-    const { refreshToken } = payload;
+  async logout(refreshToken: string) {
     // Idempotent (Tính lũy đẳng)
     // Dù gọi 1 hay n lần thì kết quả res là như nhau (User đã đăng xuất)
     await RefreshToken.deleteOne({ token: refreshToken });
@@ -168,9 +166,7 @@ class AuthService {
     return { success: true };
   }
 
-  async resetPassword(userId: string, payload: ResetPasswordReqType) {
-    const { password } = payload;
-
+  async resetPassword(userId: string, password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Implicit Verification (Xác thực ngầm)
@@ -184,6 +180,25 @@ class AuthService {
     });
 
     return { success: true };
+  }
+
+  async refreshToken(
+    userId: string,
+    refreshToken: string,
+    deviceInfo?: string,
+  ) {
+    const oldToken = await RefreshToken.findOneAndDelete({
+      token: refreshToken,
+      userId: userId,
+    });
+
+    if (!oldToken)
+      throw new UnauthorizedError(
+        USERS_MESSAGES.REFRESH_TOKEN_IS_USED_OR_NOT_EXIST,
+      );
+
+    // Refresh Token Rotation (Xoay vòng token)
+    return await this.signAccessAndRefreshToken(userId, deviceInfo);
   }
 }
 

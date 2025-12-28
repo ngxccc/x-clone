@@ -69,6 +69,11 @@ export const ResetPasswordReqBody = z
     path: ["confirmPassword"],
   });
 
+export const RefreshTokenReqBody = z.object({
+  refreshToken: requiredString(USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED),
+});
+
+export type RefreshTokenReqType = z.infer<typeof RefreshTokenReqBody>;
 export type ForgotPasswordReqType = z.infer<typeof ForgotPasswordReqBody>;
 export type ResetPasswordReqType = z.infer<typeof ResetPasswordReqBody>;
 export type ResendVerificationEmailReqType = z.infer<

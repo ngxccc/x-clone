@@ -2,6 +2,7 @@ import {
   forgotPasswordController,
   loginController,
   logoutController,
+  refreshTokenController,
   registerController,
   resendVerificationEmailController,
   resetPasswordController,
@@ -19,6 +20,7 @@ import {
   ForgotPasswordReqBody,
   LoginReqBody,
   LogoutReqBody,
+  RefreshTokenReqBody,
   RegisterReqBody,
   ResendVerificationEmailReqBody,
   ResetPasswordReqBody,
@@ -64,6 +66,13 @@ authRouter.post(
   validate(ResetPasswordReqBody),
   forgotPasswordTokenValidator,
   resetPasswordController,
+);
+
+authRouter.post(
+  "/refresh-token",
+  validate(RefreshTokenReqBody),
+  refreshTokenValidator,
+  refreshTokenController,
 );
 
 export default authRouter;
