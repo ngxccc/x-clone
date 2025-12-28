@@ -101,6 +101,11 @@ class AuthService {
 
     if (user.verify === USER_VERIFY_STATUS.VERIFIED)
       throw new ConflictError(USERS_MESSAGES.EMAIL_ALREADY_VERIFIED_BEFORE);
+    else if (user.verify === USER_VERIFY_STATUS.BANNED)
+      throw new ForbiddenError(
+        USERS_MESSAGES.ACCOUNT_IS_BANNED,
+        ERROR_CODES.ACCOUNT_IS_BANNED,
+      );
 
     if (user.emailVerifyToken) {
       const decoded = verifyToken(user.emailVerifyToken, "email");

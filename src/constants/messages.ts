@@ -20,7 +20,8 @@ export const USERS_MESSAGES = {
   EMAIL_OR_PASSWORD_INCORRECT: "Email hoặc mật khẩu không đúng",
   EMAIL_ALREADY_VERIFIED_BEFORE: "Email đã được xác thực",
   CHECK_EMAIL_TO_VERIFY: "Đã gửi lại email xác thực, vui lòng kiểm tra hộp thư",
-  ACCOUNT_IS_BANNED: "Tài khoản của bạn đã bị khoá",
+  ACCOUNT_IS_BANNED:
+    "Tài khoản này đã bị khoá. Chi tiết xin liện hệ quản trị viên",
   PASSWORD_IS_REQUIRED: "Mật khẩu là bắt buộc",
   PASSWORD_MIN_LENGTH: "Mật khẩu phải có ít nhất 6 ký tự",
   PASSWORD_MUST_NOT_BE_EMPTY: "Mật khẩu không được để trống",
