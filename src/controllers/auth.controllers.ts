@@ -78,7 +78,9 @@ export const verifyEmailController = async (
   next: NextFunction,
 ) => {
   try {
-    await authService.verifyEmail(req.decodedEmailVerifyToken!.userId);
+    const { userId } = req.decodedEmailVerifyToken!;
+
+    await authService.verifyEmail(userId);
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.EMAIL_VERIFY_SUCCESS,
@@ -126,7 +128,9 @@ export const resetPasswordController = async (
   next: NextFunction,
 ) => {
   try {
-    await authService.resetPassword(req.body);
+    const { userId } = req.decodedForgotPasswordToken!;
+
+    await authService.resetPassword(userId, req.body);
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.PASSWORD_RESET_SUCCESS,

@@ -10,6 +10,7 @@ import {
 import {
   accessTokenValidator,
   emailVerifyTokenValidator,
+  forgotPasswordTokenValidator,
   refreshTokenValidator,
 } from "@/middlewares/auth.middlewares.js";
 import { resendEmailLimiter } from "@/middlewares/rateLimit.middlewares.js";
@@ -61,6 +62,7 @@ authRouter.post(
 authRouter.post(
   "/reset-password",
   validate(ResetPasswordReqBody),
+  forgotPasswordTokenValidator,
   resetPasswordController,
 );
 

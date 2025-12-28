@@ -2,6 +2,7 @@ import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import { RefreshToken } from "@/models.js";
 import usersService from "@/services/users.services.js";
+import { UnauthorizedError } from "@/utils/errors.js";
 import { verifyToken } from "@/utils/jwt.js";
 import { NextFunction, Request, Response } from "express";
 
@@ -67,16 +68,41 @@ export const emailVerifyTokenValidator = async (
 
   try {
     const decoded = verifyToken(emailVerifyToken, "email");
-    const foundToken =
+    const user =
       await usersService.findUserByEmailVerifyToken(emailVerifyToken);
 
-    if (!foundToken) {
+    if (!user) {
       return res.status(HTTP_STATUS.UNAUTHORIZED).json({
         message: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_USED_OR_NOT_EXIST,
       });
     }
 
-    req.decodedEmailVerifyToken = { ...decoded, userId: foundToken.id };
+    req.decodedEmailVerifyToken = { ...decoded, userId: user.id };
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const forgotPasswordTokenValidator = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) => {
+  const { forgotPasswordToken } = req.body;
+
+  try {
+    const decoded = verifyToken(forgotPasswordToken, "forgotPassword");
+    const user =
+      await usersService.findUserByForgotPasswordToken(forgotPasswordToken);
+
+    if (!user)
+      throw new UnauthorizedError(
+        USERS_MESSAGES.FORGOT_PASSWORD_TOKEN_INVALID_OR_EXPIRED,
+      );
+
+    req.decodedForgotPasswordToken = { ...decoded, userId: user.id };
 
     next();
   } catch (error) {

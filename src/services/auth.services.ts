@@ -1,7 +1,7 @@
 import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/constants/enums.js";
 import { ERROR_CODES, USERS_MESSAGES } from "@/constants/messages.js";
 import { RefreshToken, User } from "@/models.js";
-import { signToken, verifyToken } from "@/utils/jwt.js";
+import { signToken } from "@/utils/jwt.js";
 import {
   UnauthorizedError,
   ForbiddenError,
@@ -152,14 +152,6 @@ class AuthService {
         ERROR_CODES.ACCOUNT_IS_BANNED,
       );
 
-    if (user.forgotPasswordToken) {
-      const decoded = verifyToken(user.forgotPasswordToken, "forgotPassword");
-      const now = Math.floor(Date.now() / 1000);
-
-      if (now - decoded.iat! < 60)
-        throw new ConflictError(USERS_MESSAGES.RESEND_EMAIL_TOO_FAST);
-    }
-
     const forgotPasswordToken = await signToken(
       {
         userId: user.id,
@@ -176,35 +168,19 @@ class AuthService {
     return { success: true };
   }
 
-  async resetPassword(payload: ResetPasswordReqType) {
-    const { forgotPasswordToken, password } = payload;
-
-    const user =
-      await usersService.findUserByForgotPasswordToken(forgotPasswordToken);
-
-    if (!user)
-      throw new NotFoundError(
-        USERS_MESSAGES.USER_NOT_FOUND,
-        ERROR_CODES.USER_NOT_FOUND,
-      );
-
-    if (user.verify === USER_VERIFY_STATUS.UNVERIFIED)
-      throw new ForbiddenError(
-        USERS_MESSAGES.EMAIL_NOT_VERIFIED,
-        ERROR_CODES.EMAIL_NOT_VERIFIED,
-      );
-    else if (user.verify === USER_VERIFY_STATUS.BANNED)
-      throw new ForbiddenError(
-        USERS_MESSAGES.ACCOUNT_IS_BANNED,
-        ERROR_CODES.ACCOUNT_IS_BANNED,
-      );
-
-    verifyToken(forgotPasswordToken, "forgotPassword");
+  async resetPassword(userId: string, payload: ResetPasswordReqType) {
+    const { password } = payload;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.findByIdAndUpdate(user.id, {
-      $set: { password: hashedPassword, forgotPasswordToken: "" },
+    // Implicit Verification (Xác thực ngầm)
+    await User.findByIdAndUpdate(userId, {
+      $set: {
+        password: hashedPassword,
+        emailVerifyToken: "",
+        verify: USER_VERIFY_STATUS.VERIFIED,
+        forgotPasswordToken: "",
+      },
     });
 
     return { success: true };
