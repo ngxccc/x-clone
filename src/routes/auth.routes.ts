@@ -14,7 +14,10 @@ import {
   forgotPasswordTokenValidator,
   refreshTokenValidator,
 } from "@/middlewares/auth.middlewares.js";
-import { resendEmailLimiter } from "@/middlewares/rateLimit.middlewares.js";
+import {
+  refreshTokenLimiter,
+  resendEmailLimiter,
+} from "@/middlewares/rateLimit.middlewares.js";
 import { validate } from "@/middlewares/validate.middleware.js";
 import {
   ForgotPasswordReqBody,
@@ -70,6 +73,7 @@ authRouter.post(
 
 authRouter.post(
   "/refresh-token",
+  refreshTokenLimiter,
   validate(RefreshTokenReqBody),
   refreshTokenValidator,
   refreshTokenController,

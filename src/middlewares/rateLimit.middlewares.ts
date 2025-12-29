@@ -4,7 +4,7 @@ import { USERS_MESSAGES } from "@/constants/messages.js";
 
 export const resendEmailLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 phút
-  max: 1,
+  limit: 1,
   standardHeaders: true, // Trả về header RateLimit-* chuẩn
   legacyHeaders: false, // Disable `X-RateLimit-*`
 
@@ -15,4 +15,10 @@ export const resendEmailLimiter = rateLimit({
   },
 
   skip: (req) => req.ip === "::1" || req.ip === "127.0.0.1",
+});
+
+export const refreshTokenLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 20,
+  message: { message: USERS_MESSAGES.TOO_MANY_REQUESTS },
 });
