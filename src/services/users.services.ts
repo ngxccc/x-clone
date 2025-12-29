@@ -1,6 +1,8 @@
 import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/constants/enums.js";
+import { USERS_MESSAGES } from "@/constants/messages.js";
 import { User } from "@/models.js";
 import { RegisterReqType } from "@/schemas/auth.schemas.js";
+import { NotFoundError } from "@/utils/errors.js";
 import { signToken } from "@/utils/jwt.js";
 import bcrypt from "bcrypt";
 
@@ -36,6 +38,14 @@ class UserService {
     });
 
     return newUser.toObject();
+  }
+
+  async getMe(userId: string) {
+    const user = await User.findById(userId);
+
+    if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
+
+    return user;
   }
 
   async findUserByEmail(email: string) {

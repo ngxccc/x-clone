@@ -88,4 +88,5 @@ export const USERS_MESSAGES = {
   UNKNOWN_ERROR: "Lỗi không xác định",
   TOO_MANY_REQUESTS:
     "Bạn đã gửi yêu cầu quá nhiều lần. Vui lòng thử lại sau 1 phút.",
+  GET_ME_SUCCESS: "Lấy thông tin người dùng thành công",
 } as const;
