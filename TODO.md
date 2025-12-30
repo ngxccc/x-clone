@@ -58,4 +58,4 @@
 ## Others
 
 - [ ] **Refactor** - Sửa lại định dạng JSON error thống nhất
-- [ ] **Refresh Token** - Thêm rate limit
+- [x] **Refresh Token** - Thêm rate limit
