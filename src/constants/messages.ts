@@ -89,4 +89,6 @@ export const USERS_MESSAGES = {
   TOO_MANY_REQUESTS:
     "Bạn đã gửi yêu cầu quá nhiều lần. Vui lòng thử lại sau 1 phút.",
   GET_ME_SUCCESS: "Lấy thông tin người dùng thành công",
+  API_ENDPOINT_NOT_FOUND: "API endpoint không tìm thấy",
+  GET_PROFILE_SUCCESS: "Lấy thông tin người dùng thành công",
 } as const;

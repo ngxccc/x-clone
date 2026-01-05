@@ -3,6 +3,8 @@ import authRouter from "./routes/auth.routes.js";
 import databaseService from "./services/database.services.js";
 import { defaultErrorHandler } from "./middlewares/error.middlewares.js";
 import usersRouter from "./routes/users.routes.js";
+import { NotFoundError } from "./utils/errors.js";
+import { USERS_MESSAGES } from "./constants/messages.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -15,8 +17,12 @@ app.set("trust proxy", 1);
 // Middelware parse JSON from client
 app.use(express.json());
 
-app.use("/v1/auth", authRouter);
-app.use("/v1/users", usersRouter);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/users", usersRouter);
+
+app.use((_req, _res, next) => {
+  next(new NotFoundError(USERS_MESSAGES.API_ENDPOINT_NOT_FOUND));
+});
 
 // Error Handler phải nằm sau tất cả các route
 app.use(defaultErrorHandler);

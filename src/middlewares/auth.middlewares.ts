@@ -109,3 +109,22 @@ export const forgotPasswordTokenValidator = async (
     next(error);
   }
 };
+
+export const isUserLoggedInValidator = async (
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) return next();
+
+  try {
+    const token = authHeader.split(" ")[1]!;
+    const decoded = verifyToken(token, "access");
+    req.decodedAccessToken = decoded;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};

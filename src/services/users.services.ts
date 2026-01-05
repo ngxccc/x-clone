@@ -1,6 +1,6 @@
 import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/constants/enums.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
-import { User } from "@/models.js";
+import { Follower, User } from "@/models.js";
 import { RegisterReqType } from "@/schemas/auth.schemas.js";
 import { NotFoundError } from "@/utils/errors.js";
 import { signToken } from "@/utils/jwt.js";
@@ -46,6 +46,30 @@ class UserService {
     if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
 
     return user;
+  }
+
+  async getProfile(username: string, myUserId?: string) {
+    const user = await User.findOne({ username }).select("-email");
+
+    if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
+
+    const isMyProfile = myUserId === user.id;
+    let isFollowed = false;
+
+    // Không cần check nếu user tự xem chính mình
+    if (myUserId && !isMyProfile) {
+      const follow = await Follower.findOne({
+        followedId: myUserId,
+        followerId: user.id,
+      });
+      isFollowed = Boolean(follow);
+    }
+
+    return {
+      ...user.toObject(),
+      isFollowed,
+      isMyProfile,
+    };
   }
 
   async findUserByEmail(email: string) {

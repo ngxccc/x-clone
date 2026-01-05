@@ -21,3 +21,23 @@ export const getMeController = async (
     next(error);
   }
 };
+
+export const getProfileController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { username } = req.params;
+    const myUserId = req.decodedAccessToken?.userId;
+
+    const result = await usersService.getProfile(username as string, myUserId);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
