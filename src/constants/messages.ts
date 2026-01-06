@@ -14,6 +14,9 @@ export const USERS_MESSAGES = {
   USERNAME_IS_REQUIRED: "Username là bắt buộc",
   USERNAME_MIN_LENGTH: "Username phải có ít nhất 3 ký tự",
   USERNAME_MAX_LENGTH: "Username không được quá 255 ký tự",
+  USERNAME_INVALID:
+    "Username chỉ được chứa chữ cái, số, dấu gạch dưới và dấu chấm",
+  USERNAME_ALREADY_EXISTS: "Username đã tồn tại",
   USER_NOT_FOUND: "Người dùng này không tồn tại",
 
   EMAIL_ALREADY_EXISTS: "Email đã tồn tại",
@@ -91,4 +94,7 @@ export const USERS_MESSAGES = {
   GET_ME_SUCCESS: "Lấy thông tin người dùng thành công",
   API_ENDPOINT_NOT_FOUND: "API endpoint không tìm thấy",
   GET_PROFILE_SUCCESS: "Lấy thông tin người dùng thành công",
+  UPDATE_ME_SUCCESS: "Cập nhật thông tin thành công",
+  WEBSITE_INVALID: "Website không hợp lệ",
+  BIO_TOO_LONG: "Bio không được quá 160 ký tự",
 } as const;

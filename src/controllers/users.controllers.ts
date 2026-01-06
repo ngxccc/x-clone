@@ -41,3 +41,23 @@ export const getProfileController = async (
     next(error);
   }
 };
+
+export const updateMeController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { userId } = req.decodedAccessToken!;
+    const payload = req.body;
+
+    const result = await usersService.updateMe(userId, payload);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

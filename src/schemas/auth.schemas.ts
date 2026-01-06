@@ -8,7 +8,9 @@ export const RegisterReqBody = z
       .string(USERS_MESSAGES.USERNAME_IS_REQUIRED)
       .trim()
       .min(3, USERS_MESSAGES.USERNAME_MIN_LENGTH)
-      .max(255, USERS_MESSAGES.USERNAME_MAX_LENGTH),
+      .max(255, USERS_MESSAGES.USERNAME_MAX_LENGTH)
+      // Regex: Chỉ cho phép chữ, số, _ và .
+      .regex(/^[a-zA-Z0-9._]+$/, USERS_MESSAGES.USERNAME_INVALID),
     email: z.email(USERS_MESSAGES.EMAIL_INVALID_FORMAT),
     password: z
       .string(USERS_MESSAGES.PASSWORD_IS_REQUIRED)

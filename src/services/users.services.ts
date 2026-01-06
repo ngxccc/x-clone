@@ -2,7 +2,8 @@ import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/constants/enums.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import { Follower, User } from "@/models.js";
 import { RegisterReqType } from "@/schemas/auth.schemas.js";
-import { NotFoundError } from "@/utils/errors.js";
+import { UpdateMeBodyType } from "@/schemas/users.schemas.js";
+import { ConflictError, NotFoundError } from "@/utils/errors.js";
 import { signToken } from "@/utils/jwt.js";
 import bcrypt from "bcrypt";
 
@@ -115,6 +116,31 @@ class UserService {
       { $set: { forgotPasswordToken: token } },
       { new: true },
     );
+  }
+
+  async updateMe(userId: string, payload: UpdateMeBodyType) {
+    const { username } = payload;
+
+    if (username) {
+      const user = await User.findOne({ username });
+
+      if (user && user.id !== userId)
+        throw new ConflictError(USERS_MESSAGES.USERNAME_ALREADY_EXISTS);
+    }
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          ...payload, // Chỉ update những field có trong payload
+        },
+      },
+      { new: true, runValidators: true },
+    );
+
+    if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
+
+    return user;
   }
 }
 
