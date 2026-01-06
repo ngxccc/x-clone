@@ -18,7 +18,7 @@ export const loginController = async (
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.LOGIN_SUCCESS,
-      data: result,
+      result,
     });
   } catch (error) {
     next(error);
@@ -46,7 +46,7 @@ export const registerController = async (
 
     return res.status(HTTP_STATUS.CREATED).json({
       message: USERS_MESSAGES.REGISTER_SUCCESS,
-      data: {
+      result: {
         _id: newUser._id,
         username: newUser.username,
         email: newUser.email,
@@ -164,7 +164,7 @@ export const refreshTokenController = async (
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
-      data: result,
+      result,
     });
   } catch (error) {
     next(error);

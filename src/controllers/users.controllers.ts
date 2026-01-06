@@ -11,11 +11,11 @@ export const getMeController = async (
   try {
     const { userId } = req.decodedAccessToken!;
 
-    const data = await usersService.getMe(userId);
+    const result = await usersService.getMe(userId);
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.GET_ME_SUCCESS,
-      data,
+      result,
     });
   } catch (error) {
     next(error);

@@ -37,9 +37,9 @@ Dùng đúng ý nghĩa của method để thao tác với dữ liệu:
 
 **Nhóm thành công (2xx):**
 
-- `200 OK`: Thành công cho `GET`, `PUT`, `PATCH` hoặc `DELETE` (nếu có trả data).
+- `200 OK`: Thành công cho `GET`, `PUT`, `PATCH` hoặc `DELETE` (nếu có trả result).
 - `201 Created`: Thành công cho `POST` (Tạo mới).
-- `204 No Content`: Thành công cho `DELETE` (Xóa xong không cần trả data gì cả).
+- `204 No Content`: Thành công cho `DELETE` (Xóa xong không cần trả result gì cả).
 
 **Nhóm lỗi Client (4xx):**
 
@@ -64,7 +64,7 @@ Thống nhất một format JSON trả về cho toàn bộ dự án để Fronte
 ```json
 {
   "message": "Mô tả ngắn gọn kết quả (Human readable)",
-  "data": { ... },    // Dữ liệu chính (Object hoặc Array)
+  "result": { ... },    // Dữ liệu chính (Object hoặc Array)
   "errors": { ... },  // Chi tiết lỗi (nếu có)
   "pagination": {     // Chỉ có khi phân trang
     "page": 1,
