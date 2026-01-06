@@ -57,7 +57,7 @@ export const defaultErrorHandler = (
   if (err instanceof JsonWebTokenError) {
     return res.status(HTTP_STATUS.UNAUTHORIZED).json({
       message: USERS_MESSAGES.TOKEN_EXPIRED_OR_INVALID,
-      error: err.message,
+      errors: err.message,
     });
   }
 
@@ -65,7 +65,9 @@ export const defaultErrorHandler = (
 
   return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
     message: USERS_MESSAGES.INTERNAL_SERVER_ERROR,
-    error:
-      process.env.NODE_ENV === ENV_CONFIG.DEVELOPMENT ? err.message : undefined,
+    errors:
+      process.env.NODE_ENV === ENV_CONFIG.DEVELOPMENT
+        ? { errors: err.message, stack: err.stack }
+        : undefined,
   });
 };
