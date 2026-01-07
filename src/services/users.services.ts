@@ -3,7 +3,11 @@ import { USERS_MESSAGES } from "@/constants/messages.js";
 import { Follower, User } from "@/models.js";
 import { RegisterReqType } from "@/schemas/auth.schemas.js";
 import { UpdateMeBodyType } from "@/schemas/users.schemas.js";
-import { ConflictError, NotFoundError } from "@/utils/errors.js";
+import {
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+} from "@/utils/errors.js";
 import { signToken } from "@/utils/jwt.js";
 import bcrypt from "bcrypt";
 
@@ -141,6 +145,36 @@ class UserService {
     if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
 
     return user;
+  }
+
+  async follow(userId: string, followedUserId: string) {
+    if (userId === followedUserId)
+      throw new BadRequestError(USERS_MESSAGES.CANNOT_FOLLOW_SELF);
+
+    const followedUser = await User.findById(followedUserId);
+    if (!followedUser) throw new NotFoundError(USERS_MESSAGES.ALREADY_FOLLOWED);
+
+    // Handle để trả về lỗi thân thiện hơn
+    const isFollowed = await Follower.findOne({
+      followerId: userId,
+      followedId: followedUserId,
+    });
+    if (isFollowed) throw new BadRequestError(USERS_MESSAGES.ALREADY_FOLLOWED);
+
+    await Promise.all([
+      Follower.create({
+        followerId: userId,
+        followedId: followedUserId,
+      }),
+      User.findByIdAndUpdate(userId, {
+        $inc: { "stats.followingCount": 1 },
+      }),
+      User.findByIdAndUpdate(followedUserId, {
+        $inc: { "stats.followersCount": 1 },
+      }),
+    ]);
+
+    return { success: true };
   }
 }
 

@@ -1,24 +1,47 @@
 # TODO List
 
-## 1. Tính năng cốt lõi (Core Features)
+## 1. Tính năng và API
 
-### Tweets API
+### User & Relationships
 
-- [ ] **POST /api/tweets** - Tạo tweet mới (Text)
-- [ ] **GET /api/tweets** - Lấy timeline (New feeds)
-- [ ] **GET /api/tweets/:id** - Xem chi tiết tweet
-- [ ] **DELETE /api/tweets/:id** - Xóa tweet
+- [x] **Lấy Public Profile người khác** - METHOD: `GET`, ENDPOINT: `/users/:username`
+- [x] **Cập nhật Profile** - METHOD: `PATCH`, ENDPOINT: `/users/me`
+- [x] **Follow user** - METHOD: `POST`, ENDPOINT: `/users/follow`
+- [ ] **Unfollow user** - METHOD: `DELETE`, ENDPOINT: `/users/follow/:userId`
+- [ ] **Xem danh sách người theo dõi** - METHOD: `GET`, ENDPOINT: `/users/:userId/followers`
+- [ ] **Xem danh sách đang theo dõi** - METHOD: `GET`, ENDPOINT: `/users/:userId/following`
 
-### Tương tác (Interactions)
+### Media Service
 
-- [ ] Like / Unlike tweet
-- [ ] Retweet (đăng lại)
-- [ ] Reply (trả lời)
-- [ ] Quote tweet (trích dẫn)
+- [ ] **Upload ảnh** - METHOD: `POST`, ENDPOINT: `/media/upload-image`
+- [ ] **Upload video (HLS Streaming)** - METHOD: `POST`, ENDPOINT: `/media/upload-video`
 
-### Media
+### Tweets
 
-- [ ] Upload ảnh/video cho tweet
+- [ ] **Tạo Tweet mới** - METHOD: `POST`, ENDPOINT: `/tweets`
+- [ ] **Xem chi tiết Tweet** - METHOD: `GET`, ENDPOINT: `/tweets/:tweetId`
+- [ ] **Lấy danh sách Comment/Reply** - METHOD: `GET`, ENDPOINT: `/tweets/:tweetId/children`
+- [ ] **Lấy News Feed** - METHOD: `GET`, ENDPOINT: `/tweets/new-feeds`
+- [ ] **Xóa Tweet** - METHOD: `DELETE`, ENDPOINT: `/tweets/:tweetId`
+
+### Interactions
+
+- [ ] **Like Tweet** - METHOD: `POST`, ENDPOINT: `/likes`
+- [ ] **Unlike Tweet** - METHOD: `DELETE`, ENDPOINT: `/likes/:tweetId`
+- [ ] **Lưu bài viết** - METHOD: `POST`, ENDPOINT: `/bookmarks`
+- [ ] **Bỏ lưu** - METHOD: `DELETE`, ENDPOINT: `/bookmarks/:tweetId`
+- [ ] **Xem danh sách đã lưu** - METHOD: `GET`, ENDPOINT: `/bookmarks`
+
+### Search & Discovery
+
+- [ ] **Tìm kiếm tổng hợp** - METHOD: `GET`, ENDPOINT: `/search`
+- [ ] **Lấy Hashtag nổi bật** - METHOD: `GET`, ENDPOINT: `/hashtags/trending`
+
+### Advanced
+
+- [ ] **Thông báo** - METHOD: `GET`, ENDPOINT: `/notifications`
+- [ ] **Chat Realtime** - METHOD: `GET`, ENDPOINT: `/conversations`
+- [ ] **Gợi ý bài viết (AI/Algorithm)** - METHOD: `GET`, ENDPOINT: `/tweets/suggested`
 
 ---
 
@@ -26,7 +49,7 @@
 
 ### Authentication
 
-- [ ] **Auth Refactor** - Xóa logic đăng nhập hardcoded (`email === "ngxc@gmail.com"`) trong `auth.controllers.ts` và thay bằng kiểm tra password thật
+- [x] **Auth Refactor** - Xóa logic đăng nhập hardcoded (`email === "ngxc@gmail.com"`) trong `auth.controllers.ts` và thay bằng kiểm tra password thật
 
 ### Security Enhancement
 
@@ -44,7 +67,7 @@
 - [ ] **Trending System** - Triển khai thuật toán tính Trending Hashtag dựa trên field `last_updated` và `count` trong `Hashtag.ts`
   - Logic: Tag nào được dùng nhiều nhất GẦN ĐÂY
 
-- [ ] **User Stats** - Đảm bảo logic tăng/giảm `followers_count`, `tweet_count` trong `User.ts` hoạt động chính xác
+- [x] **User Stats** - Đảm bảo logic tăng/giảm `followers_count`, `tweet_count` trong `User.ts` hoạt động chính xác
   - Database Hooks hoặc Service logic
 
 - [ ] **Token Cleanup** - Kiểm tra tính năng TTL Index của `RefreshToken` xem có tự động xóa token hết hạn đúng không
@@ -57,5 +80,5 @@
 
 ## Others
 
-- [ ] **Refactor** - Sửa lại định dạng JSON error thống nhất
+- [x] **Refactor** - Sửa lại định dạng JSON error thống nhất
 - [x] **Refresh Token** - Thêm rate limit

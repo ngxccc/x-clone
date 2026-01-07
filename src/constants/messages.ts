@@ -51,6 +51,10 @@ export const USERS_MESSAGES = {
   EMAIL_VERIFY_SUCCESS: "Xác thực email thành công",
   REFRESH_TOKEN_SUCCESS: "Làm mới Refresh Token thành công",
   PASSWORD_RESET_SUCCESS: "Đặt lại mật khẩu thành công",
+  GET_ME_SUCCESS: "Lấy thông tin người dùng thành công",
+  FOLLOW_SUCCESS: "Theo dõi thành công",
+  GET_PROFILE_SUCCESS: "Lấy thông tin người dùng thành công",
+  UPDATE_ME_SUCCESS: "Cập nhật thông tin thành công",
 
   ACCESS_TOKEN_IS_REQUIRED: "Yêu cầu Access Token",
   ACCESS_TOKEN_INVALID_OR_EXPIRED: "Access Token không hợp lệ hoặc đã hết hạn",
@@ -91,10 +95,11 @@ export const USERS_MESSAGES = {
   UNKNOWN_ERROR: "Lỗi không xác định",
   TOO_MANY_REQUESTS:
     "Bạn đã gửi yêu cầu quá nhiều lần. Vui lòng thử lại sau 1 phút.",
-  GET_ME_SUCCESS: "Lấy thông tin người dùng thành công",
   API_ENDPOINT_NOT_FOUND: "API endpoint không tìm thấy",
-  GET_PROFILE_SUCCESS: "Lấy thông tin người dùng thành công",
-  UPDATE_ME_SUCCESS: "Cập nhật thông tin thành công",
   WEBSITE_INVALID: "Website không hợp lệ",
   BIO_TOO_LONG: "Bio không được quá 160 ký tự",
+  CANNOT_FOLLOW_SELF: "Không thể tự theo dõi chính mình",
+  FOLLOWED_USER_ID_IS_REQUIRED: "Yêu cầu ID người được theo dõi",
+  FOLLOWED_USER_ID_INVALID: "ID người được theo dõi không hợp lệ",
+  ALREADY_FOLLOWED: "Bạn đã theo dõi người dùng này rồi",
 } as const;

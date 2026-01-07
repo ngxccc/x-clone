@@ -1,5 +1,6 @@
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
+import { FollowBodyType, UpdateMeBodyType } from "@/schemas/users.schemas.js";
 import usersService from "@/services/users.services.js";
 import { NextFunction, Request, Response } from "express";
 
@@ -49,12 +50,32 @@ export const updateMeController = async (
 ) => {
   try {
     const { userId } = req.decodedAccessToken!;
-    const payload = req.body;
+    const payload = req.body as UpdateMeBodyType;
 
     const result = await usersService.updateMe(userId, payload);
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const followController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { userId } = req.decodedAccessToken!;
+    const { followedUserId } = req.body as FollowBodyType;
+
+    const result = await usersService.follow(userId, followedUserId);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.FOLLOW_SUCCESS,
       result,
     });
   } catch (error) {

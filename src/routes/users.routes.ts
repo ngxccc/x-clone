@@ -1,4 +1,5 @@
 import {
+  followController,
   getMeController,
   getProfileController,
   updateMeController,
@@ -8,7 +9,7 @@ import {
   isUserLoggedInValidator,
 } from "@/middlewares/auth.middlewares.js";
 import { validate } from "@/middlewares/validate.middleware.js";
-import { UpdateMeReqBody } from "@/schemas/users.schemas.js";
+import { FollowReqBody, UpdateMeReqBody } from "@/schemas/users.schemas.js";
 import { Router } from "express";
 
 const usersRouter = Router();
@@ -19,6 +20,12 @@ usersRouter.patch(
   accessTokenValidator,
   validate(UpdateMeReqBody),
   updateMeController,
+);
+usersRouter.post(
+  "/follow",
+  accessTokenValidator,
+  validate(FollowReqBody),
+  followController,
 );
 
 // Đặt dynamic route sau static route tránh bị trùng
