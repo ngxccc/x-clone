@@ -30,3 +30,24 @@ export const validate =
       next(error);
     }
   };
+
+export const validateParams =
+  (schema: ZodObject) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await schema.safeParseAsync(req.params);
+
+      if (!data.success) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+          message: USERS_MESSAGES.INVALID_INPUT_DATA,
+          errors: z.flattenError(data.error).fieldErrors, // Format lỗi gọn gàng
+        });
+      }
+
+      req.params = data.data as Record<string, string>;
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };

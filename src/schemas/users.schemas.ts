@@ -26,9 +26,16 @@ export const UpdateMeReqBody = z.object({
 
 export const FollowReqBody = z.object({
   followedUserId: z.string().refine((val) => mongoose.isValidObjectId(val), {
-    error: USERS_MESSAGES.FOLLOWED_USER_ID_INVALID,
+    error: USERS_MESSAGES.USER_ID_INVALID,
   }),
 });
 
+export const UnfollowReqParams = z.object({
+  followedUserId: z.string().refine((val) => mongoose.isValidObjectId(val), {
+    error: USERS_MESSAGES.USER_ID_INVALID,
+  }),
+});
+
+export type UnfollowParamsType = z.infer<typeof UnfollowReqParams>;
 export type FollowBodyType = z.infer<typeof FollowReqBody>;
 export type UpdateMeBodyType = z.infer<typeof UpdateMeReqBody>;

@@ -149,10 +149,10 @@ class UserService {
 
   async follow(userId: string, followedUserId: string) {
     if (userId === followedUserId)
-      throw new BadRequestError(USERS_MESSAGES.CANNOT_FOLLOW_SELF);
+      throw new BadRequestError(USERS_MESSAGES.CANNOT_DO_SELF);
 
     const followedUser = await User.findById(followedUserId);
-    if (!followedUser) throw new NotFoundError(USERS_MESSAGES.ALREADY_FOLLOWED);
+    if (!followedUser) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
 
     // Handle để trả về lỗi thân thiện hơn
     const isFollowed = await Follower.findOne({
@@ -171,6 +171,29 @@ class UserService {
       }),
       User.findByIdAndUpdate(followedUserId, {
         $inc: { "stats.followersCount": 1 },
+      }),
+    ]);
+
+    return { success: true };
+  }
+
+  async unfollow(userId: string, followedUserId: string) {
+    if (userId === followedUserId)
+      throw new BadRequestError(USERS_MESSAGES.CANNOT_DO_SELF);
+
+    const deletedFollow = await Follower.findOneAndDelete({
+      followerId: userId,
+      followedId: followedUserId,
+    });
+    if (!deletedFollow)
+      throw new BadRequestError(USERS_MESSAGES.ALREADY_UNFOLLOWED);
+
+    await Promise.all([
+      User.findByIdAndUpdate(userId, {
+        $inc: { "stats.followingCount": -1 },
+      }),
+      User.findByIdAndUpdate(followedUserId, {
+        $inc: { "stats.followersCount": -1 },
       }),
     ]);
 

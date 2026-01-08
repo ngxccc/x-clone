@@ -1,6 +1,10 @@
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
-import { FollowBodyType, UpdateMeBodyType } from "@/schemas/users.schemas.js";
+import {
+  FollowBodyType,
+  UnfollowParamsType,
+  UpdateMeBodyType,
+} from "@/schemas/users.schemas.js";
 import usersService from "@/services/users.services.js";
 import { NextFunction, Request, Response } from "express";
 
@@ -76,6 +80,26 @@ export const followController = async (
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.FOLLOW_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const unfollowController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { userId } = req.decodedAccessToken!;
+    const { followedUserId } = req.params as UnfollowParamsType;
+
+    const result = await usersService.unfollow(userId, followedUserId);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.UNFOLLOW_SUCCESS,
       result,
     });
   } catch (error) {
