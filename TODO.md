@@ -12,6 +12,12 @@
 - [x] **Xem danh sách người theo dõi** - METHOD: `GET`, ENDPOINT: `/users/:userId/followers`
 - [x] **Xem danh sách đang theo dõi** - METHOD: `GET`, ENDPOINT: `/users/:userId/following`
 - [x] **Đổi mật khẩu** - METHOD: `PUT`, ENDPOINT: `/users/change-password`
+- [ ] **Lấy danh sách Tweet của 1 User** - METHOD: `GET`, ENDPOINT: `/users/:userId/tweets`
+- [ ] **Lấy danh sách Media của 1 User** - METHOD: `GET`, ENDPOINT: `/users/:userId/media`
+- [ ] **Lấy danh sách Liked Tweets** - METHOD: `GET`, ENDPOINT: `/users/:userId/liked-tweets`
+- [ ] **Chặn người dùng** - METHOD: `POST`, ENDPOINT: `/users/block`
+- [ ] **Gỡ chặn người dùng** - METHOD: `DELETE`, ENDPOINT: `/users/block/:userId`
+- [ ] **Xoá tài khoản vĩnh viễn** - METHOD: `DELETE`, ENDPOINT: `/users/me`
 
 ### Media Service
 
@@ -25,6 +31,11 @@
 - [ ] **Lấy danh sách Comment/Reply** - METHOD: `GET`, ENDPOINT: `/tweets/:tweetId/children`
 - [ ] **Lấy News Feed** - METHOD: `GET`, ENDPOINT: `/tweets/new-feeds`
 - [ ] **Xóa Tweet** - METHOD: `DELETE`, ENDPOINT: `/tweets/:tweetId`
+- [ ] **Chỉnh sửa Tweet** - METHOD: `PATCH`, ENDPOINT: `/tweets/:tweetId`
+- [ ] **Retweet** - METHOD: `POST`, ENDPOINT: `/tweets/:tweetId/retweet`
+- [ ] **Unretweet** - METHOD: `DELETE`, ENDPOINT: `/tweets/:tweetId/retweet`
+- [ ] **Thêm bạn bè vào circle** - METHOD: `POST`, ENDPOINT: `/users/circle`
+- [ ] **Bỏ bạn bè ra circle** - METHOD: `DELETE`, ENDPOINT: `/users/circle/:userId`
 
 ### Interactions
 
@@ -39,10 +50,24 @@
 - [ ] **Tìm kiếm tổng hợp** - METHOD: `GET`, ENDPOINT: `/search`
 - [ ] **Lấy Hashtag nổi bật** - METHOD: `GET`, ENDPOINT: `/hashtags/trending`
 
+### Chat Realtime
+
+- [ ] **Lấy danh sách cuộc trò chuyện** - METHOD: `GET`, ENDPOINT: `/conversations`
+- [ ] **Lấy chi tiết tin nhắn trong 1 cuộc hội thoại** - METHOD: `GET`, ENDPOINT: `/conversations/:conversationId`
+- [ ] **Gửi tin nhắn** - METHOD: `POST`, ENDPOINT: `/conversations/:receiverId/messages`
+
+### Notifications
+
+- [ ] **Lấy tất cả thông báo** - METHOD: `GET`, ENDPOINT: `/notifications`
+- [ ] **Đánh dấu đã đọc** - METHOD: `PATCH`, ENDPOINT: `/notifications/:notificationId/read`
+- [ ] **Đánh dấu tất cả đã đọc** - METHOD: `PATCH`, ENDPOINT: `/notifications/read-all`
+
+### Security & Moderation
+
+- [ ] **** - METHOD: `GET`, ENDPOINT: ``
+
 ### Advanced
 
-- [ ] **Thông báo** - METHOD: `GET`, ENDPOINT: `/notifications`
-- [ ] **Chat Realtime** - METHOD: `GET`, ENDPOINT: `/conversations`
 - [ ] **Gợi ý bài viết (AI/Algorithm)** - METHOD: `GET`, ENDPOINT: `/tweets/suggested`
 
 ---
