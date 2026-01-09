@@ -43,8 +43,12 @@ export const GetFollowersReqParams = z.object({
 });
 
 export const PaginationReqQuery = z.object({
-  limit: z.coerce.number().min(1).max(100).default(10),
-  page: z.coerce.number().min(1).default(1),
+  limit: z.coerce
+    .number()
+    .min(1, USERS_MESSAGES.LIMIT_MIN_LENGTH)
+    .max(100, USERS_MESSAGES.LIMIT_MAX_LENGTH)
+    .default(10),
+  page: z.coerce.number().min(1, USERS_MESSAGES.PAGE_MIN_LENGTH).default(1),
 });
 
 export type GetFollowersParamsType = z.infer<typeof GetFollowersReqParams>;

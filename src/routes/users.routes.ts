@@ -1,6 +1,7 @@
 import {
   followController,
   getFollowersController,
+  getFollowingController,
   getMeController,
   getProfileController,
   unfollowController,
@@ -54,6 +55,13 @@ usersRouter.get(
   validateParams(GetFollowersReqParams),
   validateQuery(PaginationReqQuery),
   getFollowersController,
+);
+usersRouter.get(
+  "/:userId/following",
+  isUserLoggedInValidator,
+  validateParams(GetFollowersReqParams),
+  validateQuery(PaginationReqQuery),
+  getFollowingController,
 );
 
 export default usersRouter;

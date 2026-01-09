@@ -9,7 +9,7 @@
 - [x] **Follow user** - METHOD: `POST`, ENDPOINT: `/users/follow`
 - [x] **Unfollow user** - METHOD: `DELETE`, ENDPOINT: `/users/follow/:followedUserId`
 - [x] **Xem danh sách người theo dõi** - METHOD: `GET`, ENDPOINT: `/users/:userId/followers`
-- [ ] **Xem danh sách đang theo dõi** - METHOD: `GET`, ENDPOINT: `/users/:userId/following`
+- [x] **Xem danh sách đang theo dõi** - METHOD: `GET`, ENDPOINT: `/users/:userId/following`
 
 ### Media Service
 

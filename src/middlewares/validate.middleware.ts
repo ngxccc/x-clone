@@ -65,14 +65,9 @@ export const validateQuery =
         });
       }
 
-      // Xoá các key thừa
-      for (const key in req.query) {
-        delete req.query[key];
-      }
-
-      // Copy dữ liệu đã validate/coerce vào lại req.query
-      // Vì req.query không cho gán trực tiếp
-      Object.assign(req.query, data.data);
+      // Lưu validated data vào custom property
+      // req.query giữ nguyên (string), req.validatedQuery chứa typed data
+      req.validatedQuery = data.data;
 
       next();
     } catch (error) {

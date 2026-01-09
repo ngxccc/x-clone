@@ -19,5 +19,6 @@ declare module "express" {
     decodedRefreshToken?: TokenPayload;
     decodedEmailVerifyToken?: TokenPayload;
     decodedForgotPasswordToken?: TokenPayload;
+    validatedQuery?: Record<string, unknown>;
   }
 }

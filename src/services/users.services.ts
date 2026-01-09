@@ -225,6 +225,31 @@ class UserService {
       totalPages: Math.ceil(total / limit),
     };
   }
+
+  async getFollowing(userId: string, limit: number, page: number) {
+    const skip = (page - 1) * limit;
+
+    const following = await Follower.find({ followerId: userId })
+      .skip(skip)
+      .limit(limit)
+      // Dữ liệu lớn thì ta dùng aggregate & $lookup
+      .populate({
+        // Tìm đến bảng users và userId là followedId
+        // Rồi gán các thông tin đó vào đây
+        path: "followedId",
+        select: "-email",
+      });
+
+    const total = await Follower.countDocuments({ followerId: userId });
+
+    return {
+      users: following.map((f) => f.followedId),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
 }
 
 const usersService = new UserService();

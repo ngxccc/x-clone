@@ -57,6 +57,7 @@ export const USERS_MESSAGES = {
   UPDATE_ME_SUCCESS: "Cập nhật thông tin thành công",
   UNFOLLOW_SUCCESS: "Hủy theo dõi thành công",
   GET_FOLLOWERS_SUCCESS: "Lấy danh sách người theo dõi thành công",
+  GET_FOLLOWING_SUCCESS: "Lấy danh sách người đang theo dõi thành công",
 
   ACCESS_TOKEN_IS_REQUIRED: "Yêu cầu Access Token",
   ACCESS_TOKEN_INVALID_OR_EXPIRED: "Access Token không hợp lệ hoặc đã hết hạn",
@@ -104,4 +105,7 @@ export const USERS_MESSAGES = {
   USER_ID_INVALID: "ID người dùng không hợp lệ",
   ALREADY_FOLLOWED: "Bạn đã theo dõi người dùng này rồi",
   ALREADY_UNFOLLOWED: "Bạn chưa theo dõi người dùng này",
+  LIMIT_MIN_LENGTH: "Giới hạn tối thiểu phải lớn 1",
+  LIMIT_MAX_LENGTH: "Giới hạn tối đa phải bé hơn 100",
+  PAGE_MIN_LENGTH: "Số trang tối thiểu phải lớn 1",
 } as const;

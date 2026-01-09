@@ -116,13 +116,32 @@ export const getFollowersController = async (
 ) => {
   try {
     const { userId } = req.params as GetFollowersParamsType;
-    // Double Casting
-    const { limit, page } = req.query as unknown as PaginationQueryType;
+    const { limit, page } = req.validatedQuery as PaginationQueryType;
 
     const result = await usersService.getFollowers(userId, limit, page);
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.GET_FOLLOWERS_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFollowingController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { userId } = req.params as GetFollowersParamsType;
+    const { limit, page } = req.validatedQuery as PaginationQueryType;
+
+    const result = await usersService.getFollowing(userId, limit, page);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.GET_FOLLOWING_SUCCESS,
       result,
     });
   } catch (error) {
