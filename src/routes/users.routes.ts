@@ -1,5 +1,6 @@
 import {
   followController,
+  getFollowersController,
   getMeController,
   getProfileController,
   unfollowController,
@@ -9,9 +10,15 @@ import {
   accessTokenValidator,
   isUserLoggedInValidator,
 } from "@/middlewares/auth.middlewares.js";
-import { validate, validateParams } from "@/middlewares/validate.middleware.js";
+import {
+  validate,
+  validateParams,
+  validateQuery,
+} from "@/middlewares/validate.middleware.js";
 import {
   FollowReqBody,
+  GetFollowersReqParams,
+  PaginationReqQuery,
   UnfollowReqParams,
   UpdateMeReqBody,
 } from "@/schemas/users.schemas.js";
@@ -34,12 +41,19 @@ usersRouter.post(
 );
 
 // Đặt dynamic route sau static route tránh bị trùng
+usersRouter.get("/:username", isUserLoggedInValidator, getProfileController);
 usersRouter.delete(
   "/follow/:followedUserId",
   accessTokenValidator,
   validateParams(UnfollowReqParams),
   unfollowController,
 );
-usersRouter.get("/:username", isUserLoggedInValidator, getProfileController);
+usersRouter.get(
+  "/:userId/followers",
+  isUserLoggedInValidator,
+  validateParams(GetFollowersReqParams),
+  validateQuery(PaginationReqQuery),
+  getFollowersController,
+);
 
 export default usersRouter;

@@ -56,6 +56,7 @@ export const USERS_MESSAGES = {
   GET_PROFILE_SUCCESS: "Lấy thông tin người dùng thành công",
   UPDATE_ME_SUCCESS: "Cập nhật thông tin thành công",
   UNFOLLOW_SUCCESS: "Hủy theo dõi thành công",
+  GET_FOLLOWERS_SUCCESS: "Lấy danh sách người theo dõi thành công",
 
   ACCESS_TOKEN_IS_REQUIRED: "Yêu cầu Access Token",
   ACCESS_TOKEN_INVALID_OR_EXPIRED: "Access Token không hợp lệ hoặc đã hết hạn",

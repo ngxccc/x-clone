@@ -36,6 +36,19 @@ export const UnfollowReqParams = z.object({
   }),
 });
 
+export const GetFollowersReqParams = z.object({
+  userId: z.string().refine((val) => mongoose.isValidObjectId(val), {
+    error: USERS_MESSAGES.USER_ID_INVALID,
+  }),
+});
+
+export const PaginationReqQuery = z.object({
+  limit: z.coerce.number().min(1).max(100).default(10),
+  page: z.coerce.number().min(1).default(1),
+});
+
+export type GetFollowersParamsType = z.infer<typeof GetFollowersReqParams>;
+export type PaginationQueryType = z.infer<typeof PaginationReqQuery>;
 export type UnfollowParamsType = z.infer<typeof UnfollowReqParams>;
 export type FollowBodyType = z.infer<typeof FollowReqBody>;
 export type UpdateMeBodyType = z.infer<typeof UpdateMeReqBody>;

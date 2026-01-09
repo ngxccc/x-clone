@@ -199,6 +199,32 @@ class UserService {
 
     return { success: true };
   }
+
+  async getFollowers(userId: string, limit: number, page: number) {
+    const skip = (page - 1) * limit;
+
+    const followers = await Follower.find({ followedId: userId })
+      .skip(skip)
+      .limit(limit)
+      // Chuyển followerId thành cục object User
+      // Dữ liệu lớn thì ta dùng aggregate & $lookup
+      .populate({
+        // Tìm đến bảng users và userId là followerId
+        // Rồi gán các thông tin đó vào đây
+        path: "followerId",
+        select: "-email",
+      });
+
+    const total = await Follower.countDocuments({ followedId: userId });
+
+    return {
+      users: followers.map((f) => f.followerId),
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
 }
 
 const usersService = new UserService();

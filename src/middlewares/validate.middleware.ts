@@ -51,3 +51,31 @@ export const validateParams =
       next(error);
     }
   };
+
+export const validateQuery =
+  (schema: ZodObject) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await schema.safeParseAsync(req.query);
+
+      if (!data.success) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+          message: USERS_MESSAGES.INVALID_INPUT_DATA,
+          errors: z.flattenError(data.error).fieldErrors, // Format lỗi gọn gàng
+        });
+      }
+
+      // Xoá các key thừa
+      for (const key in req.query) {
+        delete req.query[key];
+      }
+
+      // Copy dữ liệu đã validate/coerce vào lại req.query
+      // Vì req.query không cho gán trực tiếp
+      Object.assign(req.query, data.data);
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };

@@ -2,6 +2,8 @@ import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import {
   FollowBodyType,
+  GetFollowersParamsType,
+  PaginationQueryType,
   UnfollowParamsType,
   UpdateMeBodyType,
 } from "@/schemas/users.schemas.js";
@@ -100,6 +102,27 @@ export const unfollowController = async (
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.UNFOLLOW_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFollowersController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { userId } = req.params as GetFollowersParamsType;
+    // Double Casting
+    const { limit, page } = req.query as unknown as PaginationQueryType;
+
+    const result = await usersService.getFollowers(userId, limit, page);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.GET_FOLLOWERS_SUCCESS,
       result,
     });
   } catch (error) {
