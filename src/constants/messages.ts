@@ -32,10 +32,8 @@ export const USERS_MESSAGES = {
 
   PASSWORD_IS_REQUIRED: "Mật khẩu là bắt buộc",
   PASSWORD_MIN_LENGTH: "Mật khẩu phải có ít nhất 6 ký tự",
-  PASSWORD_MUST_NOT_BE_EMPTY: "Mật khẩu không được để trống",
   PASSWORD_NOT_STRONG:
     "Mật khẩu phải dài từ 6 ký tự và chứa ít nhất 1 chữ thường, 1 chữ hoa, 1 số, 1 ký tự đặc biệt",
-  PASSWORD_MUST_BE_STRING: "Mật khẩu phải là chuỗi",
 
   CONFIRM_PASSWORD_IS_REQUIRED: "Xác nhận mật khẩu là bắt buộc",
   CONFIRM_PASSWORD_MUST_BE_THE_SAME: "Nhập lại mật khẩu không khớp",
@@ -58,6 +56,7 @@ export const USERS_MESSAGES = {
   UNFOLLOW_SUCCESS: "Hủy theo dõi thành công",
   GET_FOLLOWERS_SUCCESS: "Lấy danh sách người theo dõi thành công",
   GET_FOLLOWING_SUCCESS: "Lấy danh sách người đang theo dõi thành công",
+  CHANGE_PASSWORD_SUCCESS: "Đổi mật khẩu thành công",
 
   ACCESS_TOKEN_IS_REQUIRED: "Yêu cầu Access Token",
   ACCESS_TOKEN_INVALID_OR_EXPIRED: "Access Token không hợp lệ hoặc đã hết hạn",
@@ -108,4 +107,6 @@ export const USERS_MESSAGES = {
   LIMIT_MIN_LENGTH: "Giới hạn tối thiểu phải lớn 1",
   LIMIT_MAX_LENGTH: "Giới hạn tối đa phải bé hơn 100",
   PAGE_MIN_LENGTH: "Số trang tối thiểu phải lớn 1",
+  OLD_PASSWORD_NOT_MATCH: "Mật khẩu cũ không đúng",
+  CHANGE_PASSWORD_SAME_AS_OLD: "Mật khẩu mới không được trùng với mật khẩu cũ",
 } as const;

@@ -148,3 +148,23 @@ export const getFollowingController = async (
     next(error);
   }
 };
+
+export const changePasswordController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { userId } = req.decodedAccessToken!;
+    const payload = req.body;
+
+    const result = await usersService.changePassword(userId, payload);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

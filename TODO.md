@@ -5,11 +5,13 @@
 ### User & Relationships
 
 - [x] **Lấy Public Profile người khác** - METHOD: `GET`, ENDPOINT: `/users/:username`
+- [x] **Xem Profile** - METHOD: `GET`, ENDPOINT: `/users/me`
 - [x] **Cập nhật Profile** - METHOD: `PATCH`, ENDPOINT: `/users/me`
 - [x] **Follow user** - METHOD: `POST`, ENDPOINT: `/users/follow`
 - [x] **Unfollow user** - METHOD: `DELETE`, ENDPOINT: `/users/follow/:followedUserId`
 - [x] **Xem danh sách người theo dõi** - METHOD: `GET`, ENDPOINT: `/users/:userId/followers`
 - [x] **Xem danh sách đang theo dõi** - METHOD: `GET`, ENDPOINT: `/users/:userId/following`
+- [x] **Đổi mật khẩu** - METHOD: `PUT`, ENDPOINT: `/users/change-password`
 
 ### Media Service
 

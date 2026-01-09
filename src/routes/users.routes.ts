@@ -1,4 +1,5 @@
 import {
+  changePasswordController,
   followController,
   getFollowersController,
   getFollowingController,
@@ -10,6 +11,7 @@ import {
 import {
   accessTokenValidator,
   isUserLoggedInValidator,
+  refreshTokenValidator,
 } from "@/middlewares/auth.middlewares.js";
 import {
   validate,
@@ -17,6 +19,7 @@ import {
   validateQuery,
 } from "@/middlewares/validate.middleware.js";
 import {
+  ChangePasswordReqBody,
   FollowReqBody,
   GetFollowersReqParams,
   PaginationReqQuery,
@@ -39,6 +42,13 @@ usersRouter.post(
   accessTokenValidator,
   validate(FollowReqBody),
   followController,
+);
+usersRouter.put(
+  "/change-password",
+  accessTokenValidator,
+  refreshTokenValidator,
+  validate(ChangePasswordReqBody),
+  changePasswordController,
 );
 
 // Đặt dynamic route sau static route tránh bị trùng

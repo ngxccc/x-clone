@@ -1,4 +1,5 @@
 import { USERS_MESSAGES } from "@/constants/messages.js";
+import { requiredString } from "@/utils/validation.js";
 import mongoose from "mongoose";
 import z from "zod";
 
@@ -51,6 +52,26 @@ export const PaginationReqQuery = z.object({
   page: z.coerce.number().min(1, USERS_MESSAGES.PAGE_MIN_LENGTH).default(1),
 });
 
+export const ChangePasswordReqBody = z
+  .object({
+    oldPassword: requiredString(USERS_MESSAGES.PASSWORD_IS_REQUIRED),
+    password: z
+      .string(USERS_MESSAGES.PASSWORD_IS_REQUIRED)
+      .min(6, USERS_MESSAGES.PASSWORD_MIN_LENGTH),
+    confirmPassword: requiredString(
+      USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED,
+    ),
+  })
+  .refine((data) => data.oldPassword !== data.password, {
+    message: USERS_MESSAGES.CHANGE_PASSWORD_SAME_AS_OLD,
+    path: ["password"],
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: USERS_MESSAGES.CONFIRM_PASSWORD_NOT_MATCH,
+    path: ["confirmPassword"],
+  });
+
+export type ChangePasswordBodyType = z.infer<typeof ChangePasswordReqBody>;
 export type GetFollowersParamsType = z.infer<typeof GetFollowersReqParams>;
 export type PaginationQueryType = z.infer<typeof PaginationReqQuery>;
 export type UnfollowParamsType = z.infer<typeof UnfollowReqParams>;

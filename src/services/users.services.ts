@@ -1,12 +1,16 @@
 import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/constants/enums.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
-import { Follower, User } from "@/models.js";
+import { Follower, RefreshToken, User } from "@/models.js";
 import { RegisterReqType } from "@/schemas/auth.schemas.js";
-import { UpdateMeBodyType } from "@/schemas/users.schemas.js";
+import {
+  ChangePasswordBodyType,
+  UpdateMeBodyType,
+} from "@/schemas/users.schemas.js";
 import {
   BadRequestError,
   ConflictError,
   NotFoundError,
+  UnauthorizedError,
 } from "@/utils/errors.js";
 import { signToken } from "@/utils/jwt.js";
 import bcrypt from "bcrypt";
@@ -22,8 +26,6 @@ class UserService {
   async register(payload: RegisterReqType) {
     const { username, email, password, dateOfBirth } = payload;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const emailVerifyToken = await signToken(
       {
         userId: "",
@@ -37,10 +39,14 @@ class UserService {
     const newUser = await User.create({
       username,
       email,
-      password: hashedPassword,
+      // Chỉ được chuyền trực tiếp khi đã cấu hình pre-save hook
+      // Nếu không phải tự hash password
+      password,
       dateOfBirth,
       emailVerifyToken,
     });
+    // Phải gọi hàm save để kích hoạt pre-save hook
+    await newUser.save();
 
     return newUser.toObject();
   }
@@ -249,6 +255,25 @@ class UserService {
       limit,
       totalPages: Math.ceil(total / limit),
     };
+  }
+
+  async changePassword(userId: string, payload: ChangePasswordBodyType) {
+    const { oldPassword, password } = payload;
+
+    const user = await User.findById(userId).select("+password");
+    if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch)
+      throw new UnauthorizedError(USERS_MESSAGES.OLD_PASSWORD_NOT_MATCH);
+
+    user.password = password;
+    // Phải gọi hàm save để kích hoạt pre-save hook
+    await user.save();
+
+    await RefreshToken.deleteMany({ userId: userId });
+
+    return { success: true };
   }
 }
 

@@ -1,6 +1,7 @@
 import { USER_VERIFY_STATUS } from "@/constants/enums.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 const { Schema } = mongoose;
 
 const UserSchema = new Schema(
@@ -76,6 +77,16 @@ UserSchema.index({
   email: 1,
   emailVerifyToken: 1,
   forgotPasswordToken: 1,
+});
+
+// Pre-save Hook: Chạy trước khi save()
+// Dùng func thường để có this
+UserSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+
+  const hash = await bcrypt.hash(this.password, 10);
+
+  this.password = hash;
 });
 
 export default mongoose.model("User", UserSchema);
