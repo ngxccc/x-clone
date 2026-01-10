@@ -11,7 +11,6 @@ import {
 import {
   accessTokenValidator,
   isUserLoggedInValidator,
-  refreshTokenValidator,
 } from "@/middlewares/auth.middlewares.js";
 import {
   validate,
@@ -46,7 +45,6 @@ usersRouter.post(
 usersRouter.put(
   "/change-password",
   accessTokenValidator,
-  refreshTokenValidator,
   validate(ChangePasswordReqBody),
   changePasswordController,
 );
