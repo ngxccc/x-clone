@@ -13,6 +13,8 @@ const UserSchema = new Schema(
       trim: true,
       minLength: [3, USERS_MESSAGES.USERNAME_MIN_LENGTH],
       maxLength: [255, USERS_MESSAGES.USERNAME_MAX_LENGTH],
+      // Chỉ cho phép chữ, số, _ và .
+      match: [/^[a-zA-Z0-9._]+$/, USERS_MESSAGES.USERNAME_IS_INVALID],
     },
     email: {
       type: String,
@@ -27,6 +29,11 @@ const UserSchema = new Schema(
       type: String,
       required: true,
       select: false, // Ẩn password khi query
+      match: [
+        // Chứa ít nhất 1 chữ thường, 1 chữ hoa, 1 số, 1 ký tự đặc biệt
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{6,}$/,
+        USERS_MESSAGES.PASSWORD_NOT_STRONG,
+      ],
     },
     dateOfBirth: {
       type: Date, // Múi giờ UTC (GMT+0)

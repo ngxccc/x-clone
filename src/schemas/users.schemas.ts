@@ -10,7 +10,7 @@ export const UpdateMeReqBody = z.object({
     .min(3, USERS_MESSAGES.USERNAME_MIN_LENGTH)
     .max(255, USERS_MESSAGES.USERNAME_MAX_LENGTH)
     // Regex: Chỉ cho phép chữ, số, _ và .
-    .regex(/^[a-zA-Z0-9._]+$/, USERS_MESSAGES.USERNAME_INVALID)
+    .regex(/^[a-zA-Z0-9._]+$/, USERS_MESSAGES.USERNAME_IS_INVALID)
     .optional(),
   dateOfBirth: z.coerce
     .date({
@@ -57,7 +57,11 @@ export const ChangePasswordReqBody = z
     oldPassword: requiredString(USERS_MESSAGES.PASSWORD_IS_REQUIRED),
     password: z
       .string(USERS_MESSAGES.PASSWORD_IS_REQUIRED)
-      .min(6, USERS_MESSAGES.PASSWORD_MIN_LENGTH),
+      .min(6, USERS_MESSAGES.PASSWORD_MIN_LENGTH)
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{6,}$/,
+        USERS_MESSAGES.PASSWORD_NOT_STRONG,
+      ),
     confirmPassword: requiredString(
       USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED,
     ),

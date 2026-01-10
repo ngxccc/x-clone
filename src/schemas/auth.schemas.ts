@@ -10,11 +10,15 @@ export const RegisterReqBody = z
       .min(3, USERS_MESSAGES.USERNAME_MIN_LENGTH)
       .max(255, USERS_MESSAGES.USERNAME_MAX_LENGTH)
       // Regex: Chỉ cho phép chữ, số, _ và .
-      .regex(/^[a-zA-Z0-9._]+$/, USERS_MESSAGES.USERNAME_INVALID),
+      .regex(/^[a-zA-Z0-9._]+$/, USERS_MESSAGES.USERNAME_IS_INVALID),
     email: z.email(USERS_MESSAGES.EMAIL_INVALID_FORMAT),
     password: z
       .string(USERS_MESSAGES.PASSWORD_IS_REQUIRED)
-      .min(6, USERS_MESSAGES.PASSWORD_MIN_LENGTH),
+      .min(6, USERS_MESSAGES.PASSWORD_MIN_LENGTH)
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{6,}$/,
+        USERS_MESSAGES.PASSWORD_NOT_STRONG,
+      ),
     confirmPassword: requiredString(
       USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED,
     ),
@@ -33,7 +37,7 @@ export const RegisterReqBody = z
 
 export const LoginReqBody = z.object({
   email: z.email(USERS_MESSAGES.EMAIL_INVALID_FORMAT),
-  password: requiredString(USERS_MESSAGES.PASSWORD_MUST_NOT_BE_EMPTY),
+  password: requiredString(USERS_MESSAGES.PASSWORD_IS_REQUIRED),
 });
 
 export const LogoutReqBody = z.object({
@@ -61,7 +65,11 @@ export const ResetPasswordReqBody = z
     ),
     password: z
       .string(USERS_MESSAGES.PASSWORD_IS_REQUIRED)
-      .min(6, USERS_MESSAGES.PASSWORD_MIN_LENGTH),
+      .min(6, USERS_MESSAGES.PASSWORD_MIN_LENGTH)
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{6,}$/,
+        USERS_MESSAGES.PASSWORD_NOT_STRONG,
+      ),
     confirmPassword: requiredString(
       USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED,
     ),

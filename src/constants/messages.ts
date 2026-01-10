@@ -14,7 +14,7 @@ export const USERS_MESSAGES = {
   USERNAME_IS_REQUIRED: "Username là bắt buộc",
   USERNAME_MIN_LENGTH: "Username phải có ít nhất 3 ký tự",
   USERNAME_MAX_LENGTH: "Username không được quá 255 ký tự",
-  USERNAME_INVALID:
+  USERNAME_IS_INVALID:
     "Username chỉ được chứa chữ cái, số, dấu gạch dưới và dấu chấm",
   USERNAME_ALREADY_EXISTS: "Username đã tồn tại",
   USER_NOT_FOUND: "Người dùng này không tồn tại",
@@ -27,13 +27,12 @@ export const USERS_MESSAGES = {
   EMAIL_OR_PASSWORD_INCORRECT: "Email hoặc mật khẩu không đúng",
   EMAIL_ALREADY_VERIFIED_BEFORE: "Email đã được xác thực",
 
-  ACCOUNT_IS_BANNED:
-    "Tài khoản này đã bị khoá. Chi tiết xin liện hệ quản trị viên",
+  ACCOUNT_IS_BANNED: "Tài khoản này đã bị vô hiệu hoá",
 
   PASSWORD_IS_REQUIRED: "Mật khẩu là bắt buộc",
   PASSWORD_MIN_LENGTH: "Mật khẩu phải có ít nhất 6 ký tự",
   PASSWORD_NOT_STRONG:
-    "Mật khẩu phải dài từ 6 ký tự và chứa ít nhất 1 chữ thường, 1 chữ hoa, 1 số, 1 ký tự đặc biệt",
+    "Mật khẩu phải chứa ít nhất 1 chữ thường, 1 chữ hoa, 1 số, 1 ký tự đặc biệt",
 
   CONFIRM_PASSWORD_IS_REQUIRED: "Xác nhận mật khẩu là bắt buộc",
   CONFIRM_PASSWORD_MUST_BE_THE_SAME: "Nhập lại mật khẩu không khớp",

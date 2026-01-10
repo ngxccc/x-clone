@@ -9,6 +9,7 @@ import {
 import {
   BadRequestError,
   ConflictError,
+  ForbiddenError,
   NotFoundError,
   UnauthorizedError,
 } from "@/utils/errors.js";
@@ -154,11 +155,19 @@ class UserService {
   }
 
   async follow(userId: string, followedUserId: string) {
+    const user = await User.findById(userId);
+
+    if (user?.verify === USER_VERIFY_STATUS.BANNED)
+      throw new ForbiddenError(USERS_MESSAGES.ACCOUNT_IS_BANNED);
+
     if (userId === followedUserId)
       throw new BadRequestError(USERS_MESSAGES.CANNOT_DO_SELF);
 
     const followedUser = await User.findById(followedUserId);
     if (!followedUser) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
+
+    if (followedUser.verify === USER_VERIFY_STATUS.BANNED)
+      throw new BadRequestError(USERS_MESSAGES.ACCOUNT_IS_BANNED);
 
     // Handle để trả về lỗi thân thiện hơn
     const isFollowed = await Follower.findOne({
