@@ -6,6 +6,13 @@ const { Schema } = mongoose;
 
 const UserSchema = new Schema(
   {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      minLength: [1, USERS_MESSAGES.NAME_MIN_LENGTH],
+      maxLength: [100, USERS_MESSAGES.NAME_MAX_LENGTH],
+    },
     username: {
       type: String,
       required: true,
@@ -35,6 +42,11 @@ const UserSchema = new Schema(
         USERS_MESSAGES.PASSWORD_NOT_STRONG,
       ],
     },
+    googleId: {
+      type: String,
+      default: null,
+      select: false,
+    },
     dateOfBirth: {
       type: Date, // Múi giờ UTC (GMT+0)
       required: true,
@@ -60,6 +72,10 @@ const UserSchema = new Schema(
       maxLength: 160,
     },
     avatar: {
+      type: String,
+      default: "", // URL ảnh
+    },
+    cover: {
       type: String,
       default: "", // URL ảnh
     },

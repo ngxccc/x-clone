@@ -1,7 +1,7 @@
 import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/constants/enums.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import { Follower, RefreshToken, User } from "@/models.js";
-import { RegisterReqType } from "@/schemas/auth.schemas.js";
+import { RegisterBodyType } from "@/schemas/auth.schemas.js";
 import {
   ChangePasswordBodyType,
   UpdateMeBodyType,
@@ -24,8 +24,8 @@ class UserService {
     return Boolean(user);
   }
 
-  async register(payload: RegisterReqType) {
-    const { username, email, password, dateOfBirth } = payload;
+  async register(payload: RegisterBodyType) {
+    const { name, username, email, password, dateOfBirth } = payload;
 
     const emailVerifyToken = await signToken(
       {
@@ -38,6 +38,7 @@ class UserService {
     // Dùng .create() để kích hoạt Mongoose Validation & Hooks
     // Không dùng .insertOne vì nó không có Validation
     const newUser = await User.create({
+      name,
       username,
       email,
       // Chỉ được chuyền trực tiếp khi đã cấu hình pre-save hook
@@ -46,8 +47,6 @@ class UserService {
       dateOfBirth,
       emailVerifyToken,
     });
-    // Phải gọi hàm save để kích hoạt pre-save hook
-    await newUser.save();
 
     return newUser.toObject();
   }

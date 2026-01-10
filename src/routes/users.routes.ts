@@ -30,18 +30,21 @@ import { Router } from "express";
 const usersRouter = Router();
 
 usersRouter.get("/me", accessTokenValidator, getMeController);
+
 usersRouter.patch(
   "/me",
   accessTokenValidator,
   validate(UpdateMeReqBody),
   updateMeController,
 );
+
 usersRouter.post(
   "/follow",
   accessTokenValidator,
   validate(FollowReqBody),
   followController,
 );
+
 usersRouter.put(
   "/change-password",
   accessTokenValidator,
@@ -51,12 +54,14 @@ usersRouter.put(
 
 // Đặt dynamic route sau static route tránh bị trùng
 usersRouter.get("/:username", isUserLoggedInValidator, getProfileController);
+
 usersRouter.delete(
   "/follow/:followedUserId",
   accessTokenValidator,
   validateParams(UnfollowReqParams),
   unfollowController,
 );
+
 usersRouter.get(
   "/:userId/followers",
   isUserLoggedInValidator,
@@ -64,6 +69,7 @@ usersRouter.get(
   validateQuery(PaginationReqQuery),
   getFollowersController,
 );
+
 usersRouter.get(
   "/:userId/following",
   isUserLoggedInValidator,

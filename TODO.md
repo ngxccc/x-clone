@@ -4,6 +4,7 @@
 
 ### User & Relationships
 
+- [x] **Đăng nhập với tài khoản Google (Client-Side Handling)** - METHOD: `POST`, ENDPOINT: `/auth/login/google`
 - [x] **Lấy Public Profile người khác** - METHOD: `GET`, ENDPOINT: `/users/:username`
 - [x] **Xem Profile** - METHOD: `GET`, ENDPOINT: `/users/me`
 - [x] **Cập nhật Profile** - METHOD: `PATCH`, ENDPOINT: `/users/me`

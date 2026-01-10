@@ -7,17 +7,49 @@ import {
   ForbiddenError,
   NotFoundError,
   ConflictError,
+  BadRequestError,
 } from "@/utils/errors.js";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import ms, { StringValue } from "ms";
 import usersService from "./users.services.js";
 import {
-  ForgotPasswordReqType,
-  ResendVerificationEmailReqType,
+  ForgotPasswordBodyType,
+  ResendVerificationEmailBodyType,
 } from "@/schemas/auth.schemas.js";
+import { getGoogleToken, getGoogleUserInfo } from "@/utils/google.js";
 
 class AuthService {
+  private generateRandomPassword() {
+    const chars = "abcdefghijklmnopqrstuvwxyz";
+    const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const numbers = "0123456789";
+    const specials = "!@#$%^&*()";
+
+    const p1 = chars[Math.floor(Math.random() * chars.length)];
+    const p2 = upper[Math.floor(Math.random() * upper.length)];
+    const p3 = numbers[Math.floor(Math.random() * numbers.length)];
+    const p4 = specials[Math.floor(Math.random() * specials.length)];
+
+    // Thêm các ký tự ngẫu nhiên cho đủ độ dài
+    const remaining = Math.random().toString(36).slice(-6) + p1 + p2 + p3 + p4;
+
+    return remaining;
+  }
+
+  private generateRandomUsername(email: string) {
+    let username = email.split("@")[0]!;
+
+    username = username.replace(/[^a-zA-Z0-9._]/g, "");
+
+    if (!username) username = "user";
+
+    // Ví dụ kết quả: "nguyenvana_1715403921"
+    username += `_${Date.now().toString()}`;
+
+    return username;
+  }
+
   private async signAccessAndRefreshToken(userId: string, deviceInfo?: string) {
     const jwtPayload = {
       userId: userId,
@@ -85,6 +117,46 @@ class AuthService {
     return await this.signAccessAndRefreshToken(user.id, deviceInfo);
   }
 
+  async loginGoogle(code: string, deviceInfo?: string) {
+    const { access_token } = await getGoogleToken(code);
+
+    const googleUserInfo = await getGoogleUserInfo(access_token);
+
+    if (!googleUserInfo.email_verified)
+      throw new BadRequestError(USERS_MESSAGES.GMAIL_NOT_VERIFIED);
+
+    const user = await User.findOne({ email: googleUserInfo.email });
+
+    if (user) {
+      if (!user.googleId) {
+        await User.findByIdAndUpdate(user.id, {
+          $set: {
+            googleId: googleUserInfo.sub,
+            avatar: user.avatar ?? googleUserInfo.picture,
+          },
+        });
+      }
+
+      return await this.signAccessAndRefreshToken(user.id, deviceInfo);
+    } else {
+      const randomPassword = this.generateRandomPassword();
+
+      // .create() tự động gọi Pre-save hook
+      const newUser = await User.create({
+        name: googleUserInfo.name,
+        username: this.generateRandomUsername(googleUserInfo.email),
+        email: googleUserInfo.email,
+        googleId: googleUserInfo.sub,
+        password: randomPassword,
+        avatar: googleUserInfo.picture,
+        dateOfBirth: new Date(),
+        verify: USER_VERIFY_STATUS.VERIFIED,
+      });
+
+      return await this.signAccessAndRefreshToken(newUser.id, deviceInfo);
+    }
+  }
+
   async logout(refreshToken: string) {
     // Idempotent (Tính lũy đẳng)
     // Dù gọi 1 hay n lần thì kết quả res là như nhau (User đã đăng xuất)
@@ -99,7 +171,7 @@ class AuthService {
     return { success: true };
   }
 
-  async resendVerificationEmail(payload: ResendVerificationEmailReqType) {
+  async resendVerificationEmail(payload: ResendVerificationEmailBodyType) {
     const { email } = payload;
 
     const user = await usersService.findUserByEmail(email);
@@ -137,7 +209,7 @@ class AuthService {
     return { success: true };
   }
 
-  async forgotPassword(payload: ForgotPasswordReqType) {
+  async forgotPassword(payload: ForgotPasswordBodyType) {
     const { email } = payload;
 
     const user = await usersService.findUserByEmail(email);

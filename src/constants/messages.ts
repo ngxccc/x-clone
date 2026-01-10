@@ -11,6 +11,10 @@ export const ERROR_CODES = {
 } as const;
 
 export const USERS_MESSAGES = {
+  NAME_IS_REQUIRED: "Tên là bắt buộc",
+  NAME_MIN_LENGTH: "Tên phải có độ dài từ 1 ký tự trở lên",
+  NAME_MAX_LENGTH: "Tên không được vượt quá 100 ký tự",
+
   USERNAME_IS_REQUIRED: "Username là bắt buộc",
   USERNAME_MIN_LENGTH: "Username phải có ít nhất 3 ký tự",
   USERNAME_MAX_LENGTH: "Username không được quá 255 ký tự",
@@ -20,12 +24,13 @@ export const USERS_MESSAGES = {
   USER_NOT_FOUND: "Người dùng này không tồn tại",
 
   EMAIL_ALREADY_EXISTS: "Email đã tồn tại",
-  EMAIL_IS_REQUIRED: "Email không được để trống",
+  EMAIL_IS_REQUIRED: "Email là bắt buộc",
   EMAIL_IS_INVALID: "Email không hợp lệ",
   EMAIL_INVALID_FORMAT: "Email không hợp lệ, vui lòng kiểm tra lại",
   EMAIL_NOT_VERIFIED: "Email chưa được xác thực",
   EMAIL_OR_PASSWORD_INCORRECT: "Email hoặc mật khẩu không đúng",
   EMAIL_ALREADY_VERIFIED_BEFORE: "Email đã được xác thực",
+  GMAIL_NOT_VERIFIED: "Email Google chưa được xác thực",
 
   ACCOUNT_IS_BANNED: "Tài khoản này đã bị vô hiệu hoá",
 
@@ -42,6 +47,7 @@ export const USERS_MESSAGES = {
   DATE_OF_BIRTH_MUST_BE_ISO8601: "Ngày sinh phải theo chuẩn ISO8601",
 
   LOGIN_SUCCESS: "Đăng nhập thành công",
+  LOGIN_WITH_GOOGLE_SUCCESS: "Đăng nhập với Google thành công",
   LOGIN_FAILED: "Đăng nhập thất bại",
   LOGOUT_SUCCESS: "Đăng xuất thành công",
   REGISTER_SUCCESS: "Đăng ký thành công",
@@ -83,6 +89,10 @@ export const USERS_MESSAGES = {
   REFRESH_TOKEN_IS_USED_OR_NOT_EXIST:
     "Refresh Token đã được sử dụng hoặc không tồn tại",
   TOKEN_EXPIRED_OR_INVALID: "Token hết hạn hoặc không hợp lệ",
+
+  GOOGLE_AUTH_FAILED: "Xác thực Google thất bại",
+  GOOGLE_CODE_IS_REQUIRED: "Mã xác thực Google là bắt buộc",
+  GOOGLE_GET_USER_INFO_FAILED: "Lỗi khi lấy thông tin người dùng từ Google",
 
   INVALID_JSON_SYNTAX:
     "Dữ liệu gửi lên không đúng định dạng JSON (Syntax Error)",

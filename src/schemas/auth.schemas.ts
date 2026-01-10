@@ -4,6 +4,11 @@ import { z } from "zod";
 
 export const RegisterReqBody = z
   .object({
+    name: z
+      .string(USERS_MESSAGES.NAME_IS_REQUIRED)
+      .trim()
+      .min(1, USERS_MESSAGES.NAME_MIN_LENGTH)
+      .max(100, USERS_MESSAGES.NAME_MAX_LENGTH),
     username: z
       .string(USERS_MESSAGES.USERNAME_IS_REQUIRED)
       .trim()
@@ -83,13 +88,18 @@ export const RefreshTokenReqBody = z.object({
   refreshToken: requiredString(USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED),
 });
 
-export type RefreshTokenReqType = z.infer<typeof RefreshTokenReqBody>;
-export type ForgotPasswordReqType = z.infer<typeof ForgotPasswordReqBody>;
-export type ResetPasswordReqType = z.infer<typeof ResetPasswordReqBody>;
-export type ResendVerificationEmailReqType = z.infer<
+export const LoginGoogleReqBody = z.object({
+  code: requiredString(USERS_MESSAGES.GOOGLE_CODE_IS_REQUIRED),
+});
+
+export type LoginGoogleBodyType = z.infer<typeof LoginGoogleReqBody>;
+export type RefreshTokenBodyType = z.infer<typeof RefreshTokenReqBody>;
+export type ForgotPasswordBodyType = z.infer<typeof ForgotPasswordReqBody>;
+export type ResetPasswordBodyType = z.infer<typeof ResetPasswordReqBody>;
+export type ResendVerificationEmailBodyType = z.infer<
   typeof ResendVerificationEmailReqBody
 >;
-export type VerifyEmailReqType = z.infer<typeof VerifyEmailReqBody>;
-export type LogoutReqType = z.infer<typeof LogoutReqBody>;
-export type LoginReqType = z.infer<typeof LoginReqBody>;
-export type RegisterReqType = z.infer<typeof RegisterReqBody>;
+export type VerifyEmailBodyType = z.infer<typeof VerifyEmailReqBody>;
+export type LogoutBodyType = z.infer<typeof LogoutReqBody>;
+export type LoginBodyType = z.infer<typeof LoginReqBody>;
+export type RegisterBodyType = z.infer<typeof RegisterReqBody>;

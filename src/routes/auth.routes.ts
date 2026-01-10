@@ -2,6 +2,7 @@ import {
   forgotPasswordController,
   loginController,
   logoutController,
+  loginGoogleController,
   refreshTokenController,
   registerController,
   resendVerificationEmailController,
@@ -23,6 +24,7 @@ import {
   ForgotPasswordReqBody,
   LoginReqBody,
   LogoutReqBody,
+  LoginGoogleReqBody,
   RefreshTokenReqBody,
   RegisterReqBody,
   ResendVerificationEmailReqBody,
@@ -34,7 +36,9 @@ import { Router } from "express";
 const authRouter = Router();
 
 authRouter.post("/login", validate(LoginReqBody), loginController);
+
 authRouter.post("/register", validate(RegisterReqBody), registerController);
+
 authRouter.post(
   "/logout",
   validate(LogoutReqBody),
@@ -77,6 +81,12 @@ authRouter.post(
   validate(RefreshTokenReqBody),
   refreshTokenValidator,
   refreshTokenController,
+);
+
+authRouter.post(
+  "/login/google",
+  validate(LoginGoogleReqBody),
+  loginGoogleController,
 );
 
 export default authRouter;

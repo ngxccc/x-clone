@@ -4,6 +4,12 @@ import mongoose from "mongoose";
 import z from "zod";
 
 export const UpdateMeReqBody = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, USERS_MESSAGES.NAME_MIN_LENGTH)
+    .max(100, USERS_MESSAGES.NAME_MAX_LENGTH)
+    .optional(),
   username: z
     .string()
     .trim()

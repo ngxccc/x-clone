@@ -5,6 +5,7 @@ import { defaultErrorHandler } from "./middlewares/error.middlewares.js";
 import usersRouter from "./routes/users.routes.js";
 import { NotFoundError } from "./utils/errors.js";
 import { USERS_MESSAGES } from "./constants/messages.js";
+import cors from "cors";
 
 const app = express();
 const port = process.env.PORT;
@@ -13,6 +14,14 @@ databaseService.connect();
 
 // Bỏ qua lớp trung gian (Cloudflare / Nginx)
 app.set("trust proxy", 1);
+
+// Cấu hình CORS
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  }),
+);
 
 // Middelware parse JSON from client
 app.use(express.json());

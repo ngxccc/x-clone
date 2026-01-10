@@ -1,9 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import { RegisterReqType } from "@/schemas/auth.schemas.js";
+import {
+  LoginGoogleBodyType,
+  RegisterBodyType,
+} from "@/schemas/auth.schemas.js";
 import usersService from "@/services/users.services.js";
 import authService from "@/services/auth.services.js";
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
+import "dotenv/config";
 
 export const loginController = async (
   req: Request,
@@ -31,7 +35,7 @@ export const registerController = async (
   next: NextFunction,
 ) => {
   try {
-    const { email } = req.body as RegisterReqType;
+    const { email } = req.body as RegisterBodyType;
 
     if (await usersService.checkEmailExist(email)) {
       return res
@@ -164,6 +168,26 @@ export const refreshTokenController = async (
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const loginGoogleController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { code } = req.body as LoginGoogleBodyType;
+    const deviceInfo = req.headers["user-agent"];
+
+    const result = await authService.loginGoogle(code, deviceInfo);
+
+    return res.status(HTTP_STATUS.OK).json({
+      message: USERS_MESSAGES.LOGIN_WITH_GOOGLE_SUCCESS,
       result,
     });
   } catch (error) {
