@@ -7,9 +7,10 @@ import { NotFoundError } from "./utils/errors.js";
 import { USERS_MESSAGES } from "./constants/messages.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import envConfig from "./constants/config.js";
 
 const app = express();
-const port = process.env.PORT;
+const port = envConfig.PORT;
 
 databaseService.connect();
 
@@ -19,7 +20,7 @@ app.set("trust proxy", 1);
 // Cấu hình CORS
 app.use(
   cors({
-    origin: process.env.CLIENT_URL,
+    origin: envConfig.CLIENT_URL,
     credentials: true,
   }),
 );

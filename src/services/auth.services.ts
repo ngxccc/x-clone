@@ -18,6 +18,7 @@ import {
   ResendVerificationEmailBodyType,
 } from "@/schemas/auth.schemas.js";
 import { getGoogleToken, getGoogleUserInfo } from "@/utils/google.js";
+import envConfig from "@/constants/config.js";
 
 class AuthService {
   private generateRandomPassword() {
@@ -72,7 +73,7 @@ class AuthService {
       ),
     ]);
 
-    const expiresIn = process.env.JWT_REFRESH_EXPIRE || "100d";
+    const expiresIn = envConfig.JWT_REFRESH_EXPIRES_IN;
     const expiresMilliseconds = ms(expiresIn as StringValue);
 
     await RefreshToken.create({

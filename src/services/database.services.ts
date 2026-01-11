@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 import "dotenv/config";
-import { ENV_CONFIG } from "@/constants/config.js";
+import envConfig, { ENV_CONFIG } from "@/constants/config.js";
 
 class DatabaseService {
   private readonly uri: string;
 
   constructor() {
-    this.uri = process.env.MONGO_URI || "";
+    this.uri = envConfig.MONGO_URI;
   }
 
   async connect() {
@@ -21,7 +21,7 @@ class DatabaseService {
       }
 
       // Tắt autoIndex ở production tăng hiệu năng
-      if (process.env.NODE_ENV === ENV_CONFIG.PRODUCTION) {
+      if (envConfig.NODE_ENV === ENV_CONFIG.PRODUCTION) {
         mongoose.set("autoIndex", false);
         mongoose.set("debug", false);
       } else {
@@ -31,7 +31,7 @@ class DatabaseService {
 
       await mongoose.connect(this.uri);
       console.log(
-        `MongoDB Connected successfully! (Mode: ${process.env.NODE_ENV})`,
+        `MongoDB Connected successfully! (Mode: ${envConfig.NODE_ENV})`,
       );
     } catch (error) {
       console.error("MongoDB connection error:", error);

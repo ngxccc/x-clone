@@ -96,15 +96,21 @@ export const USERS_MESSAGES = {
 
   INVALID_JSON_SYNTAX:
     "Dữ liệu gửi lên không đúng định dạng JSON (Syntax Error)",
-  VALIDATION_DATA_ERROR: "Lỗi validation dữ liệu (Mongoose)",
-  FIELD_ALREADY_EXISTS: (field: string) => `${field} đã tồn tại trong hệ thống`,
-  INTERNAL_SERVER_ERROR: "Lỗi server nội bộ",
   INVALID_CONTENT_TYPE:
     "Vui lòng gửi định dạng JSON (Content-Type: application/json)",
   INVALID_INPUT_DATA: "Lỗi dữ liệu đầu vào",
   INVALID_PARAM_DATA: "Lỗi dữ liệu param",
   INVALID_QUERY_DATA: "Lỗi dữ liệu query",
   INVALID_COOKIE_DATA: "Lỗi dữ liệu cookie",
+  INVALID_TIME_STRING: "Chuỗi thời gian không hợp lệ",
+
+  DOTENV_FILE_NOT_FOUND: "❌ Không tìm thấy file môi trường .env",
+  DOTENV_FILE_CONFIG_INVALID: "❌ Các khai báo trong file .env không hợp lệ:",
+  DOTENV_CONFIG_ERROR: "Lỗi cấu hình biến môi trường",
+
+  VALIDATION_DATA_ERROR: "Lỗi validation dữ liệu (Mongoose)",
+  FIELD_ALREADY_EXISTS: (field: string) => `${field} đã tồn tại trong hệ thống`,
+  INTERNAL_SERVER_ERROR: "Lỗi server nội bộ",
   UNKNOWN_DEVICE: "Thiết bị không xác định",
   UNKNOWN_ERROR: "Lỗi không xác định",
   TOO_MANY_REQUESTS:
@@ -121,4 +127,5 @@ export const USERS_MESSAGES = {
   PAGE_MIN_LENGTH: "Số trang tối thiểu phải lớn 1",
   OLD_PASSWORD_NOT_MATCH: "Mật khẩu cũ không đúng",
   CHANGE_PASSWORD_SAME_AS_OLD: "Mật khẩu mới không được trùng với mật khẩu cũ",
+  MONGO_URI_IS_REQUIRED: "MONGO_URI là bắt buộc",
 } as const;

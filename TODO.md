@@ -111,3 +111,4 @@
 
 - [x] **Refactor** - Sửa lại định dạng JSON error thống nhất
 - [x] **Refresh Token** - Thêm rate limit
+- [x] **Validate env data**

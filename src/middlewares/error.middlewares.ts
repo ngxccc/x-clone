@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ENV_CONFIG } from "@/constants/config.js";
+import envConfig, { ENV_CONFIG } from "@/constants/config.js";
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { ERROR_CODES, USERS_MESSAGES } from "@/constants/messages.js";
 import { ErrorWithStatus } from "@/utils/errors.js";
@@ -66,7 +66,7 @@ export const defaultErrorHandler = (
   return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
     message: USERS_MESSAGES.INTERNAL_SERVER_ERROR,
     errors:
-      process.env.NODE_ENV === ENV_CONFIG.DEVELOPMENT
+      envConfig.NODE_ENV === ENV_CONFIG.DEVELOPMENT
         ? { errors: err.message, stack: err.stack }
         : undefined,
   });

@@ -7,8 +7,9 @@ import usersService from "@/services/users.services.js";
 import authService from "@/services/auth.services.js";
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
-import ms, { StringValue } from "ms";
+import ms from "ms";
 import "dotenv/config";
+import envConfig, { ENV_CONFIG } from "@/constants/config.js";
 
 export const loginController = async (
   req: Request,
@@ -27,9 +28,9 @@ export const loginController = async (
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true, // Chặn JS đọc
-      secure: process.env.NODE_ENV === "production", // https
+      secure: envConfig.NODE_ENV === ENV_CONFIG.PRODUCTION, // https
       sameSite: "strict", // Chống CSRF
-      maxAge: ms(process.env.JWT_REFRESH_EXPIRE as StringValue),
+      maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
     });
 
     return res.status(HTTP_STATUS.OK).json({
@@ -182,9 +183,9 @@ export const refreshTokenController = async (
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true, // Chặn JS đọc
-      secure: process.env.NODE_ENV === "production", // https
+      secure: envConfig.NODE_ENV === ENV_CONFIG.PRODUCTION, // https
       sameSite: "strict", // Chống CSRF
-      maxAge: ms(process.env.JWT_REFRESH_EXPIRE as StringValue),
+      maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
     });
 
     return res.status(HTTP_STATUS.OK).json({
@@ -212,9 +213,9 @@ export const loginGoogleController = async (
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true, // Chặn JS đọc
-      secure: process.env.NODE_ENV === "production", // https
+      secure: envConfig.NODE_ENV === ENV_CONFIG.PRODUCTION, // https
       sameSite: "strict", // Chống CSRF
-      maxAge: ms(process.env.JWT_REFRESH_EXPIRE as StringValue),
+      maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
     });
 
     return res.status(HTTP_STATUS.OK).json({

@@ -9,10 +9,11 @@ import {
   Bookmark,
   Follower,
 } from "@/models.js";
+import envConfig from "@/constants/config.js";
 
 const syncIndexes = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI as string);
+    await mongoose.connect(envConfig.MONGO_URI);
     console.log("Connected to DB for Indexing...");
 
     // Các model cần đánh index

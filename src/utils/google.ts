@@ -3,13 +3,14 @@ import "dotenv/config";
 import { BadRequestError } from "./errors.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import { GoogleTokenResponse, GoogleUserInfo } from "@/types/common.types.js";
+import envConfig from "@/constants/config.js";
 
 export const getGoogleToken = async (code: string) => {
   const body = {
     code,
-    client_id: process.env.GOOGLE_CLIENT_ID!,
-    client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-    redirect_uri: process.env.GOOGLE_REDIRECT_URI!,
+    client_id: envConfig.GOOGLE_CLIENT_ID,
+    client_secret: envConfig.GOOGLE_CLIENT_SECRET,
+    redirect_uri: envConfig.GOOGLE_REDIRECT_URI,
     grant_type: "authorization_code",
   };
 
