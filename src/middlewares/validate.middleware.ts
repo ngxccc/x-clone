@@ -39,7 +39,7 @@ export const validateParams =
 
       if (!data.success) {
         return res.status(HTTP_STATUS.BAD_REQUEST).json({
-          message: USERS_MESSAGES.INVALID_INPUT_DATA,
+          message: USERS_MESSAGES.INVALID_PARAM_DATA,
           errors: z.flattenError(data.error).fieldErrors, // Format lỗi gọn gàng
         });
       }
@@ -60,7 +60,7 @@ export const validateQuery =
 
       if (!data.success) {
         return res.status(HTTP_STATUS.BAD_REQUEST).json({
-          message: USERS_MESSAGES.INVALID_INPUT_DATA,
+          message: USERS_MESSAGES.INVALID_QUERY_DATA,
           errors: z.flattenError(data.error).fieldErrors, // Format lỗi gọn gàng
         });
       }
@@ -68,6 +68,27 @@ export const validateQuery =
       // Lưu validated data vào custom property
       // req.query giữ nguyên (string), req.validatedQuery chứa typed data
       req.validatedQuery = data.data;
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+
+export const validateCookies =
+  (schema: ZodObject) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await schema.safeParseAsync(req.cookies);
+
+      if (!data.success) {
+        return res.status(HTTP_STATUS.BAD_REQUEST).json({
+          message: USERS_MESSAGES.INVALID_COOKIE_DATA,
+          errors: z.flattenError(data.error).fieldErrors,
+        });
+      }
+
+      req.cookies = data.data;
 
       next();
     } catch (error) {

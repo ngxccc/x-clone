@@ -7,6 +7,7 @@ import usersService from "@/services/users.services.js";
 import authService from "@/services/auth.services.js";
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
+import ms, { StringValue } from "ms";
 import "dotenv/config";
 
 export const loginController = async (
@@ -18,11 +19,22 @@ export const loginController = async (
     const { email, password } = req.body;
     const deviceInfo = req.headers["user-agent"];
 
-    const result = await authService.login(email, password, deviceInfo);
+    const { accessToken, refreshToken } = await authService.login(
+      email,
+      password,
+      deviceInfo,
+    );
+
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true, // Chặn JS đọc
+      secure: process.env.NODE_ENV === "production", // https
+      sameSite: "strict", // Chống CSRF
+      maxAge: ms(process.env.JWT_REFRESH_EXPIRE as StringValue),
+    });
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.LOGIN_SUCCESS,
-      result,
+      result: { accessToken },
     });
   } catch (error) {
     next(error);
@@ -69,9 +81,11 @@ export const logoutController = async (
   next: NextFunction,
 ) => {
   try {
-    const { refreshToken } = req.body;
+    const refreshToken = req.cookies.refresh_token;
 
     await authService.logout(refreshToken);
+
+    res.clearCookie("refresh_token");
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.LOGOUT_SUCCESS,
@@ -156,19 +170,26 @@ export const refreshTokenController = async (
   next: NextFunction,
 ) => {
   try {
-    const { refreshToken } = req.body;
+    const refreshTokenCookie = req.cookies.refresh_token;
     const { userId } = req.decodedRefreshToken!;
     const deviceInfo = req.headers["user-agent"];
 
-    const result = await authService.refreshToken(
+    const { accessToken, refreshToken } = await authService.refreshToken(
       userId,
-      refreshToken,
+      refreshTokenCookie,
       deviceInfo,
     );
 
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true, // Chặn JS đọc
+      secure: process.env.NODE_ENV === "production", // https
+      sameSite: "strict", // Chống CSRF
+      maxAge: ms(process.env.JWT_REFRESH_EXPIRE as StringValue),
+    });
+
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
-      result,
+      result: { accessToken },
     });
   } catch (error) {
     next(error);
@@ -184,11 +205,21 @@ export const loginGoogleController = async (
     const { code } = req.body as LoginGoogleBodyType;
     const deviceInfo = req.headers["user-agent"];
 
-    const result = await authService.loginGoogle(code, deviceInfo);
+    const { accessToken, refreshToken } = await authService.loginGoogle(
+      code,
+      deviceInfo,
+    );
+
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true, // Chặn JS đọc
+      secure: process.env.NODE_ENV === "production", // https
+      sameSite: "strict", // Chống CSRF
+      maxAge: ms(process.env.JWT_REFRESH_EXPIRE as StringValue),
+    });
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.LOGIN_WITH_GOOGLE_SUCCESS,
-      result,
+      result: { accessToken },
     });
   } catch (error) {
     next(error);

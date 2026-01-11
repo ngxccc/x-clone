@@ -38,7 +38,10 @@ export const refreshTokenValidator = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const { refreshToken } = req.body;
+  const refreshToken = req.cookies.refresh_token;
+
+  if (!refreshToken)
+    throw new UnauthorizedError(USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED);
 
   try {
     const decoded = verifyToken(refreshToken, "refresh");

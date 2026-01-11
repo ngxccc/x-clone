@@ -6,6 +6,7 @@ import usersRouter from "./routes/users.routes.js";
 import { NotFoundError } from "./utils/errors.js";
 import { USERS_MESSAGES } from "./constants/messages.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const port = process.env.PORT;
@@ -22,6 +23,9 @@ app.use(
     credentials: true,
   }),
 );
+
+// Hỗ trợ đọc cookie
+app.use(cookieParser());
 
 // Middelware parse JSON from client
 app.use(express.json());

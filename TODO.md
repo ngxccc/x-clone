@@ -78,6 +78,7 @@
 ### Authentication
 
 - [x] **Auth Refactor** - Xóa logic đăng nhập hardcoded (`email === "ngxc@gmail.com"`) trong `auth.controllers.ts` và thay bằng kiểm tra password thật
+- [x] **Set Refresh Token into Cookie on Server**
 
 ### Security Enhancement
 

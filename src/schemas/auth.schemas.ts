@@ -45,10 +45,6 @@ export const LoginReqBody = z.object({
   password: requiredString(USERS_MESSAGES.PASSWORD_IS_REQUIRED),
 });
 
-export const LogoutReqBody = z.object({
-  refreshToken: requiredString(USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED),
-});
-
 export const VerifyEmailReqBody = z.object({
   emailVerifyToken: requiredString(
     USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_REQUIRED,
@@ -84,22 +80,21 @@ export const ResetPasswordReqBody = z
     path: ["confirmPassword"],
   });
 
-export const RefreshTokenReqBody = z.object({
-  refreshToken: requiredString(USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED),
-});
-
 export const LoginGoogleReqBody = z.object({
   code: requiredString(USERS_MESSAGES.GOOGLE_CODE_IS_REQUIRED),
 });
 
+export const RefreshTokenReqCookie = z.object({
+  refresh_token: requiredString(USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED),
+});
+
+export type RefreshTokenCookieType = z.infer<typeof RefreshTokenReqCookie>;
 export type LoginGoogleBodyType = z.infer<typeof LoginGoogleReqBody>;
-export type RefreshTokenBodyType = z.infer<typeof RefreshTokenReqBody>;
 export type ForgotPasswordBodyType = z.infer<typeof ForgotPasswordReqBody>;
 export type ResetPasswordBodyType = z.infer<typeof ResetPasswordReqBody>;
 export type ResendVerificationEmailBodyType = z.infer<
   typeof ResendVerificationEmailReqBody
 >;
 export type VerifyEmailBodyType = z.infer<typeof VerifyEmailReqBody>;
-export type LogoutBodyType = z.infer<typeof LogoutReqBody>;
 export type LoginBodyType = z.infer<typeof LoginReqBody>;
 export type RegisterBodyType = z.infer<typeof RegisterReqBody>;

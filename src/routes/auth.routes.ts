@@ -10,7 +10,6 @@ import {
   verifyEmailController,
 } from "@/controllers/auth.controllers.js";
 import {
-  accessTokenValidator,
   emailVerifyTokenValidator,
   forgotPasswordTokenValidator,
   refreshTokenValidator,
@@ -19,17 +18,19 @@ import {
   refreshTokenLimiter,
   resendEmailLimiter,
 } from "@/middlewares/rateLimit.middlewares.js";
-import { validate } from "@/middlewares/validate.middleware.js";
+import {
+  validate,
+  validateCookies,
+} from "@/middlewares/validate.middleware.js";
 import {
   ForgotPasswordReqBody,
   LoginReqBody,
-  LogoutReqBody,
   LoginGoogleReqBody,
-  RefreshTokenReqBody,
   RegisterReqBody,
   ResendVerificationEmailReqBody,
   ResetPasswordReqBody,
   VerifyEmailReqBody,
+  RefreshTokenReqCookie,
 } from "@/schemas/auth.schemas.js";
 import { Router } from "express";
 
@@ -41,8 +42,7 @@ authRouter.post("/register", validate(RegisterReqBody), registerController);
 
 authRouter.post(
   "/logout",
-  validate(LogoutReqBody),
-  accessTokenValidator,
+  validateCookies(RefreshTokenReqCookie),
   refreshTokenValidator,
   logoutController,
 );
@@ -78,7 +78,7 @@ authRouter.post(
 authRouter.post(
   "/refresh-token",
   refreshTokenLimiter,
-  validate(RefreshTokenReqBody),
+  validateCookies(RefreshTokenReqCookie),
   refreshTokenValidator,
   refreshTokenController,
 );

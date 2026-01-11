@@ -102,6 +102,9 @@ export const USERS_MESSAGES = {
   INVALID_CONTENT_TYPE:
     "Vui lòng gửi định dạng JSON (Content-Type: application/json)",
   INVALID_INPUT_DATA: "Lỗi dữ liệu đầu vào",
+  INVALID_PARAM_DATA: "Lỗi dữ liệu param",
+  INVALID_QUERY_DATA: "Lỗi dữ liệu query",
+  INVALID_COOKIE_DATA: "Lỗi dữ liệu cookie",
   UNKNOWN_DEVICE: "Thiết bị không xác định",
   UNKNOWN_ERROR: "Lỗi không xác định",
   TOO_MANY_REQUESTS:
