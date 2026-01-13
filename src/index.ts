@@ -8,10 +8,14 @@ import { USERS_MESSAGES } from "./constants/messages.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import envConfig from "./constants/config.js";
+import { initFolder } from "./utils/file.js";
+import mediasRouter from "./routes/medias.routes.js";
+import { UPLOAD_TEMP_DIR } from "./constants/dir.js";
 
 const app = express();
 const port = envConfig.PORT;
 
+initFolder();
 databaseService.connect();
 
 // Bỏ qua lớp trung gian (Cloudflare / Nginx)
@@ -33,6 +37,10 @@ app.use(express.json());
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", usersRouter);
+app.use("/api/v1/media", mediasRouter);
+
+// Route để serve static file
+app.use("/static/image", express.static(UPLOAD_TEMP_DIR));
 
 app.use((_req, _res, next) => {
   next(new NotFoundError(USERS_MESSAGES.API_ENDPOINT_NOT_FOUND));

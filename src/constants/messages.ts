@@ -8,6 +8,10 @@ export const ERROR_CODES = {
   RESEND_EMAIL_TOO_FAST: "RESEND_EMAIL_TOO_FAST",
   VALIDATION_ERROR: "ValidationError",
   MONGO_DUPLICATE_KEY: 11000,
+  LIMIT_FILE_SIZE: "LIMIT_FILE_SIZE",
+  FORMIDABLE_MAX_FILE_SIZE: 1016,
+  FORMIDABLE_MAX_FILES: 1015,
+  FORMIDABLE_MAX_TOTAL_FILE_SIZE: 1009,
 } as const;
 
 export const USERS_MESSAGES = {
@@ -62,6 +66,7 @@ export const USERS_MESSAGES = {
   GET_FOLLOWERS_SUCCESS: "Lấy danh sách người theo dõi thành công",
   GET_FOLLOWING_SUCCESS: "Lấy danh sách người đang theo dõi thành công",
   CHANGE_PASSWORD_SUCCESS: "Đổi mật khẩu thành công",
+  UPLOAD_SUCCESS: "Tải ảnh lên thành công",
 
   ACCESS_TOKEN_IS_REQUIRED: "Yêu cầu Access Token",
   ACCESS_TOKEN_INVALID_OR_EXPIRED: "Access Token không hợp lệ hoặc đã hết hạn",
@@ -107,6 +112,15 @@ export const USERS_MESSAGES = {
   DOTENV_FILE_NOT_FOUND: "❌ Không tìm thấy file môi trường .env",
   DOTENV_FILE_CONFIG_INVALID: "❌ Các khai báo trong file .env không hợp lệ:",
   DOTENV_CONFIG_ERROR: "Lỗi cấu hình biến môi trường",
+
+  IMAGE_FILE_SIZE_LIMIT_EXCEEDED:
+    "Kích thước file vượt quá giới hạn (Tối đa 10MB)",
+  IMAGE_FILE_IS_REQUIRED: "Yêu cầu file ảnh",
+  IMAGE_FILE_TYPE_INVALID: "Loại file không hợp lệ",
+  IMAGE_FILE_COUNT_LIMIT_EXCEEDED:
+    "Số lượng file vượt quá giới hạn (Tối đa 4 ảnh)",
+  IMAGE_TOTAL_FILE_SIZE_LIMIT_EXCEEDED:
+    "Tổng kích thước các file vượt quá giới hạn (Tối đa 40MB)",
 
   VALIDATION_DATA_ERROR: "Lỗi validation dữ liệu (Mongoose)",
   FIELD_ALREADY_EXISTS: (field: string) => `${field} đã tồn tại trong hệ thống`,

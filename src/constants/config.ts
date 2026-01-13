@@ -10,6 +10,11 @@ export const ENV_CONFIG = {
   PRODUCTION: "production",
 } as const;
 
+export const UPLOAD_CONFIG = {
+  IMAGE_MAX_SIZE: 10 * 1024 ** 2,
+  IMAGE_MAX_FILES: 4,
+} as const;
+
 const MsDuration = z.custom<StringValue>((val) => {
   if (typeof val !== "string") return false;
 
