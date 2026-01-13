@@ -18,6 +18,7 @@ const UserSchema = new Schema(
       required: true,
       unique: true,
       trim: true,
+      lowercase: true,
       minLength: [3, USERS_MESSAGES.USERNAME_MIN_LENGTH],
       maxLength: [255, USERS_MESSAGES.USERNAME_MAX_LENGTH],
       // Chỉ cho phép chữ, số, _ và .
@@ -27,6 +28,7 @@ const UserSchema = new Schema(
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
       match: [
         /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
         USERS_MESSAGES.EMAIL_IS_INVALID,
@@ -82,6 +84,7 @@ const UserSchema = new Schema(
     website: {
       type: String,
       default: "",
+      lowercase: true,
     },
     // Cache số liệu để hiển thị nhanh trên Profile
     stats: {
