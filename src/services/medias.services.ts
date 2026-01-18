@@ -1,4 +1,4 @@
-import { isProduction } from "@/constants/config.js";
+import envConfig, { isProduction } from "@/constants/config.js";
 import { UPLOAD_IMAGE_DIR } from "@/constants/dir.js";
 import { UPLOAD_PURPOSE, UploadPurposeType } from "@/constants/enums.js";
 import { handleUploadImage } from "@/utils/file.js";
@@ -38,7 +38,7 @@ class MediasService {
 
           return {
             url: isProduction()
-              ? `${process.env.HOST}/static/image/${newName}.jpg`
+              ? `${envConfig.HOST}/static/image/${newName}.jpg`
               : `http://localhost:4000/static/image/${newName}.jpg`,
             type: 0, // Image type
           };
