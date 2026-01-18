@@ -36,7 +36,7 @@ config({
   path: resolve(".env"),
 });
 
-const checkEnv = async () => {
+const checkEnv = () => {
   if (!fs.existsSync(resolve(".env"))) {
     console.error(USERS_MESSAGES.DOTENV_FILE_NOT_FOUND);
     process.exit(1);
