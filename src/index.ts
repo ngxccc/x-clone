@@ -10,7 +10,7 @@ import cookieParser from "cookie-parser";
 import envConfig from "./constants/config.js";
 import { initFolder } from "./utils/file.js";
 import mediasRouter from "./routes/medias.routes.js";
-import { UPLOAD_TEMP_DIR } from "./constants/dir.js";
+import { UPLOAD_IMAGE_DIR } from "./constants/dir.js";
 
 const app = express();
 const port = envConfig.PORT;
@@ -40,7 +40,7 @@ app.use("/api/v1/users", usersRouter);
 app.use("/api/v1/media", mediasRouter);
 
 // Route để serve static file
-app.use("/static/image", express.static(UPLOAD_TEMP_DIR));
+app.use("/static/image", express.static(UPLOAD_IMAGE_DIR));
 
 app.use((_req, _res, next) => {
   next(new NotFoundError(USERS_MESSAGES.API_ENDPOINT_NOT_FOUND));
