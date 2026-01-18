@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import "dotenv/config";
-import envConfig, { ENV_CONFIG } from "@/constants/config.js";
+import envConfig, { isProduction } from "@/constants/config.js";
 
 class DatabaseService {
   private readonly uri: string;
@@ -21,7 +21,7 @@ class DatabaseService {
       }
 
       // Tắt autoIndex ở production tăng hiệu năng
-      if (envConfig.NODE_ENV === ENV_CONFIG.PRODUCTION) {
+      if (isProduction()) {
         mongoose.set("autoIndex", false);
         mongoose.set("debug", false);
       } else {

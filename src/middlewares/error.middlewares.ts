@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import envConfig, { ENV_CONFIG } from "@/constants/config.js";
+import { isProduction } from "@/constants/config.js";
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { ERROR_CODES, USERS_MESSAGES } from "@/constants/messages.js";
 import { ErrorWithStatus } from "@/utils/errors.js";
@@ -90,7 +90,7 @@ export const defaultErrorHandler = (
     message: USERS_MESSAGES.INTERNAL_SERVER_ERROR,
   };
 
-  if (envConfig.NODE_ENV === ENV_CONFIG.DEVELOPMENT) {
+  if (!isProduction()) {
     response.errors = err.message;
     response.stack = err.stack;
   }

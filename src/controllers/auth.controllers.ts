@@ -9,7 +9,7 @@ import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import ms from "ms";
 import "dotenv/config";
-import envConfig, { ENV_CONFIG } from "@/constants/config.js";
+import envConfig, { isProduction } from "@/constants/config.js";
 
 export const loginController = async (
   req: Request,
@@ -28,7 +28,7 @@ export const loginController = async (
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true, // Chặn JS đọc
-      secure: envConfig.NODE_ENV === ENV_CONFIG.PRODUCTION, // https
+      secure: isProduction(), // https
       sameSite: "strict", // Chống CSRF
       maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
     });
@@ -183,7 +183,7 @@ export const refreshTokenController = async (
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true, // Chặn JS đọc
-      secure: envConfig.NODE_ENV === ENV_CONFIG.PRODUCTION, // https
+      secure: isProduction(), // https
       sameSite: "strict", // Chống CSRF
       maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
     });
@@ -213,7 +213,7 @@ export const loginGoogleController = async (
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true, // Chặn JS đọc
-      secure: envConfig.NODE_ENV === ENV_CONFIG.PRODUCTION, // https
+      secure: isProduction(), // https
       sameSite: "strict", // Chống CSRF
       maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
     });
