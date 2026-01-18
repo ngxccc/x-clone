@@ -46,11 +46,12 @@ checkEnv();
 
 const configSchema = z.object({
   // --- Server Basic ---
+  HOST: z.string(),
   PORT: z.coerce.number().default(4000),
   NODE_ENV: z.enum(["development", "production"]).default("development"),
 
   // --- Database ---
-  MONGO_URI: z.string(USERS_MESSAGES.MONGO_URI_IS_REQUIRED),
+  MONGO_URI: z.string(),
 
   // --- JWT Secret & Expiration ---
   JWT_ACCESS_SECRET: z.string(),

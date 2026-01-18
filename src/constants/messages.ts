@@ -123,7 +123,6 @@ export const USERS_MESSAGES = {
     "Tổng kích thước các file vượt quá giới hạn (Tối đa 40MB)",
 
   VALIDATION_DATA_ERROR: "Lỗi validation dữ liệu (Mongoose)",
-  FIELD_ALREADY_EXISTS: (field: string) => `${field} đã tồn tại trong hệ thống`,
   INTERNAL_SERVER_ERROR: "Lỗi server nội bộ",
   UNKNOWN_DEVICE: "Thiết bị không xác định",
   UNKNOWN_ERROR: "Lỗi không xác định",
@@ -141,5 +140,7 @@ export const USERS_MESSAGES = {
   PAGE_MIN_LENGTH: "Số trang tối thiểu phải lớn 1",
   OLD_PASSWORD_NOT_MATCH: "Mật khẩu cũ không đúng",
   CHANGE_PASSWORD_SAME_AS_OLD: "Mật khẩu mới không được trùng với mật khẩu cũ",
-  MONGO_URI_IS_REQUIRED: "MONGO_URI là bắt buộc",
+
+  FIELD_ALREADY_EXISTS: (field: string) => `${field} đã tồn tại trong hệ thống`,
+  FIELD_IS_REQUIRED: (field: string) => `${field} là bắt buộc`,
 } as const;
