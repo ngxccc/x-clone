@@ -1,17 +1,52 @@
+import { UPLOAD_PURPOSE } from "@/constants/enums.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import mediasService from "@/services/medias.services.js";
 import { NextFunction, Request, Response } from "express";
 
-export const uploadImageController = async (
+export const uploadTweetImageController = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const result = await mediasService.uploadImage(req);
+    const result = await mediasService.uploadImage(req, UPLOAD_PURPOSE.TWEET);
 
     return res.json({
       message: USERS_MESSAGES.UPLOAD_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const uploadAvatarController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = await mediasService.uploadImage(req, UPLOAD_PURPOSE.AVATAR);
+
+    return res.json({
+      message: USERS_MESSAGES.UPLOAD_AVATAR_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const uploadCoverController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = await mediasService.uploadImage(req, UPLOAD_PURPOSE.COVER);
+
+    return res.json({
+      message: USERS_MESSAGES.UPLOAD_COVER_SUCCESS,
       result,
     });
   } catch (error) {

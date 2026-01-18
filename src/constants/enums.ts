@@ -11,6 +11,20 @@ export const TOKEN_TYPES = {
   FORGOT_PASSWORD_TOKEN: 3,
 } as const;
 
+export const MEDIA_TYPES = {
+  IMAGE: 0,
+  VIDEO: 1,
+} as const;
+
+export const UPLOAD_PURPOSE = {
+  AVATAR: 0,
+  COVER: 1,
+  TWEET: 2,
+} as const;
+
+export type UploadPurposeType =
+  (typeof UPLOAD_PURPOSE)[keyof typeof UPLOAD_PURPOSE];
+
 export type TokenType = (typeof TOKEN_TYPES)[keyof typeof TOKEN_TYPES];
 
 export type UserVerifyStatusType =

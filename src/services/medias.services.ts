@@ -1,5 +1,6 @@
 import { isProduction } from "@/constants/config.js";
 import { UPLOAD_IMAGE_DIR } from "@/constants/dir.js";
+import { UPLOAD_PURPOSE, UploadPurposeType } from "@/constants/enums.js";
 import { handleUploadImage } from "@/utils/file.js";
 import { Request } from "express";
 import { unlink } from "node:fs/promises";
@@ -14,7 +15,7 @@ const getNameFromFullname = (fullname: string) => {
 
 class MediasService {
   // TODO: Upload lên Cloud Storage bên thứ 3
-  async uploadImage(req: Request) {
+  async uploadImage(req: Request, type: UploadPurposeType) {
     const files = await handleUploadImage(req);
 
     const result = await Promise.all([
@@ -24,7 +25,15 @@ class MediasService {
 
         try {
           // Check Magic Bytes
-          await sharp(file.filepath).jpeg().toFile(newPath);
+          const sharpInstance = sharp(file.filepath);
+          if (type === UPLOAD_PURPOSE.AVATAR)
+            sharpInstance.resize(500, 500, {
+              fit: "cover",
+              position: "center",
+            });
+
+          await sharpInstance.jpeg({ quality: 80 }).toFile(newPath);
+
           await unlink(file.filepath);
 
           return {

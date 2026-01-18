@@ -67,6 +67,8 @@ export const USERS_MESSAGES = {
   GET_FOLLOWING_SUCCESS: "Lấy danh sách người đang theo dõi thành công",
   CHANGE_PASSWORD_SUCCESS: "Đổi mật khẩu thành công",
   UPLOAD_SUCCESS: "Tải ảnh lên thành công",
+  UPLOAD_AVATAR_SUCCESS: "Tải ảnh đại diện lên thành công",
+  UPLOAD_COVER_SUCCESS: "Tải ảnh bìa lên thành công",
 
   ACCESS_TOKEN_IS_REQUIRED: "Yêu cầu Access Token",
   ACCESS_TOKEN_INVALID_OR_EXPIRED: "Access Token không hợp lệ hoặc đã hết hạn",
