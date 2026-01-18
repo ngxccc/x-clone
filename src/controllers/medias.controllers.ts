@@ -29,7 +29,7 @@ export const uploadAvatarController = async (
     const result = await mediasService.uploadImage(req, UPLOAD_PURPOSE.AVATAR);
 
     return res.json({
-      message: USERS_MESSAGES.UPLOAD_AVATAR_SUCCESS,
+      message: USERS_MESSAGES.UPLOAD_SUCCESS,
       result,
     });
   } catch (error) {
@@ -46,7 +46,7 @@ export const uploadCoverController = async (
     const result = await mediasService.uploadImage(req, UPLOAD_PURPOSE.COVER);
 
     return res.json({
-      message: USERS_MESSAGES.UPLOAD_COVER_SUCCESS,
+      message: USERS_MESSAGES.UPLOAD_SUCCESS,
       result,
     });
   } catch (error) {
