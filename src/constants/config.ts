@@ -1,6 +1,6 @@
 import { config } from "dotenv";
 import fs from "fs";
-import path from "path";
+import { resolve } from "node:path";
 import z from "zod";
 import { USERS_MESSAGES } from "./messages.js";
 import { StringValue } from "ms";
@@ -33,11 +33,11 @@ const MsDuration = z.custom<StringValue>((val) => {
 }, USERS_MESSAGES.INVALID_TIME_STRING);
 
 config({
-  path: path.resolve(".env"),
+  path: resolve(".env"),
 });
 
 const checkEnv = async () => {
-  if (!fs.existsSync(path.resolve(".env"))) {
+  if (!fs.existsSync(resolve(".env"))) {
     console.error(USERS_MESSAGES.DOTENV_FILE_NOT_FOUND);
     process.exit(1);
   }

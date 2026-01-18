@@ -4,7 +4,7 @@ import { UPLOAD_PURPOSE, UploadPurposeType } from "@/constants/enums.js";
 import { handleUploadImage } from "@/utils/file.js";
 import { Request } from "express";
 import { unlink } from "node:fs/promises";
-import path from "node:path";
+import { resolve } from "node:path";
 import sharp from "sharp";
 
 const getNameFromFullname = (fullname: string) => {
@@ -21,7 +21,7 @@ class MediasService {
     const result = await Promise.all([
       files.map(async (file) => {
         const newName = getNameFromFullname(file.newFilename);
-        const newPath = path.resolve(UPLOAD_IMAGE_DIR, `${newName}.jpg`);
+        const newPath = resolve(UPLOAD_IMAGE_DIR, `${newName}.jpg`);
 
         try {
           // Check Magic Bytes
