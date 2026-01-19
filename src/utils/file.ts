@@ -1,4 +1,8 @@
-import { UPLOAD_TEMP_DIR } from "@/constants/dir.js";
+import {
+  UPLOAD_IMAGE_DIR,
+  UPLOAD_TEMP_DIR,
+  UPLOAD_VIDEO_DIR,
+} from "@/constants/dir.js";
 import { ERROR_CODES, USERS_MESSAGES } from "@/constants/messages.js";
 import { Request } from "express";
 import formidable, { File } from "formidable";
@@ -8,11 +12,15 @@ import { UPLOAD_CONFIG } from "@/constants/config.js";
 // import { errors as formidableErrors } from "formidable";
 
 export const initFolder = () => {
-  if (!existsSync(UPLOAD_TEMP_DIR)) {
-    mkdirSync(UPLOAD_TEMP_DIR, {
-      recursive: true,
-    });
-  }
+  const uploadsFolder = [UPLOAD_TEMP_DIR, UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR];
+
+  uploadsFolder.forEach((dir) => {
+    if (!existsSync(dir)) {
+      mkdirSync(dir, {
+        recursive: true, // Tạo cả folder cha nếu chưa có
+      });
+    }
+  });
 };
 
 export const handleUploadImage = async (req: Request) => {

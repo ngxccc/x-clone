@@ -18,7 +18,7 @@ class MediasService {
   async uploadImage(req: Request, type: UploadPurposeType) {
     const files = await handleUploadImage(req);
 
-    const result = await Promise.all([
+    const result = await Promise.all(
       files.map(async (file) => {
         const newName = getNameFromFullname(file.newFilename);
         const newPath = resolve(UPLOAD_IMAGE_DIR, `${newName}.jpg`);
@@ -47,7 +47,7 @@ class MediasService {
           throw error;
         }
       }),
-    ]);
+    );
 
     return result;
   }
