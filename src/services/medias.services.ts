@@ -1,12 +1,13 @@
 import envConfig, { isProduction } from "@/constants/config.js";
-import { UPLOAD_IMAGE_DIR } from "@/constants/dir.js";
+import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from "@/constants/dir.js";
 import {
   MEDIA_TYPES,
   UPLOAD_PURPOSE,
   UploadPurposeType,
 } from "@/constants/enums.js";
-import { handleUploadImage } from "@/utils/file.js";
+import { handleUploadImage, handleUploadVideo } from "@/utils/file.js";
 import { Request } from "express";
+import { rename } from "node:fs/promises";
 import { unlink } from "node:fs/promises";
 import { resolve } from "node:path";
 import sharp from "sharp";
@@ -53,6 +54,27 @@ class MediasService {
           await unlink(file.filepath).catch(() => {});
           throw error;
         }
+      }),
+    );
+
+    return result;
+  }
+
+  async uploadVideo(req: Request) {
+    const files = await handleUploadVideo(req);
+
+    const result = await Promise.all(
+      files.map(async (file) => {
+        const newPath = resolve(UPLOAD_VIDEO_DIR, file.newFilename);
+
+        await rename(file.filepath, newPath);
+
+        return {
+          url: isProduction()
+            ? `${envConfig.HOST}/static/video/${file.newFilename}`
+            : `http://localhost:4000/static/video/${file.newFilename}`,
+          type: MEDIA_TYPES.VIDEO,
+        };
       }),
     );
 

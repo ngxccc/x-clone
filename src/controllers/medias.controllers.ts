@@ -12,7 +12,7 @@ export const uploadTweetImageController = async (
     const result = await mediasService.uploadImage(req, UPLOAD_PURPOSE.TWEET);
 
     return res.json({
-      message: USERS_MESSAGES.UPLOAD_SUCCESS,
+      message: USERS_MESSAGES.UPLOAD_IMAGE_SUCCESS,
       result,
     });
   } catch (error) {
@@ -29,7 +29,7 @@ export const uploadAvatarController = async (
     const result = await mediasService.uploadImage(req, UPLOAD_PURPOSE.AVATAR);
 
     return res.json({
-      message: USERS_MESSAGES.UPLOAD_SUCCESS,
+      message: USERS_MESSAGES.UPLOAD_IMAGE_SUCCESS,
       result,
     });
   } catch (error) {
@@ -46,7 +46,24 @@ export const uploadCoverController = async (
     const result = await mediasService.uploadImage(req, UPLOAD_PURPOSE.COVER);
 
     return res.json({
-      message: USERS_MESSAGES.UPLOAD_SUCCESS,
+      message: USERS_MESSAGES.UPLOAD_IMAGE_SUCCESS,
+      result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const uploadVideoController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = await mediasService.uploadVideo(req);
+
+    return res.json({
+      message: USERS_MESSAGES.UPLOAD_VIDEO_SUCCESS,
       result,
     });
   } catch (error) {

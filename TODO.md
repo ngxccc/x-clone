@@ -25,7 +25,7 @@
 - [x] **Upload ảnh bài viết** - METHOD: `POST`, ENDPOINT: `/media/upload-tweet-image`
 - [x] **Upload avatar** - METHOD: `POST`, ENDPOINT: `/media/upload-avatar`
 - [x] **Upload cover** - METHOD: `POST`, ENDPOINT: `/media/upload-cover`
-- [ ] **Upload video (HLS Streaming)** - METHOD: `POST`, ENDPOINT: `/media/upload-video`
+- [x] **Upload video (HLS Streaming)** - METHOD: `POST`, ENDPOINT: `/media/upload-video`
 
 ### Tweets
 

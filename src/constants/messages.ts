@@ -66,7 +66,8 @@ export const USERS_MESSAGES = {
   GET_FOLLOWERS_SUCCESS: "Lấy danh sách người theo dõi thành công",
   GET_FOLLOWING_SUCCESS: "Lấy danh sách người đang theo dõi thành công",
   CHANGE_PASSWORD_SUCCESS: "Đổi mật khẩu thành công",
-  UPLOAD_SUCCESS: "Tải ảnh lên thành công",
+  UPLOAD_IMAGE_SUCCESS: "Tải ảnh lên thành công",
+  UPLOAD_VIDEO_SUCCESS: "Tải video lên thành công",
 
   ACCESS_TOKEN_IS_REQUIRED: "Yêu cầu Access Token",
   ACCESS_TOKEN_INVALID_OR_EXPIRED: "Access Token không hợp lệ hoặc đã hết hạn",
@@ -116,11 +117,20 @@ export const USERS_MESSAGES = {
   IMAGE_FILE_SIZE_LIMIT_EXCEEDED:
     "Kích thước file vượt quá giới hạn (Tối đa 10MB)",
   IMAGE_FILE_IS_REQUIRED: "Yêu cầu file ảnh",
-  IMAGE_FILE_TYPE_INVALID: "Loại file không hợp lệ",
   IMAGE_FILE_COUNT_LIMIT_EXCEEDED:
     "Số lượng file vượt quá giới hạn (Tối đa 4 ảnh)",
   IMAGE_TOTAL_FILE_SIZE_LIMIT_EXCEEDED:
     "Tổng kích thước các file vượt quá giới hạn (Tối đa 40MB)",
+
+  VIDEO_FILE_SIZE_LIMIT_EXCEEDED:
+    "Kích thước file vượt quá giới hạn (Tối đa 50MB)",
+  VIDEO_FILE_IS_REQUIRED: "Yêu cầu file MP4/MOV",
+  VIDEO_FILE_COUNT_LIMIT_EXCEEDED:
+    "Số lượng file vượt quá giới hạn (Tối đa 1 video)",
+  VIDEO_TOTAL_FILE_SIZE_LIMIT_EXCEEDED:
+    "Tổng kích thước các file vượt quá giới hạn (Tối đa 50MB)",
+
+  FILE_TYPE_INVALID: "Loại file không hợp lệ",
 
   VALIDATION_DATA_ERROR: "Lỗi validation dữ liệu (Mongoose)",
   INTERNAL_SERVER_ERROR: "Lỗi server nội bộ",

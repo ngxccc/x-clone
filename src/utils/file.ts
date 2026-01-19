@@ -40,7 +40,7 @@ export const handleUploadImage = async (req: Request) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (form as any).emit(
           "error",
-          new UnprocessableEntityError(USERS_MESSAGES.IMAGE_FILE_TYPE_INVALID),
+          new UnprocessableEntityError(USERS_MESSAGES.FILE_TYPE_INVALID),
         );
       }
 
@@ -84,6 +84,72 @@ export const handleUploadImage = async (req: Request) => {
       const images = files.image;
 
       resolve(images);
+    });
+  });
+};
+
+export const handleUploadVideo = async (req: Request) => {
+  const form = formidable({
+    uploadDir: UPLOAD_TEMP_DIR,
+    maxFiles: UPLOAD_CONFIG.VIDEO_MAX_FILES,
+    keepExtensions: true,
+    maxFileSize: UPLOAD_CONFIG.VIDEO_MAX_SIZE,
+    maxTotalFileSize:
+      UPLOAD_CONFIG.VIDEO_MAX_SIZE * UPLOAD_CONFIG.VIDEO_MAX_FILES,
+
+    filter: ({ name, mimetype }) => {
+      const valid =
+        name == "video" &&
+        Boolean(mimetype?.includes("mp4") || mimetype?.includes("quicktime"));
+
+      if (!valid) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (form as any).emit(
+          "error",
+          new UnprocessableEntityError(USERS_MESSAGES.FILE_TYPE_INVALID),
+        );
+      }
+
+      return valid;
+    },
+  });
+
+  return new Promise<File[]>((resolve, reject) => {
+    form.parse(req, (err, _fields, files) => {
+      if (err) {
+        if (err.code === ERROR_CODES.FORMIDABLE_MAX_FILE_SIZE)
+          return reject(
+            new UnprocessableEntityError(
+              USERS_MESSAGES.VIDEO_FILE_SIZE_LIMIT_EXCEEDED,
+            ),
+          );
+
+        if (err.code === ERROR_CODES.FORMIDABLE_MAX_FILES)
+          return reject(
+            new PayloadTooLargeError(
+              USERS_MESSAGES.VIDEO_FILE_COUNT_LIMIT_EXCEEDED,
+            ),
+          );
+
+        if (err.code === ERROR_CODES.FORMIDABLE_MAX_TOTAL_FILE_SIZE)
+          return reject(
+            new PayloadTooLargeError(
+              USERS_MESSAGES.VIDEO_TOTAL_FILE_SIZE_LIMIT_EXCEEDED,
+            ),
+          );
+
+        return reject(err);
+      }
+
+      // key trong Form Data phải là image
+      if (!files.video)
+        return reject(
+          new UnprocessableEntityError(USERS_MESSAGES.VIDEO_FILE_IS_REQUIRED),
+        );
+
+      const video = files.video;
+
+      resolve(video);
     });
   });
 };

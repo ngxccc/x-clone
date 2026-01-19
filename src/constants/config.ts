@@ -13,6 +13,8 @@ export const ENV_CONFIG = {
 export const UPLOAD_CONFIG = {
   IMAGE_MAX_SIZE: 10 * 1024 ** 2,
   IMAGE_MAX_FILES: 4,
+  VIDEO_MAX_SIZE: 50 * 1024 ** 2,
+  VIDEO_MAX_FILES: 1,
 } as const;
 
 export const isProduction = () => {
