@@ -1,6 +1,10 @@
 import envConfig, { isProduction } from "@/constants/config.js";
 import { UPLOAD_IMAGE_DIR } from "@/constants/dir.js";
-import { UPLOAD_PURPOSE, UploadPurposeType } from "@/constants/enums.js";
+import {
+  MEDIA_TYPES,
+  UPLOAD_PURPOSE,
+  UploadPurposeType,
+} from "@/constants/enums.js";
 import { handleUploadImage } from "@/utils/file.js";
 import { Request } from "express";
 import { unlink } from "node:fs/promises";
@@ -17,6 +21,9 @@ class MediasService {
   // TODO: Upload lên Cloud Storage bên thứ 3
   async uploadImage(req: Request, type: UploadPurposeType) {
     const files = await handleUploadImage(req);
+
+    // FIX LỖI EPERM: Ngăn sharp không giữ file mở khiến bị lock
+    sharp.cache(false);
 
     const result = await Promise.all(
       files.map(async (file) => {
@@ -40,7 +47,7 @@ class MediasService {
             url: isProduction()
               ? `${envConfig.HOST}/static/image/${newName}.jpg`
               : `http://localhost:4000/static/image/${newName}.jpg`,
-            type: 0, // Image type
+            type: MEDIA_TYPES.IMAGE,
           };
         } catch (error) {
           await unlink(file.filepath).catch(() => {});
