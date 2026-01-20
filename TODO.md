@@ -115,4 +115,4 @@
 - [x] **Refresh Token** - Thêm rate limit
 - [x] **Validate env data**
 - [ ] **Refactor errorCode**
-- [ ] **Implement resize image**
+- [x] **Implement resize image**
