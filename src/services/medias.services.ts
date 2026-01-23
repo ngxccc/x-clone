@@ -4,8 +4,10 @@ import {
   MEDIA_TYPES,
   UPLOAD_PURPOSE,
   UploadPurposeType,
+  VIDEO_STATUS,
 } from "@/constants/enums.js";
 import { handleUploadImage, handleUploadVideo } from "@/utils/file.js";
+import { addVideoToQueue } from "@/utils/queue.js";
 import { Request } from "express";
 import { rename } from "node:fs/promises";
 import { unlink } from "node:fs/promises";
@@ -69,11 +71,18 @@ class MediasService {
 
         await rename(file.filepath, newPath);
 
+        await addVideoToQueue({
+          videoPath: newPath,
+          fileName: file.newFilename,
+        });
+
+        // TODO: Triển khai Socket IO đến thống báo user biết trạng thái
         return {
           url: isProduction()
             ? `${envConfig.HOST}/static/video/${file.newFilename}`
             : `http://localhost:4000/static/video/${file.newFilename}`,
           type: MEDIA_TYPES.VIDEO,
+          status: VIDEO_STATUS.PENDING,
         };
       }),
     );

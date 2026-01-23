@@ -11,12 +11,14 @@ import envConfig from "./constants/config.js";
 import { initFolder } from "./utils/file.js";
 import mediasRouter from "./routes/medias.routes.js";
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from "./constants/dir.js";
+import { initVideoWorker } from "./services/video.worker.js";
+
+initVideoWorker();
+initFolder();
+databaseService.connect();
 
 const app = express();
 const port = envConfig.PORT;
-
-initFolder();
-databaseService.connect();
 
 // Bỏ qua lớp trung gian (Cloudflare / Nginx)
 app.set("trust proxy", 1);
@@ -51,5 +53,5 @@ app.use((_req, _res, next) => {
 app.use(defaultErrorHandler);
 
 app.listen(port, () => {
-  console.log(`App listening on port ${port}`);
+  console.log(`🚀 App listening on port ${port}`);
 });

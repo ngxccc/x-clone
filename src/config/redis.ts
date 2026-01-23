@@ -1,0 +1,24 @@
+import envConfig from "@/constants/config.js";
+import { Redis } from "ioredis";
+
+export const redisConnection = new Redis({
+  host: envConfig.REDIS_HOST,
+  port: envConfig.REDIS_PORT,
+  username: envConfig.REDIS_USERNAME,
+  password: envConfig.REDIS_PASSWORD,
+  tls:
+    envConfig.REDIS_HOST !== "localhost"
+      ? {
+          rejectUnauthorized: false, // Chấp nhận kết nối bảo mật
+        }
+      : undefined,
+  maxRetriesPerRequest: null,
+});
+
+redisConnection.on("connect", () => {
+  console.log("✅ Redis connected via URL!");
+});
+
+redisConnection.on("error", (err) => {
+  console.error("❌ Redis connection failed:", err);
+});

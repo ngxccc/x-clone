@@ -16,6 +16,13 @@ export const MEDIA_TYPES = {
   VIDEO: 1,
 } as const;
 
+export const VIDEO_STATUS = {
+  SUCCESS: "success",
+  FAILED: "failed",
+  PENDING: "pending",
+  PROCESSING: "processing",
+} as const;
+
 export const UPLOAD_PURPOSE = {
   AVATAR: 0,
   COVER: 1,

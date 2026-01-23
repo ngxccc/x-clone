@@ -36,6 +36,7 @@ const MsDuration = z.custom<StringValue>((val) => {
 
 config({
   path: resolve(".env"),
+  quiet: true,
 });
 
 const checkEnv = () => {
@@ -51,6 +52,12 @@ const configSchema = z.object({
   HOST: z.string(),
   PORT: z.coerce.number().default(4000),
   NODE_ENV: z.enum(["development", "production"]).default("development"),
+
+  // Redis
+  REDIS_HOST: z.string().default("localhost"),
+  REDIS_PORT: z.coerce.number().default(6379),
+  REDIS_PASSWORD: z.string().optional(),
+  REDIS_USERNAME: z.string().optional(),
 
   // --- Database ---
   MONGO_URI: z.string(),
