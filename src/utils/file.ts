@@ -6,9 +6,10 @@ import {
 import { ERROR_CODES, USERS_MESSAGES } from "@/constants/messages.js";
 import { Request } from "express";
 import formidable, { File } from "formidable";
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { PayloadTooLargeError, UnprocessableEntityError } from "./errors.js";
 import { UPLOAD_CONFIG } from "@/constants/config.js";
+import { fileTypeFromFile } from "file-type";
 // import { errors as formidableErrors } from "formidable";
 
 export const initFolder = () => {
@@ -115,7 +116,7 @@ export const handleUploadVideo = async (req: Request) => {
   });
 
   return new Promise<File[]>((resolve, reject) => {
-    form.parse(req, (err, _fields, files) => {
+    form.parse(req, async (err, _fields, files) => {
       if (err) {
         if (err.code === ERROR_CODES.FORMIDABLE_MAX_FILE_SIZE)
           return reject(
@@ -147,9 +148,35 @@ export const handleUploadVideo = async (req: Request) => {
           new UnprocessableEntityError(USERS_MESSAGES.VIDEO_FILE_IS_REQUIRED),
         );
 
-      const video = files.video;
+      const videos = files.video;
 
-      resolve(video);
+      // Magic bytes check
+      for (const video of videos) {
+        try {
+          const type = await fileTypeFromFile(video.filepath);
+
+          const isValid =
+            type &&
+            (type.mime === "video/mp4" || type.mime === "video/quicktime");
+          if (!isValid) {
+            try {
+              unlinkSync(video.filepath);
+            } catch (cleanupError) {
+              console.error("Cleanup failed", cleanupError);
+            }
+
+            return reject(
+              new UnprocessableEntityError(
+                USERS_MESSAGES.VIDEO_EXTENSION_MISMATCH,
+              ),
+            );
+          }
+        } catch (error) {
+          return reject(error);
+        }
+      }
+
+      resolve(videos);
     });
   });
 };

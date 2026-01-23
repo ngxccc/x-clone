@@ -150,6 +150,7 @@ export const USERS_MESSAGES = {
   PAGE_MIN_LENGTH: "Số trang tối thiểu phải lớn 1",
   OLD_PASSWORD_NOT_MATCH: "Mật khẩu cũ không đúng",
   CHANGE_PASSWORD_SAME_AS_OLD: "Mật khẩu mới không được trùng với mật khẩu cũ",
+  VIDEO_EXTENSION_MISMATCH: "Nội dung file không khớp với file video",
 
   FIELD_ALREADY_EXISTS: (field: string) => `${field} đã tồn tại trong hệ thống`,
   FIELD_IS_REQUIRED: (field: string) => `${field} là bắt buộc`,
