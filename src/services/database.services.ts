@@ -35,9 +35,7 @@ class DatabaseService {
       }
 
       await mongoose.connect(this.uri);
-      logger.info(
-        `MongoDB Connected successfully! (Mode: ${envConfig.NODE_ENV})`,
-      );
+      logger.info(`✅ MongoDB Connected successfully!`);
     } catch (error) {
       console.error("MongoDB connection error:", error);
       process.exit(1);
