@@ -1,8 +1,8 @@
 import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/constants/enums.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import { Follower, RefreshToken, User } from "@/models.js";
-import { RegisterBodyType } from "@/schemas/auth.schemas.js";
-import {
+import type { RegisterBodyType } from "@/schemas/auth.schemas.js";
+import type {
   ChangePasswordBodyType,
   UpdateMeBodyType,
 } from "@/schemas/users.schemas.js";

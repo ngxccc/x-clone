@@ -2,9 +2,10 @@ import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import { RefreshToken } from "@/models.js";
 import usersService from "@/services/users.services.js";
+import type { RefreshTokenRequest } from "@/types/request.types";
 import { UnauthorizedError } from "@/utils/errors.js";
 import { verifyToken } from "@/utils/jwt.js";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 export const accessTokenValidator = (
   req: Request,
@@ -13,7 +14,7 @@ export const accessTokenValidator = (
 ) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!authHeader?.startsWith("Bearer ")) {
     return res
       .status(401)
       .json({ message: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED });
@@ -34,7 +35,7 @@ export const accessTokenValidator = (
 };
 
 export const refreshTokenValidator = async (
-  req: Request,
+  req: RefreshTokenRequest,
   res: Response,
   next: NextFunction,
 ) => {
@@ -63,7 +64,7 @@ export const refreshTokenValidator = async (
 };
 
 export const emailVerifyTokenValidator = async (
-  req: Request,
+  req: Request<object, object, { emailVerifyToken: string }>,
   res: Response,
   next: NextFunction,
 ) => {
@@ -89,7 +90,7 @@ export const emailVerifyTokenValidator = async (
 };
 
 export const forgotPasswordTokenValidator = async (
-  req: Request,
+  req: Request<object, object, { forgotPasswordToken: string }>,
   _res: Response,
   next: NextFunction,
 ) => {
@@ -113,14 +114,14 @@ export const forgotPasswordTokenValidator = async (
   }
 };
 
-export const isUserLoggedInValidator = async (
+export const isUserLoggedInValidator = (
   req: Request,
   _res: Response,
   next: NextFunction,
 ) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) return next();
+  if (!authHeader?.startsWith("Bearer ")) return next();
 
   try {
     const token = authHeader.split(" ")[1]!;

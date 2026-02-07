@@ -29,6 +29,14 @@ export const UPLOAD_PURPOSE = {
   TWEET: 2,
 } as const;
 
+export const CONNECTION_STATES = {
+  DISCONNECTED: 0,
+  CONNECTED: 1,
+  CONNECTING: 2,
+  DISCONNECTING: 3,
+  UNINITIALIZED: 99,
+} as const;
+
 export type UploadPurposeType =
   (typeof UPLOAD_PURPOSE)[keyof typeof UPLOAD_PURPOSE];
 

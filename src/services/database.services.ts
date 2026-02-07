@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import "dotenv/config";
 import envConfig, { isProduction } from "@/constants/config.js";
+import logger from "@/utils/logger";
+import { CONNECTION_STATES } from "@/constants/enums";
 
 class DatabaseService {
   private readonly uri: string;
@@ -15,13 +17,16 @@ class DatabaseService {
         throw new Error("MONGO_URI is not defined in .env file");
       }
 
-      if (mongoose.connection.readyState === 1) {
-        console.log("MongoDB is already connected.");
+      if (
+        (mongoose.connection.readyState as number) ===
+        CONNECTION_STATES.CONNECTED
+      ) {
+        logger.info("MongoDB is already connected.");
         return;
       }
 
       // Tắt autoIndex ở production tăng hiệu năng
-      if (isProduction()) {
+      if (isProduction) {
         mongoose.set("autoIndex", false);
         mongoose.set("debug", false);
       } else {
@@ -30,7 +35,7 @@ class DatabaseService {
       }
 
       await mongoose.connect(this.uri);
-      console.log(
+      logger.info(
         `MongoDB Connected successfully! (Mode: ${envConfig.NODE_ENV})`,
       );
     } catch (error) {

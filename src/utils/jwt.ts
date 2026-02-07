@@ -1,6 +1,7 @@
-import jwt, { SignOptions } from "jsonwebtoken";
+import type { SignOptions } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import "dotenv/config";
-import { TokenPayload } from "@/types/common.types.js";
+import type { TokenPayload } from "@/types/common.types.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import envConfig from "@/constants/config.js";
 
@@ -63,9 +64,9 @@ export const verifyToken = (token: string, type: TokenType) => {
 // Để dùng được await (Tránh Callback Hell)
 const signTokenIn = ({ payload, privateKey, options }: SignTokenParams) => {
   return new Promise<string>((resolve, reject) => {
-    jwt.sign(payload, privateKey, options || {}, (error, token) => {
+    jwt.sign(payload, privateKey, options ?? {}, (error, token) => {
       if (error) reject(error);
-      resolve(token as string);
+      resolve(token!);
     });
   });
 };

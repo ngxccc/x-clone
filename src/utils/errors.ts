@@ -1,17 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 
-export class ErrorWithStatus extends Error {
+export class ErrorWithStatus<
+  T = Record<string, string | string[]> | null,
+> extends Error {
   status: number;
   errorCode?: string;
-  errors?: any;
+  errors?: T;
 
-  constructor(
-    message: string,
-    status: number,
-    errorCode?: string,
-    errors?: any,
-  ) {
+  constructor(message: string, status: number, errorCode?: string, errors?: T) {
     super(message);
     this.status = status;
     this.errorCode = errorCode;
@@ -62,5 +58,11 @@ export class UnprocessableEntityError extends ErrorWithStatus {
 export class PayloadTooLargeError extends ErrorWithStatus {
   constructor(message: string, errorCode?: string) {
     super(message, HTTP_STATUS.PAYLOAD_TOO_LARGE, errorCode);
+  }
+}
+
+export class InternalServerError extends ErrorWithStatus {
+  constructor(message: string, errorCode?: string) {
+    super(message, HTTP_STATUS.INTERNAL_SERVER_ERROR, errorCode);
   }
 }

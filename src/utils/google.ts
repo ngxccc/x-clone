@@ -2,7 +2,10 @@ import { GOOGLE_APIS } from "@/constants/googleApi.js";
 import "dotenv/config";
 import { BadRequestError } from "./errors.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
-import { GoogleTokenResponse, GoogleUserInfo } from "@/types/common.types.js";
+import type {
+  GoogleTokenResponse,
+  GoogleUserInfo,
+} from "@/types/common.types.js";
 import envConfig from "@/constants/config.js";
 
 export const getGoogleToken = async (code: string) => {
@@ -20,10 +23,11 @@ export const getGoogleToken = async (code: string) => {
     body: new URLSearchParams(body),
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line
   const data = (await response.json()) as any;
 
   if (!response.ok)
+    // eslint-disable-next-line
     throw new BadRequestError(USERS_MESSAGES.GOOGLE_AUTH_FAILED, data.error);
 
   return data as GoogleTokenResponse;

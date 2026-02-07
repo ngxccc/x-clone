@@ -4,12 +4,19 @@ import {
   UPLOAD_VIDEO_DIR,
 } from "@/constants/dir.js";
 import { ERROR_CODES, USERS_MESSAGES } from "@/constants/messages.js";
-import { Request } from "express";
-import formidable, { File } from "formidable";
+import type { Request } from "express";
+import type { File } from "formidable";
+import formidable from "formidable";
 import { existsSync, mkdirSync, unlinkSync } from "node:fs";
-import { PayloadTooLargeError, UnprocessableEntityError } from "./errors.js";
+import {
+  ErrorWithStatus,
+  InternalServerError,
+  PayloadTooLargeError,
+  UnprocessableEntityError,
+} from "./errors.js";
 import { UPLOAD_CONFIG } from "@/constants/config.js";
 import { fileTypeFromFile } from "file-type";
+import type { EventEmitter } from "node:events";
 // import { errors as formidableErrors } from "formidable";
 
 export const initFolder = () => {
@@ -38,8 +45,11 @@ export const handleUploadImage = async (req: Request) => {
       const valid = name == "image" && Boolean(mimetype?.includes("image/"));
 
       if (!valid) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (form as any).emit(
+        /**
+         * ép thành EventEmitter vì type mặc định của formidable
+         * không eventName là error
+         */
+        (form as EventEmitter).emit(
           "error",
           new UnprocessableEntityError(USERS_MESSAGES.FILE_TYPE_INVALID),
         );
@@ -50,7 +60,8 @@ export const handleUploadImage = async (req: Request) => {
   });
 
   return new Promise<File[]>((resolve, reject) => {
-    form.parse(req, (err, _fields, files) => {
+    // TODO: tạo type chuẩn hơn cho err
+    form.parse(req, (err: { code: number }, _fields, files) => {
       if (err) {
         if (err.code === ERROR_CODES.FORMIDABLE_MAX_FILE_SIZE)
           return reject(
@@ -73,7 +84,7 @@ export const handleUploadImage = async (req: Request) => {
             ),
           );
 
-        return reject(err);
+        return reject(new Error(JSON.stringify(err)));
       }
 
       // key trong Form Data phải là image
@@ -101,11 +112,10 @@ export const handleUploadVideo = async (req: Request) => {
     filter: ({ name, mimetype }) => {
       const valid =
         name == "video" &&
-        Boolean(mimetype?.includes("mp4") || mimetype?.includes("quicktime"));
+        Boolean(mimetype?.includes("mp4") ?? mimetype?.includes("quicktime"));
 
       if (!valid) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (form as any).emit(
+        (form as EventEmitter).emit(
           "error",
           new UnprocessableEntityError(USERS_MESSAGES.FILE_TYPE_INVALID),
         );
@@ -116,7 +126,8 @@ export const handleUploadVideo = async (req: Request) => {
   });
 
   return new Promise<File[]>((resolve, reject) => {
-    form.parse(req, async (err, _fields, files) => {
+    // TODO: tạo type chuẩn hơn cho err
+    form.parse(req, (err: { code: number }, _fields, files) => {
       if (err) {
         if (err.code === ERROR_CODES.FORMIDABLE_MAX_FILE_SIZE)
           return reject(
@@ -139,7 +150,7 @@ export const handleUploadVideo = async (req: Request) => {
             ),
           );
 
-        return reject(err);
+        return reject(new Error(JSON.stringify(err)));
       }
 
       // key trong Form Data phải là image
@@ -150,33 +161,46 @@ export const handleUploadVideo = async (req: Request) => {
 
       const videos = files.video;
 
-      // Magic bytes check
-      for (const video of videos) {
-        try {
-          const type = await fileTypeFromFile(video.filepath);
+      (async () => {
+        // Magic bytes check
+        for (const video of videos) {
+          try {
+            const type = await fileTypeFromFile(video.filepath);
 
-          const isValid =
-            type &&
-            (type.mime === "video/mp4" || type.mime === "video/quicktime");
-          if (!isValid) {
-            try {
-              unlinkSync(video.filepath);
-            } catch (cleanupError) {
-              console.error("Cleanup failed", cleanupError);
+            const isValid =
+              type &&
+              (type.mime === "video/mp4" || type.mime === "video/quicktime");
+            if (!isValid) {
+              try {
+                unlinkSync(video.filepath);
+              } catch (cleanupError) {
+                console.error("Cleanup failed", cleanupError);
+              }
+
+              return reject(
+                new UnprocessableEntityError(
+                  USERS_MESSAGES.VIDEO_EXTENSION_MISMATCH,
+                ),
+              );
             }
-
+          } catch (error) {
             return reject(
-              new UnprocessableEntityError(
-                USERS_MESSAGES.VIDEO_EXTENSION_MISMATCH,
-              ),
+              error instanceof Error ? error : new Error(JSON.stringify(error)),
             );
           }
-        } catch (error) {
+        }
+
+        resolve(videos);
+      })().catch((error) => {
+        if (error instanceof ErrorWithStatus) {
           return reject(error);
         }
-      }
 
-      resolve(videos);
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown Error";
+
+        return reject(new InternalServerError(errorMessage));
+      });
     });
   });
 };

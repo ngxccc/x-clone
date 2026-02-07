@@ -2,6 +2,7 @@ import { spawn } from "child_process";
 import fs from "fs";
 import { UPLOAD_VIDEO_DIR } from "@/constants/dir.js";
 import { resolve } from "path";
+import logger from "./logger";
 
 /**
  * Chạy lệnh FFmpeg trực tiếp
@@ -69,7 +70,7 @@ export const encodeHLSWithFFmpeg = async (
     outputPath,
   ];
 
-  console.log(`🎥 Start FFmpeg with args: ${args.join(" ")}`);
+  logger.info(`🎥 Start FFmpeg with args: ${args.join(" ")}`);
 
   return new Promise<string>((resolve, reject) => {
     // Spawn tiến trình con
@@ -77,15 +78,15 @@ export const encodeHLSWithFFmpeg = async (
 
     // FFmpeg ghi log vào stderr
     ffmpegProcess.stderr.on("data", (_data) => {
-      // console.log(`ffmpeg progress: ${_data}`);
+      // logger.info(`ffmpeg progress: ${_data}`);
     });
 
     ffmpegProcess.on("close", (code) => {
       if (code === 0) {
-        console.log("✅ FFmpeg convert done!");
+        logger.info("✅ FFmpeg convert done!");
         resolve(outputPath);
       } else {
-        console.error(`❌ FFmpeg exited with code ${code}`);
+        logger.error(`❌ FFmpeg exited with code ${code}`);
         reject(new Error(`FFmpeg error code ${code}`));
       }
     });

@@ -1,14 +1,14 @@
 import envConfig, { isProduction } from "@/constants/config.js";
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from "@/constants/dir.js";
+import type { UploadPurposeType } from "@/constants/enums.js";
 import {
   MEDIA_TYPES,
   UPLOAD_PURPOSE,
-  UploadPurposeType,
   VIDEO_STATUS,
 } from "@/constants/enums.js";
 import { handleUploadImage, handleUploadVideo } from "@/utils/file.js";
 import { addVideoToQueue } from "@/utils/queue.js";
-import { Request } from "express";
+import type { Request } from "express";
 import { rename } from "node:fs/promises";
 import { unlink } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -47,13 +47,15 @@ class MediasService {
           await unlink(file.filepath);
 
           return {
-            url: isProduction()
+            url: isProduction
               ? `${envConfig.HOST}/static/image/${newName}.jpg`
               : `http://localhost:4000/static/image/${newName}.jpg`,
             type: MEDIA_TYPES.IMAGE,
           };
         } catch (error) {
-          await unlink(file.filepath).catch(() => {});
+          await unlink(file.filepath).catch(() => {
+            /* empty */
+          });
           throw error;
         }
       }),
@@ -78,7 +80,7 @@ class MediasService {
 
         // TODO: Triển khai Socket IO đến thống báo user biết trạng thái
         return {
-          url: isProduction()
+          url: isProduction
             ? `${envConfig.HOST}/static/video/${file.newFilename}`
             : `http://localhost:4000/static/video/${file.newFilename}`,
           type: MEDIA_TYPES.VIDEO,

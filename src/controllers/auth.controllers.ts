@@ -1,7 +1,11 @@
-import { NextFunction, Request, Response } from "express";
-import {
+import type { NextFunction, Request, Response } from "express";
+import type {
+  ForgotPasswordBodyType,
+  LoginBodyType,
   LoginGoogleBodyType,
   RegisterBodyType,
+  ResendVerificationEmailBodyType,
+  ResetPasswordBodyType,
 } from "@/schemas/auth.schemas.js";
 import usersService from "@/services/users.services.js";
 import authService from "@/services/auth.services.js";
@@ -10,9 +14,10 @@ import { USERS_MESSAGES } from "@/constants/messages.js";
 import ms from "ms";
 import "dotenv/config";
 import envConfig, { isProduction } from "@/constants/config.js";
+import type { RefreshTokenRequest } from "@/types/request.types";
 
 export const loginController = async (
-  req: Request,
+  req: Request<object, object, LoginBodyType>,
   res: Response,
   next: NextFunction,
 ) => {
@@ -28,7 +33,7 @@ export const loginController = async (
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true, // Chặn JS đọc
-      secure: isProduction(), // https
+      secure: isProduction, // https
       sameSite: "strict", // Chống CSRF
       maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
     });
@@ -43,12 +48,12 @@ export const loginController = async (
 };
 
 export const registerController = async (
-  req: Request,
+  req: Request<object, object, RegisterBodyType>,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { email } = req.body as RegisterBodyType;
+    const { email } = req.body;
 
     if (await usersService.checkEmailExist(email)) {
       return res
@@ -77,7 +82,7 @@ export const registerController = async (
 };
 
 export const logoutController = async (
-  req: Request,
+  req: RefreshTokenRequest,
   res: Response,
   next: NextFunction,
 ) => {
@@ -115,7 +120,7 @@ export const verifyEmailController = async (
 };
 
 export const resendVerificationEmailController = async (
-  req: Request,
+  req: Request<object, object, ResendVerificationEmailBodyType>,
   res: Response,
   next: NextFunction,
 ) => {
@@ -131,7 +136,7 @@ export const resendVerificationEmailController = async (
 };
 
 export const forgotPasswordController = async (
-  req: Request,
+  req: Request<object, object, ForgotPasswordBodyType>,
   res: Response,
   next: NextFunction,
 ) => {
@@ -147,7 +152,7 @@ export const forgotPasswordController = async (
 };
 
 export const resetPasswordController = async (
-  req: Request,
+  req: Request<object, object, ResetPasswordBodyType>,
   res: Response,
   next: NextFunction,
 ) => {
@@ -166,7 +171,7 @@ export const resetPasswordController = async (
 };
 
 export const refreshTokenController = async (
-  req: Request,
+  req: RefreshTokenRequest,
   res: Response,
   next: NextFunction,
 ) => {
@@ -183,7 +188,7 @@ export const refreshTokenController = async (
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true, // Chặn JS đọc
-      secure: isProduction(), // https
+      secure: isProduction, // https
       sameSite: "strict", // Chống CSRF
       maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
     });
@@ -213,7 +218,7 @@ export const loginGoogleController = async (
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true, // Chặn JS đọc
-      secure: isProduction(), // https
+      secure: isProduction, // https
       sameSite: "strict", // Chống CSRF
       maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
     });

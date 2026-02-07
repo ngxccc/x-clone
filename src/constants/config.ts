@@ -3,11 +3,20 @@ import fs from "fs";
 import { resolve } from "node:path";
 import z from "zod";
 import { USERS_MESSAGES } from "./messages.js";
-import { StringValue } from "ms";
+import type { StringValue } from "ms";
 
-export const ENV_CONFIG = {
+export const ENVIRONMENT_MODES = {
   DEVELOPMENT: "development",
   PRODUCTION: "production",
+} as const;
+
+export const LOG_LEVELS = {
+  TRACE: "trace",
+  DEBUG: "debug",
+  INFO: "info",
+  WARN: "warn",
+  ERROR: "error",
+  FATAL: "fatal",
 } as const;
 
 export const UPLOAD_CONFIG = {
@@ -16,10 +25,6 @@ export const UPLOAD_CONFIG = {
   VIDEO_MAX_SIZE: 50 * 1024 ** 2,
   VIDEO_MAX_FILES: 1,
 } as const;
-
-export const isProduction = () => {
-  return envConfig.NODE_ENV === ENV_CONFIG.PRODUCTION;
-};
 
 const MsDuration = z.custom<StringValue>((val) => {
   if (typeof val !== "string") return false;
@@ -48,10 +53,11 @@ const checkEnv = () => {
 checkEnv();
 
 const configSchema = z.object({
-  // --- Server Basic ---
+  // --- Server ---
   HOST: z.string(),
   PORT: z.coerce.number().default(4000),
-  NODE_ENV: z.enum(["development", "production"]).default("development"),
+  NODE_ENV: z.enum(ENVIRONMENT_MODES).default("development"),
+  LOG_LEVEL: z.enum(LOG_LEVELS).default("debug"),
 
   // Redis
   REDIS_HOST: z.string().default("localhost"),
@@ -95,6 +101,9 @@ if (!configServer.success) {
 }
 
 const envConfig = configServer.data;
+
+export const isProduction = envConfig.NODE_ENV === ENVIRONMENT_MODES.PRODUCTION;
+
 export default envConfig;
 
 declare global {

@@ -10,11 +10,12 @@ import {
   Follower,
 } from "@/models.js";
 import envConfig from "@/constants/config.js";
+import logger from "./logger";
 
 const syncIndexes = async () => {
   try {
     await mongoose.connect(envConfig.MONGO_URI);
-    console.log("Connected to DB for Indexing...");
+    logger.info("Connected to DB for Indexing...");
 
     // Các model cần đánh index
     // Promise.all giúp chạy song song cho nhanh
@@ -28,12 +29,12 @@ const syncIndexes = async () => {
       Follower.createIndexes(),
     ]);
 
-    console.log("✅ Sync The Index Successfully!");
+    logger.info("✅ Sync The Index Successfully!");
     process.exit(0);
   } catch (error) {
-    console.error("❌ Indexing error:", error);
+    logger.error(error, "❌ Indexing error:");
     process.exit(1);
   }
 };
 
-syncIndexes();
+void syncIndexes();

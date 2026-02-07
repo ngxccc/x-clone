@@ -12,12 +12,17 @@ import { initFolder } from "./utils/file.js";
 import mediasRouter from "./routes/medias.routes.js";
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from "./constants/dir.js";
 import { initVideoWorker } from "./services/video.worker.js";
+import compression from "compression";
+import logger from "./utils/logger.js";
 
 initVideoWorker();
 initFolder();
-databaseService.connect();
+
+void databaseService.connect();
 
 const app = express();
+app.use(compression());
+
 const port = envConfig.PORT;
 
 // Bỏ qua lớp trung gian (Cloudflare / Nginx)
@@ -53,5 +58,5 @@ app.use((_req, _res, next) => {
 app.use(defaultErrorHandler);
 
 app.listen(port, () => {
-  console.log(`🚀 App listening on port ${port}`);
+  logger.info(`🚀 App listening on port ${port}`);
 });

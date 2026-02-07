@@ -1,13 +1,19 @@
 import { redisConnection } from "@/config/redis.js";
+import logger from "@/utils/logger";
 import { encodeHLSWithFFmpeg } from "@/utils/video.js";
-import { Job, Worker } from "bullmq";
+import type { Job } from "bullmq";
+import { Worker } from "bullmq";
 import { unlink } from "node:fs/promises";
 
-const processEncodeVideo = async (job: Job) => {
+const processEncodeVideo = async (
+  job: Job<{ videoPath: string; fileName: string }>,
+) => {
+  // TODO: type cho job
+  logger.info(job);
   const { videoPath, fileName } = job.data;
 
-  console.log(`⏳ [Worker] Đang encode HLS (Native FFmpeg): ${fileName}...`);
-  console.log(`   Path: ${videoPath}`);
+  logger.info(`⏳ [Worker] Đang encode HLS (Native FFmpeg): ${fileName}...`);
+  logger.info(`   Path: ${videoPath}`);
 
   try {
     await encodeHLSWithFFmpeg(videoPath, fileName);
@@ -17,12 +23,12 @@ const processEncodeVideo = async (job: Job) => {
     // NOTE: Trả về link S3 nếu deloy lên S3
     const hlsUrl = `http://localhost:4000/static/video/${idName}/master.m3u8`;
 
-    await unlink(videoPath).catch((e) => console.log("Lỗi xóa file gốc:", e));
+    await unlink(videoPath).catch((e) => logger.info(e, "Lỗi xóa file gốc:"));
 
-    console.log(`✅ [Worker] Done job ${job.id}`);
+    logger.info(`✅ [Worker] Done job ${job.id}`);
     return { status: "success", hlsUrl };
   } catch (error) {
-    console.error("❌ Worker Error:", error);
+    logger.error(error, "❌ Worker Error:");
     throw error;
   }
 };
@@ -34,12 +40,12 @@ export const initVideoWorker = () => {
   });
 
   worker.on("completed", (job) => {
-    console.log(`🎉 Job ${job.id} hoàn thành!`);
+    logger.info(`🎉 Job ${job.id} hoàn thành!`);
   });
 
   worker.on("failed", (job, err) => {
-    console.error(`❌ Job ${job?.id} thất bại: ${err.message}`);
+    logger.error(`❌ Job ${job?.id} thất bại: ${err.message}`);
   });
 
-  console.log("🚀 Video Worker is ready!");
+  logger.info("🚀 Video Worker is ready!");
 };

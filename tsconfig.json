@@ -1,28 +1,26 @@
 {
   "compilerOptions": {
-    /* 1. Thiết lập môi trường Output */
-    "target": "ES2022", // Node 18+ hỗ trợ tốt ES2022
-    "module": "NodeNext", // Quan trọng: Sử dụng chuẩn module của Node
-    "moduleResolution": "NodeNext", // Quan trọng: Để Node hiểu cách resolve module
+    "target": "ESNext", // "ESNext" -> bun | "ES2022" -> nodejs
+    "module": "ESNext", // "ESNext" -> bun | "NodeNext" -> nodejs
+    "moduleResolution": "bundler", // "bundler" -> bun | "NodeNext" -> nodejs
     "outDir": "./dist",
     "rootDir": "./src",
-    "sourceMap": true, // Hỗ trợ debug (nhảy từ JS về TS khi lỗi)
-
-    /* 2. Các thư viện */
+    "sourceMap": true,
     "lib": ["ESNext"],
+    "noEmit": true, // Không build ra file js
+    "allowJs": true, // Tắt check file js
 
-    /* 3. Interop (Tương thích) */
-    "esModuleInterop": true, // Giúp import các thư viện CommonJS cũ (như express) dễ dàng hơn
-    "forceConsistentCasingInFileNames": true,
-
-    /* 4. Strict Mode */
     "strict": true,
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true, // Giúp import các thư viện CommonJS cũ (như express) dễ dàng hơn
+    "forceConsistentCasingInFileNames": true,
+    "verbatimModuleSyntax": true, // tách type
 
-    /* 5. Clean up code */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
 
@@ -32,5 +30,5 @@
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "dist", "build"]
 }

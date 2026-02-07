@@ -1,4 +1,5 @@
 import envConfig from "@/constants/config.js";
+import logger from "@/utils/logger";
 import { Redis } from "ioredis";
 
 export const redisConnection = new Redis({
@@ -16,9 +17,9 @@ export const redisConnection = new Redis({
 });
 
 redisConnection.on("connect", () => {
-  console.log("✅ Redis connected via URL!");
+  logger.info("✅ Redis connected via URL!");
 });
 
 redisConnection.on("error", (err) => {
-  console.error("❌ Redis connection failed:", err);
+  logger.error(err, "❌ Redis connection failed:");
 });

@@ -1,4 +1,4 @@
-import { TokenType } from "@/constants/enums.js";
+import type { TokenType } from "@/constants/enums.js";
 
 export interface MongoError extends Error {
   code?: number;

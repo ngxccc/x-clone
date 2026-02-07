@@ -1,6 +1,7 @@
 import { HTTP_STATUS } from "@/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
-import {
+import type {
+  ChangePasswordBodyType,
   FollowBodyType,
   GetFollowersParamsType,
   PaginationQueryType,
@@ -8,7 +9,7 @@ import {
   UpdateMeBodyType,
 } from "@/schemas/users.schemas.js";
 import usersService from "@/services/users.services.js";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 export const getMeController = async (
   req: Request,
@@ -38,7 +39,7 @@ export const getProfileController = async (
     const { username } = req.params;
     const myUserId = req.decodedAccessToken?.userId;
 
-    const result = await usersService.getProfile(username as string, myUserId);
+    const result = await usersService.getProfile(username!, myUserId);
 
     return res.status(HTTP_STATUS.OK).json({
       message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
@@ -150,7 +151,7 @@ export const getFollowingController = async (
 };
 
 export const changePasswordController = async (
-  req: Request,
+  req: Request<object, object, ChangePasswordBodyType>,
   res: Response,
   next: NextFunction,
 ) => {

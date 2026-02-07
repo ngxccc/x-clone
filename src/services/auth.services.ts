@@ -11,9 +11,9 @@ import {
 } from "@/utils/errors.js";
 import bcrypt from "bcrypt";
 import "dotenv/config";
-import ms, { StringValue } from "ms";
+import ms from "ms";
 import usersService from "./users.services.js";
-import {
+import type {
   ForgotPasswordBodyType,
   ResendVerificationEmailBodyType,
 } from "@/schemas/auth.schemas.js";
@@ -74,7 +74,7 @@ class AuthService {
     ]);
 
     const expiresIn = envConfig.JWT_REFRESH_EXPIRES_IN;
-    const expiresMilliseconds = ms(expiresIn as StringValue);
+    const expiresMilliseconds = ms(expiresIn);
 
     await RefreshToken.create({
       token: refreshToken,

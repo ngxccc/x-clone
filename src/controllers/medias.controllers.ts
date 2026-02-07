@@ -1,7 +1,7 @@
 import { UPLOAD_PURPOSE } from "@/constants/enums.js";
 import { USERS_MESSAGES } from "@/constants/messages.js";
 import mediasService from "@/services/medias.services.js";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 export const uploadTweetImageController = async (
   req: Request,
