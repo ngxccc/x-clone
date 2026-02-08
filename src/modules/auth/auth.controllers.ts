@@ -7,227 +7,226 @@ import type {
   ResendVerificationEmailBodyType,
   ResetPasswordBodyType,
 } from "./auth.schemas.js";
-import { usersService } from "@/modules/users";
-import authService from "./auth.services.js";
+import type { AuthService } from "./auth.services.js";
 import { HTTP_STATUS } from "@/common/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/common/constants/messages.js";
 import ms from "ms";
 import "dotenv/config";
 import envConfig, { isProduction } from "@/common/config/env.js";
 import type { RefreshTokenRequest } from "@/common/types/request.types";
+import type { UserService } from "../users/users.services.js";
 
-export const loginController = async (
-  req: Request<object, object, LoginBodyType>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { email, password } = req.body;
-    const deviceInfo = req.headers["user-agent"];
+export class AuthController {
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
 
-    const { accessToken, refreshToken } = await authService.login(
-      email,
-      password,
-      deviceInfo,
-    );
+  login = async (
+    req: Request<object, object, LoginBodyType>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { email, password } = req.body;
+      const deviceInfo = req.headers["user-agent"];
 
-    res.cookie("refresh_token", refreshToken, {
-      httpOnly: true, // Chặn JS đọc
-      secure: isProduction, // https
-      sameSite: "strict", // Chống CSRF
-      maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
-    });
+      const { accessToken, refreshToken } = await this.authService.login(
+        email,
+        password,
+        deviceInfo,
+      );
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.LOGIN_SUCCESS,
-      result: { accessToken },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      res.cookie("refresh_token", refreshToken, {
+        httpOnly: true, // Chặn JS đọc
+        secure: isProduction, // https
+        sameSite: "strict", // Chống CSRF
+        maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
+      });
 
-export const registerController = async (
-  req: Request<object, object, RegisterBodyType>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { email } = req.body;
-
-    if (await usersService.checkEmailExist(email)) {
-      return res
-        .status(HTTP_STATUS.CONFLICT)
-        .json({ message: USERS_MESSAGES.EMAIL_ALREADY_EXISTS });
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.LOGIN_SUCCESS,
+        result: { accessToken },
+      });
+    } catch (error) {
+      next(error);
     }
+  };
 
-    const newUser = await usersService.register(req.body);
+  register = async (
+    req: Request<object, object, RegisterBodyType>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { email } = req.body;
 
-    // TODO: Sẽ gửi mail cho user
-    console.log(newUser.emailVerifyToken);
+      if (await this.userService.checkEmailExist(email)) {
+        return res
+          .status(HTTP_STATUS.CONFLICT)
+          .json({ message: USERS_MESSAGES.EMAIL_ALREADY_EXISTS });
+      }
 
-    return res.status(HTTP_STATUS.CREATED).json({
-      message: USERS_MESSAGES.REGISTER_SUCCESS,
-      result: {
-        _id: newUser._id,
-        username: newUser.username,
-        email: newUser.email,
-        dateOfBirth: newUser.dateOfBirth,
-      },
-    });
-  } catch (error) {
-    // Đẩy toàn bộ lỗi sang defaultErrorHandler xử lý
-    next(error);
-  }
-};
+      const newUser = await this.userService.register(req.body);
 
-export const logoutController = async (
-  req: RefreshTokenRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const refreshToken = req.cookies.refresh_token;
+      // TODO: Sẽ gửi mail cho user
+      console.log(newUser.emailVerifyToken);
 
-    await authService.logout(refreshToken);
+      return res.status(HTTP_STATUS.CREATED).json({
+        message: USERS_MESSAGES.REGISTER_SUCCESS,
+        result: {
+          _id: newUser._id,
+          username: newUser.username,
+          email: newUser.email,
+          dateOfBirth: newUser.dateOfBirth,
+        },
+      });
+    } catch (error) {
+      // Đẩy toàn bộ lỗi sang defaultErrorHandler xử lý
+      next(error);
+    }
+  };
 
-    res.clearCookie("refresh_token");
+  logout = async (
+    req: RefreshTokenRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const refreshToken = req.cookies.refresh_token;
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.LOGOUT_SUCCESS,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      await this.authService.logout(refreshToken);
 
-export const verifyEmailController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { userId } = req.decodedEmailVerifyToken!;
+      res.clearCookie("refresh_token");
 
-    await authService.verifyEmail(userId);
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.LOGOUT_SUCCESS,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.EMAIL_VERIFY_SUCCESS,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.decodedEmailVerifyToken!;
 
-export const resendVerificationEmailController = async (
-  req: Request<object, object, ResendVerificationEmailBodyType>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    await authService.resendVerificationEmail(req.body);
+      await this.authService.verifyEmail(userId);
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.CHECK_EMAIL_TO_VERIFY,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.EMAIL_VERIFY_SUCCESS,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-export const forgotPasswordController = async (
-  req: Request<object, object, ForgotPasswordBodyType>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    await authService.forgotPassword(req.body);
+  resendVerificationEmail = async (
+    req: Request<object, object, ResendVerificationEmailBodyType>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      await this.authService.resendVerificationEmail(req.body);
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.CHECK_EMAIL_TO_VERIFY,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-export const resetPasswordController = async (
-  req: Request<object, object, ResetPasswordBodyType>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { password } = req.body;
-    const { userId } = req.decodedForgotPasswordToken!;
+  forgotPassword = async (
+    req: Request<object, object, ForgotPasswordBodyType>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      await this.authService.forgotPassword(req.body);
 
-    await authService.resetPassword(userId, password);
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.PASSWORD_RESET_SUCCESS,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  resetPassword = async (
+    req: Request<object, object, ResetPasswordBodyType>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { password } = req.body;
+      const { userId } = req.decodedForgotPasswordToken!;
 
-export const refreshTokenController = async (
-  req: RefreshTokenRequest,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const refreshTokenCookie = req.cookies.refresh_token;
-    const { userId } = req.decodedRefreshToken!;
-    const deviceInfo = req.headers["user-agent"];
+      await this.authService.resetPassword(userId, password);
 
-    const { accessToken, refreshToken } = await authService.refreshToken(
-      userId,
-      refreshTokenCookie,
-      deviceInfo,
-    );
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.PASSWORD_RESET_SUCCESS,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    res.cookie("refresh_token", refreshToken, {
-      httpOnly: true, // Chặn JS đọc
-      secure: isProduction, // https
-      sameSite: "strict", // Chống CSRF
-      maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
-    });
+  refreshToken = async (
+    req: RefreshTokenRequest,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const refreshTokenCookie = req.cookies.refresh_token;
+      const { userId } = req.decodedRefreshToken!;
+      const deviceInfo = req.headers["user-agent"];
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
-      result: { accessToken },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      const { accessToken, refreshToken } = await this.authService.refreshToken(
+        userId,
+        refreshTokenCookie,
+        deviceInfo,
+      );
 
-export const loginGoogleController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { code } = req.body as LoginGoogleBodyType;
-    const deviceInfo = req.headers["user-agent"];
+      res.cookie("refresh_token", refreshToken, {
+        httpOnly: true, // Chặn JS đọc
+        secure: isProduction, // https
+        sameSite: "strict", // Chống CSRF
+        maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
+      });
 
-    const { accessToken, refreshToken } = await authService.loginGoogle(
-      code,
-      deviceInfo,
-    );
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
+        result: { accessToken },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    res.cookie("refresh_token", refreshToken, {
-      httpOnly: true, // Chặn JS đọc
-      secure: isProduction, // https
-      sameSite: "strict", // Chống CSRF
-      maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
-    });
+  loginGoogle = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { code } = req.body as LoginGoogleBodyType;
+      const deviceInfo = req.headers["user-agent"];
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.LOGIN_WITH_GOOGLE_SUCCESS,
-      result: { accessToken },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      const { accessToken, refreshToken } = await this.authService.loginGoogle(
+        code,
+        deviceInfo,
+      );
+
+      res.cookie("refresh_token", refreshToken, {
+        httpOnly: true, // Chặn JS đọc
+        secure: isProduction, // https
+        sameSite: "strict", // Chống CSRF
+        maxAge: ms(envConfig.JWT_REFRESH_EXPIRES_IN),
+      });
+
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.LOGIN_WITH_GOOGLE_SUCCESS,
+        result: { accessToken },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+}

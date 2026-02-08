@@ -4,7 +4,7 @@ import envConfig, { isProduction } from "@/common/config/env.js";
 import logger from "@/common/utils/logger";
 import { CONNECTION_STATES } from "@/common/constants/enums";
 
-class DatabaseService {
+export class DatabaseService {
   private readonly uri: string;
 
   constructor() {
@@ -42,7 +42,3 @@ class DatabaseService {
     }
   }
 }
-
-// Tạo instance (Singleton Pattern đơn giản)
-const databaseService = new DatabaseService();
-export default databaseService;

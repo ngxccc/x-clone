@@ -1,6 +1,5 @@
 import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/common/constants/enums.js";
 import { ERROR_CODES, USERS_MESSAGES } from "@/common/constants/messages.js";
-import { User } from "@/modules/users";
 import { signToken } from "@/common/utils/jwt.js";
 import {
   UnauthorizedError,
@@ -12,7 +11,6 @@ import {
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import ms from "ms";
-import { usersService } from "@/modules/users";
 import type {
   ForgotPasswordBodyType,
   ResendVerificationEmailBodyType,
@@ -20,8 +18,12 @@ import type {
 import envConfig from "@/common/config/env.js";
 import { getGoogleToken, getGoogleUserInfo } from "@/common/utils/google.js";
 import RefreshToken from "./models/RefreshToken.js";
+import User from "../users/models/User.js";
+import type { UserService } from "../users/users.services.js";
 
-class AuthService {
+export class AuthService {
+  constructor(private readonly userService: UserService) {}
+
   private generateRandomPassword() {
     const chars = "abcdefghijklmnopqrstuvwxyz";
     const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -91,7 +93,7 @@ class AuthService {
   }
 
   async login(email: string, password: string, deviceInfo?: string) {
-    const user = await usersService.findUserByEmailWithPassword(email);
+    const user = await this.userService.findUserByEmailWithPassword(email);
     if (!user)
       throw new UnauthorizedError(
         USERS_MESSAGES.EMAIL_OR_PASSWORD_INCORRECT,
@@ -168,7 +170,7 @@ class AuthService {
   }
 
   async verifyEmail(userId: string) {
-    await usersService.updateVerifyStatus(userId);
+    await this.userService.updateVerifyStatus(userId);
 
     return { success: true };
   }
@@ -176,7 +178,7 @@ class AuthService {
   async resendVerificationEmail(payload: ResendVerificationEmailBodyType) {
     const { email } = payload;
 
-    const user = await usersService.findUserByEmail(email);
+    const user = await this.userService.findUserByEmail(email);
 
     if (!user)
       throw new NotFoundError(
@@ -203,7 +205,7 @@ class AuthService {
       "email",
     );
 
-    await usersService.updateEmailVerifyToken(user.id, emailVerifyToken);
+    await this.userService.updateEmailVerifyToken(user.id, emailVerifyToken);
 
     // TODO: Gửi email cho user
     console.log(`RESEND EMAIL TO [${email}]: ${emailVerifyToken}`);
@@ -214,7 +216,7 @@ class AuthService {
   async forgotPassword(payload: ForgotPasswordBodyType) {
     const { email } = payload;
 
-    const user = await usersService.findUserByEmail(email);
+    const user = await this.userService.findUserByEmail(email);
 
     if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
 
@@ -232,7 +234,10 @@ class AuthService {
       "forgotPassword",
     );
 
-    await usersService.updateForgotPasswordToken(user.id, forgotPasswordToken);
+    await this.userService.updateForgotPasswordToken(
+      user.id,
+      forgotPasswordToken,
+    );
 
     // TODO: Gửi Email (Link: https://client.com/reset-password?token=...)
     console.log(`FORGOT PASSWORD TOKEN FOR [${email}]: ${forgotPasswordToken}`);
@@ -275,6 +280,3 @@ class AuthService {
     return await this.signAccessAndRefreshToken(userId, deviceInfo);
   }
 }
-
-const authService = new AuthService();
-export default authService;

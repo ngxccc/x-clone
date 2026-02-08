@@ -7,9 +7,15 @@ import { USERS_MESSAGES } from "@/common/constants/messages.js";
 import envConfig from "@/common/config/env.js";
 import { NotFoundError } from "@/common/utils/errors.js";
 import { defaultErrorHandler } from "@/common/middlewares/error.middlewares.js";
-import { usersRouter } from "@/modules/users";
-import { mediasRouter } from "@/modules/medias";
-import { authRouter } from "./modules/auth";
+import {
+  authController,
+  authMiddleware,
+  mediaController,
+  userController,
+} from "./container";
+import { createAuthRouter } from "./modules/auth";
+import { createUsersRouter } from "./modules/users";
+import { createMediasRouter } from "@/modules/medias";
 
 const app = express();
 
@@ -29,9 +35,9 @@ app.use(
 );
 
 // Routes Definition
-app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/users", usersRouter);
-app.use("/api/v1/media", mediasRouter);
+app.use("/api/v1/auth", createAuthRouter(authController, authMiddleware));
+app.use("/api/v1/users", createUsersRouter(userController, authMiddleware));
+app.use("/api/v1/media", createMediasRouter(mediaController, authMiddleware));
 
 // Serve static file
 app.use("/static/image", express.static(UPLOAD_IMAGE_DIR));

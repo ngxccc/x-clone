@@ -1,6 +1,5 @@
 import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/common/constants/enums.js";
 import { USERS_MESSAGES } from "@/common/constants/messages.js";
-import { RefreshToken, type RegisterBodyType } from "@/modules/auth";
 import type {
   ChangePasswordBodyType,
   UpdateMeBodyType,
@@ -14,9 +13,12 @@ import {
 } from "@/common/utils/errors.js";
 import { signToken } from "@/common/utils/jwt.js";
 import bcrypt from "bcrypt";
-import { Follower, User } from "@/modules/users";
+import RefreshToken from "../auth/models/RefreshToken.js";
+import User from "./models/User.js";
+import Follower from "./models/Follower.js";
+import type { RegisterBodyType } from "../auth/auth.schemas.js";
 
-class UserService {
+export class UserService {
   async checkEmailExist(email: string) {
     // Mongoose unique cũng bắt được cái này
     // Nhưng check tay ở đây để trả về message thân thiện hơn.
@@ -284,6 +286,3 @@ class UserService {
     return { success: true };
   }
 }
-
-const usersService = new UserService();
-export default usersService;

@@ -1,28 +1,36 @@
-import {
-  uploadAvatarController,
-  uploadCoverController,
-  uploadTweetImageController,
-  uploadVideoController,
-} from "./medias.controllers.js";
-import { accessTokenValidator } from "@/modules/auth";
+import type { AuthMiddleware } from "../auth/auth.middlewares.js";
+import type { MediaController } from "./medias.controllers.js";
 import { Router } from "express";
 
-const mediasRouter = Router();
+export const createMediasRouter = (
+  mediaController: MediaController,
+  authMiddleware: AuthMiddleware,
+) => {
+  const router = Router();
 
-mediasRouter.post(
-  "/upload-tweet-image",
-  accessTokenValidator,
-  uploadTweetImageController,
-);
+  router.post(
+    "/upload-tweet-image",
+    authMiddleware.accessTokenValidator,
+    mediaController.uploadTweetImage,
+  );
 
-mediasRouter.post(
-  "/upload-avatar",
-  accessTokenValidator,
-  uploadAvatarController,
-);
+  router.post(
+    "/upload-avatar",
+    authMiddleware.accessTokenValidator,
+    mediaController.uploadAvatar,
+  );
 
-mediasRouter.post("/upload-cover", accessTokenValidator, uploadCoverController);
+  router.post(
+    "/upload-cover",
+    authMiddleware.accessTokenValidator,
+    mediaController.uploadCover,
+  );
 
-mediasRouter.post("/upload-video", accessTokenValidator, uploadVideoController);
+  router.post(
+    "/upload-video",
+    authMiddleware.accessTokenValidator,
+    mediaController.uploadVideo,
+  );
 
-export default mediasRouter;
+  return router;
+};

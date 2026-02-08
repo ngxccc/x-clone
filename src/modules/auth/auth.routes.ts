@@ -1,20 +1,4 @@
 import {
-  forgotPasswordController,
-  loginController,
-  logoutController,
-  loginGoogleController,
-  refreshTokenController,
-  registerController,
-  resendVerificationEmailController,
-  resetPasswordController,
-  verifyEmailController,
-} from "./auth.controllers.js";
-import {
-  emailVerifyTokenValidator,
-  forgotPasswordTokenValidator,
-  refreshTokenValidator,
-} from "./auth.middlewares.js";
-import {
   refreshTokenLimiter,
   resendEmailLimiter,
 } from "@/common/middlewares/rateLimit.middlewares.js";
@@ -33,60 +17,67 @@ import {
   RefreshTokenReqCookie,
 } from "./auth.schemas.js";
 import { Router } from "express";
+import type { AuthController } from "./auth.controllers.js";
+import type { AuthMiddleware } from "./auth.middlewares.js";
 
-const authRouter = Router();
+export const createAuthRouter = (
+  authController: AuthController,
+  authMiddleware: AuthMiddleware,
+) => {
+  const router = Router();
 
-authRouter.post("/login", validate(LoginReqBody), loginController);
+  router.post("/login", validate(LoginReqBody), authController.login);
 
-authRouter.post("/register", validate(RegisterReqBody), registerController);
+  router.post("/register", validate(RegisterReqBody), authController.register);
 
-authRouter.post(
-  "/logout",
-  validateCookies(RefreshTokenReqCookie),
-  refreshTokenValidator,
-  logoutController,
-);
+  router.post(
+    "/logout",
+    validateCookies(RefreshTokenReqCookie),
+    authMiddleware.refreshTokenValidator,
+    authController.logout,
+  );
 
-authRouter.post(
-  "/verify-email",
-  validate(VerifyEmailReqBody),
-  emailVerifyTokenValidator,
-  verifyEmailController,
-);
+  router.post(
+    "/verify-email",
+    validate(VerifyEmailReqBody),
+    authMiddleware.emailVerifyTokenValidator,
+    authController.verifyEmail,
+  );
 
-authRouter.post(
-  "/resend-verification-email",
-  resendEmailLimiter,
-  validate(ResendVerificationEmailReqBody),
-  resendVerificationEmailController,
-);
+  router.post(
+    "/resend-verification-email",
+    resendEmailLimiter,
+    validate(ResendVerificationEmailReqBody),
+    authController.resendVerificationEmail,
+  );
 
-authRouter.post(
-  "/forgot-password",
-  resendEmailLimiter,
-  validate(ForgotPasswordReqBody),
-  forgotPasswordController,
-);
+  router.post(
+    "/forgot-password",
+    resendEmailLimiter,
+    validate(ForgotPasswordReqBody),
+    authController.forgotPassword,
+  );
 
-authRouter.post(
-  "/reset-password",
-  validate(ResetPasswordReqBody),
-  forgotPasswordTokenValidator,
-  resetPasswordController,
-);
+  router.post(
+    "/reset-password",
+    validate(ResetPasswordReqBody),
+    authMiddleware.forgotPasswordTokenValidator,
+    authController.resetPassword,
+  );
 
-authRouter.post(
-  "/refresh-token",
-  refreshTokenLimiter,
-  validateCookies(RefreshTokenReqCookie),
-  refreshTokenValidator,
-  refreshTokenController,
-);
+  router.post(
+    "/refresh-token",
+    refreshTokenLimiter,
+    validateCookies(RefreshTokenReqCookie),
+    authMiddleware.refreshTokenValidator,
+    authController.refreshToken,
+  );
 
-authRouter.post(
-  "/login/google",
-  validate(LoginGoogleReqBody),
-  loginGoogleController,
-);
+  router.post(
+    "/login/google",
+    validate(LoginGoogleReqBody),
+    authController.loginGoogle,
+  );
 
-export default authRouter;
+  return router;
+};

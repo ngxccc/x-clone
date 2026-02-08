@@ -1,15 +1,4 @@
 import {
-  changePasswordController,
-  followController,
-  getFollowersController,
-  getFollowingController,
-  getMeController,
-  getProfileController,
-  unfollowController,
-  updateMeController,
-} from "./users.controllers.js";
-import { accessTokenValidator, isUserLoggedInValidator } from "@/modules/auth";
-import {
   validate,
   validateParams,
   validateQuery,
@@ -23,56 +12,67 @@ import {
   UpdateMeReqBody,
 } from "./users.schemas.js";
 import { Router } from "express";
+import type { UserController } from "./users.controllers.js";
+import type { AuthMiddleware } from "../auth/auth.middlewares.js";
 
-const usersRouter = Router();
+export const createUsersRouter = (
+  userController: UserController,
+  authMiddleware: AuthMiddleware,
+) => {
+  const router = Router();
 
-usersRouter.get("/me", accessTokenValidator, getMeController);
+  router.get("/me", authMiddleware.accessTokenValidator, userController.getMe);
 
-usersRouter.patch(
-  "/me",
-  accessTokenValidator,
-  validate(UpdateMeReqBody),
-  updateMeController,
-);
+  router.patch(
+    "/me",
+    authMiddleware.accessTokenValidator,
+    validate(UpdateMeReqBody),
+    userController.updateMe,
+  );
 
-usersRouter.post(
-  "/follow",
-  accessTokenValidator,
-  validate(FollowReqBody),
-  followController,
-);
+  router.post(
+    "/follow",
+    authMiddleware.accessTokenValidator,
+    validate(FollowReqBody),
+    userController.follow,
+  );
 
-usersRouter.put(
-  "/change-password",
-  accessTokenValidator,
-  validate(ChangePasswordReqBody),
-  changePasswordController,
-);
+  router.put(
+    "/change-password",
+    authMiddleware.accessTokenValidator,
+    validate(ChangePasswordReqBody),
+    userController.changePassword,
+  );
 
-// Đặt dynamic route sau static route tránh bị trùng
-usersRouter.get("/:username", isUserLoggedInValidator, getProfileController);
+  // Đặt dynamic route sau static route tránh bị trùng
+  router.get(
+    "/:username",
+    authMiddleware.isUserLoggedInValidator,
+    userController.getProfile,
+  );
 
-usersRouter.delete(
-  "/follow/:followedUserId",
-  accessTokenValidator,
-  validateParams(UnfollowReqParams),
-  unfollowController,
-);
+  router.delete(
+    "/follow/:followedUserId",
+    authMiddleware.accessTokenValidator,
+    validateParams(UnfollowReqParams),
+    userController.unfollow,
+  );
 
-usersRouter.get(
-  "/:userId/followers",
-  isUserLoggedInValidator,
-  validateParams(GetFollowersReqParams),
-  validateQuery(PaginationReqQuery),
-  getFollowersController,
-);
+  router.get(
+    "/:userId/followers",
+    authMiddleware.isUserLoggedInValidator,
+    validateParams(GetFollowersReqParams),
+    validateQuery(PaginationReqQuery),
+    userController.getFollowers,
+  );
 
-usersRouter.get(
-  "/:userId/following",
-  isUserLoggedInValidator,
-  validateParams(GetFollowersReqParams),
-  validateQuery(PaginationReqQuery),
-  getFollowingController,
-);
+  router.get(
+    "/:userId/following",
+    authMiddleware.isUserLoggedInValidator,
+    validateParams(GetFollowersReqParams),
+    validateQuery(PaginationReqQuery),
+    userController.getFollowing,
+  );
 
-export default usersRouter;
+  return router;
+};

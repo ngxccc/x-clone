@@ -20,7 +20,7 @@ const getNameFromFullname = (fullname: string) => {
   return namearr.join("");
 };
 
-class MediasService {
+export class MediaService {
   // TODO: Upload lên Cloud Storage bên thứ 3
   async uploadImage(req: Request, type: UploadPurposeType) {
     const files = await handleUploadImage(req);
@@ -92,6 +92,3 @@ class MediasService {
     return result;
   }
 }
-
-const mediasService = new MediasService();
-export default mediasService;

@@ -8,164 +8,140 @@ import type {
   UnfollowParamsType,
   UpdateMeBodyType,
 } from "./users.schemas.js";
-import usersService from "./users.services.js";
 import type { NextFunction, Request, Response } from "express";
+import type { UserService } from "./users.services.js";
 
-export const getMeController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { userId } = req.decodedAccessToken!;
+export class UserController {
+  constructor(private readonly userService: UserService) {}
 
-    const result = await usersService.getMe(userId);
+  getMe = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.decodedAccessToken!;
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.GET_ME_SUCCESS,
-      result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      const result = await this.userService.getMe(userId);
 
-export const getProfileController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { username } = req.params;
-    const myUserId = req.decodedAccessToken?.userId;
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.GET_ME_SUCCESS,
+        result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    const result = await usersService.getProfile(username!, myUserId);
+  getProfile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { username } = req.params;
+      const myUserId = req.decodedAccessToken?.userId;
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
-      result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      const result = await this.userService.getProfile(username!, myUserId);
 
-export const updateMeController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { userId } = req.decodedAccessToken!;
-    const payload = req.body as UpdateMeBodyType;
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
+        result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    const result = await usersService.updateMe(userId, payload);
+  updateMe = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.decodedAccessToken!;
+      const payload = req.body as UpdateMeBodyType;
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
-      result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      const result = await this.userService.updateMe(userId, payload);
 
-export const followController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { userId } = req.decodedAccessToken!;
-    const { followedUserId } = req.body as FollowBodyType;
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
+        result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    const result = await usersService.follow(userId, followedUserId);
+  follow = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.decodedAccessToken!;
+      const { followedUserId } = req.body as FollowBodyType;
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.FOLLOW_SUCCESS,
-      result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      const result = await this.userService.follow(userId, followedUserId);
 
-export const unfollowController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { userId } = req.decodedAccessToken!;
-    const { followedUserId } = req.params as UnfollowParamsType;
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.FOLLOW_SUCCESS,
+        result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    const result = await usersService.unfollow(userId, followedUserId);
+  unfollow = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.decodedAccessToken!;
+      const { followedUserId } = req.params as UnfollowParamsType;
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.UNFOLLOW_SUCCESS,
-      result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      const result = await this.userService.unfollow(userId, followedUserId);
 
-export const getFollowersController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { userId } = req.params as GetFollowersParamsType;
-    const { limit, page } = req.validatedQuery as PaginationQueryType;
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.UNFOLLOW_SUCCESS,
+        result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    const result = await usersService.getFollowers(userId, limit, page);
+  getFollowers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.params as GetFollowersParamsType;
+      const { limit, page } = req.validatedQuery as PaginationQueryType;
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.GET_FOLLOWERS_SUCCESS,
-      result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      const result = await this.userService.getFollowers(userId, limit, page);
 
-export const getFollowingController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { userId } = req.params as GetFollowersParamsType;
-    const { limit, page } = req.validatedQuery as PaginationQueryType;
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.GET_FOLLOWERS_SUCCESS,
+        result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    const result = await usersService.getFollowing(userId, limit, page);
+  getFollowing = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { userId } = req.params as GetFollowersParamsType;
+      const { limit, page } = req.validatedQuery as PaginationQueryType;
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.GET_FOLLOWING_SUCCESS,
-      result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      const result = await this.userService.getFollowing(userId, limit, page);
 
-export const changePasswordController = async (
-  req: Request<object, object, ChangePasswordBodyType>,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { userId } = req.decodedAccessToken!;
-    const payload = req.body;
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.GET_FOLLOWING_SUCCESS,
+        result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    const result = await usersService.changePassword(userId, payload);
+  changePassword = async (
+    req: Request<object, object, ChangePasswordBodyType>,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const { userId } = req.decodedAccessToken!;
+      const payload = req.body;
 
-    return res.status(HTTP_STATUS.OK).json({
-      message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS,
-      result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+      const result = await this.userService.changePassword(userId, payload);
+
+      return res.status(HTTP_STATUS.OK).json({
+        message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS,
+        result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+}

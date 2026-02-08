@@ -1,72 +1,73 @@
 import { UPLOAD_PURPOSE } from "@/common/constants/enums.js";
 import { USERS_MESSAGES } from "@/common/constants/messages.js";
-import mediasService from "./medias.services.js";
 import type { NextFunction, Request, Response } from "express";
+import type { MediaService } from "./medias.services";
 
-export const uploadTweetImageController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const result = await mediasService.uploadImage(req, UPLOAD_PURPOSE.TWEET);
+export class MediaController {
+  constructor(private readonly mediaService: MediaService) {}
 
-    return res.json({
-      message: USERS_MESSAGES.UPLOAD_IMAGE_SUCCESS,
-      result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  uploadTweetImage = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const result = await this.mediaService.uploadImage(
+        req,
+        UPLOAD_PURPOSE.TWEET,
+      );
 
-export const uploadAvatarController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const result = await mediasService.uploadImage(req, UPLOAD_PURPOSE.AVATAR);
+      return res.json({
+        message: USERS_MESSAGES.UPLOAD_IMAGE_SUCCESS,
+        result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    return res.json({
-      message: USERS_MESSAGES.UPLOAD_IMAGE_SUCCESS,
-      result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  uploadAvatar = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.mediaService.uploadImage(
+        req,
+        UPLOAD_PURPOSE.AVATAR,
+      );
 
-export const uploadCoverController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const result = await mediasService.uploadImage(req, UPLOAD_PURPOSE.COVER);
+      return res.json({
+        message: USERS_MESSAGES.UPLOAD_IMAGE_SUCCESS,
+        result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    return res.json({
-      message: USERS_MESSAGES.UPLOAD_IMAGE_SUCCESS,
-      result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  uploadCover = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.mediaService.uploadImage(
+        req,
+        UPLOAD_PURPOSE.COVER,
+      );
 
-export const uploadVideoController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const result = await mediasService.uploadVideo(req);
+      return res.json({
+        message: USERS_MESSAGES.UPLOAD_IMAGE_SUCCESS,
+        result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-    return res.json({
-      message: USERS_MESSAGES.UPLOAD_VIDEO_SUCCESS,
-      result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  uploadVideo = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.mediaService.uploadVideo(req);
+
+      return res.json({
+        message: USERS_MESSAGES.UPLOAD_VIDEO_SUCCESS,
+        result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+}
