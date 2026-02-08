@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import "dotenv/config";
-import envConfig, { isProduction } from "@/constants/config.js";
-import logger from "@/utils/logger";
-import { CONNECTION_STATES } from "@/constants/enums";
+import envConfig, { isProduction } from "@/common/config/env.js";
+import logger from "@/common/utils/logger";
+import { CONNECTION_STATES } from "@/common/constants/enums";
 
 class DatabaseService {
   private readonly uri: string;

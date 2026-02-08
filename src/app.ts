@@ -2,14 +2,14 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import compression from "compression";
-import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from "@/constants/dir.js";
-import { USERS_MESSAGES } from "@/constants/messages.js";
-import envConfig from "@/constants/config.js";
-import { NotFoundError } from "@/utils/errors.js";
-import { defaultErrorHandler } from "@/middlewares/error.middlewares.js";
-import authRouter from "@/routes/auth.routes.js";
-import usersRouter from "@/routes/users.routes.js";
-import mediasRouter from "@/routes/medias.routes.js";
+import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from "@/common/constants/dir.js";
+import { USERS_MESSAGES } from "@/common/constants/messages.js";
+import envConfig from "@/common/config/env.js";
+import { NotFoundError } from "@/common/utils/errors.js";
+import { defaultErrorHandler } from "@/common/middlewares/error.middlewares.js";
+import { usersRouter } from "@/modules/users";
+import { mediasRouter } from "@/modules/medias";
+import { authRouter } from "./modules/auth";
 
 const app = express();
 

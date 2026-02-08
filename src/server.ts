@@ -1,10 +1,10 @@
 import app from "./app.js";
 import databaseService from "@/services/database.services.js";
-import { initFolder } from "@/utils/file.js";
-import { initVideoWorker } from "@/services/video.worker.js";
-import logger from "@/utils/logger.js";
-import envConfig from "@/constants/config.js";
+import { initFolder } from "@/common/utils/file.js";
+import { initVideoWorker } from "@/modules/medias";
+import logger from "@/common/utils/logger.js";
 import { setServers } from "node:dns/promises";
+import envConfig from "./common/config/env.js";
 
 const port = envConfig.PORT;
 
