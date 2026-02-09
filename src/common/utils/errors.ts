@@ -15,7 +15,10 @@ export class ErrorWithStatus<
     this.name = this.constructor.name; // Set name: "ErrorWithStatus"
     // Chỉ ra lỗi xuất phát từ file nào, dòng số mấy
     // Và loại bỏ constructor ra khỏi stack trace.
-    Error.captureStackTrace(this, this.constructor);
+    // check if this func is exist in curr runtime
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
   }
 }
 
