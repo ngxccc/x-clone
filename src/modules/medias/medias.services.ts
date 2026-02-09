@@ -6,7 +6,7 @@ import {
   UPLOAD_PURPOSE,
   VIDEO_STATUS,
 } from "@/common/constants/enums.js";
-import { handleUploadImage, handleUploadVideo } from "@/common/utils/file.js";
+import type { FileService } from "@/common/utils/file";
 import { addVideoToQueue } from "@/common/utils/queue.js";
 import type { Request } from "express";
 import { rename } from "node:fs/promises";
@@ -21,9 +21,11 @@ const getNameFromFullname = (fullname: string) => {
 };
 
 export class MediaService {
+  constructor(private readonly fileService: FileService) {}
+
   // TODO: Upload lên Cloud Storage bên thứ 3
   async uploadImage(req: Request, type: UploadPurposeType) {
-    const files = await handleUploadImage(req);
+    const files = await this.fileService.handleUploadImage(req);
 
     // FIX LỖI EPERM: Ngăn sharp không giữ file mở khiến bị lock
     sharp.cache(false);
@@ -65,7 +67,7 @@ export class MediaService {
   }
 
   async uploadVideo(req: Request) {
-    const files = await handleUploadVideo(req);
+    const files = await this.fileService.handleUploadVideo(req);
 
     const result = await Promise.all(
       files.map(async (file) => {

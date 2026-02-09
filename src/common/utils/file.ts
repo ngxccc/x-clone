@@ -32,7 +32,7 @@ export class FileService {
     });
   };
 
-  uploadImage = async (req: Request) => {
+  handleUploadImage = async (req: Request) => {
     const form = formidable({
       uploadDir: UPLOAD_TEMP_DIR,
       maxFiles: UPLOAD_CONFIG.IMAGE_MAX_FILES,
@@ -101,7 +101,7 @@ export class FileService {
     });
   };
 
-  uploadVideo = async (req: Request) => {
+  handleUploadVideo = async (req: Request) => {
     const form = formidable({
       uploadDir: UPLOAD_TEMP_DIR,
       maxFiles: UPLOAD_CONFIG.VIDEO_MAX_FILES,

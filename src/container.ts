@@ -6,11 +6,11 @@ import { UserController, UserService } from "./modules/users";
 import { DatabaseService } from "./services/database.services";
 
 const userService = new UserService();
-const authService = new AuthService(userService);
-const mediaService = new MediaService();
-const databaseService = new DatabaseService();
 const fileService = new FileService();
 const videoService = new VideoService();
+const databaseService = new DatabaseService();
+const authService = new AuthService(userService);
+const mediaService = new MediaService(fileService);
 const videoWorker = new VideoWorker(videoService);
 
 const userController = new UserController(userService);
