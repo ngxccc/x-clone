@@ -9,7 +9,7 @@ export class VideoWorker {
   private worker: Worker | undefined;
   private readonly queueName = "video-encoding";
 
-  constructor(private readonly videoService: VideoService) {}
+  public constructor(private readonly videoService: VideoService) {}
 
   private process = async (
     job: Job<{ videoPath: string; fileName: string }>,

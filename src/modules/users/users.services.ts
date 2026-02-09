@@ -19,16 +19,16 @@ import type { RegisterBodyType } from "../auth/auth.schemas.js";
 import type { TokenService } from "@/common/utils/jwt.js";
 
 export class UserService {
-  constructor(private readonly tokenService: TokenService) {}
+  public constructor(private readonly tokenService: TokenService) {}
 
-  async checkEmailExist(email: string) {
+  public async checkEmailExist(email: string) {
     // Mongoose unique cũng bắt được cái này
     // Nhưng check tay ở đây để trả về message thân thiện hơn.
     const user = await User.findOne({ email });
     return Boolean(user);
   }
 
-  async register(payload: RegisterBodyType) {
+  public async register(payload: RegisterBodyType) {
     const { name, username, email, password, dateOfBirth } = payload;
 
     const emailVerifyToken = await this.tokenService.signToken(
@@ -55,7 +55,7 @@ export class UserService {
     return newUser.toObject();
   }
 
-  async getMe(userId: string) {
+  public async getMe(userId: string) {
     const user = await User.findById(userId);
 
     if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
@@ -63,7 +63,7 @@ export class UserService {
     return user;
   }
 
-  async getProfile(username: string, myUserId?: string) {
+  public async getProfile(username: string, myUserId?: string) {
     const user = await User.findOne({ username }).select("-email");
 
     if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
@@ -87,23 +87,23 @@ export class UserService {
     };
   }
 
-  async findUserByEmail(email: string) {
+  public async findUserByEmail(email: string) {
     return await User.findOne({ email });
   }
 
-  async findUserByEmailWithPassword(email: string) {
+  public async findUserByEmailWithPassword(email: string) {
     return await User.findOne({ email }).select("+password");
   }
 
-  async findUserByEmailVerifyToken(token: string) {
+  public async findUserByEmailVerifyToken(token: string) {
     return await User.findOne({ emailVerifyToken: token });
   }
 
-  async findUserByForgotPasswordToken(token: string) {
+  public async findUserByForgotPasswordToken(token: string) {
     return await User.findOne({ forgotPasswordToken: token });
   }
 
-  async updateVerifyStatus(userId: string) {
+  public async updateVerifyStatus(userId: string) {
     return await User.findByIdAndUpdate(
       userId,
       {
@@ -116,7 +116,7 @@ export class UserService {
     );
   }
 
-  async updateEmailVerifyToken(userId: string, token: string) {
+  public async updateEmailVerifyToken(userId: string, token: string) {
     return await User.findByIdAndUpdate(
       userId,
       { $set: { emailVerifyToken: token } },
@@ -124,7 +124,7 @@ export class UserService {
     );
   }
 
-  async updateForgotPasswordToken(userId: string, token: string) {
+  public async updateForgotPasswordToken(userId: string, token: string) {
     return await User.findByIdAndUpdate(
       userId,
       { $set: { forgotPasswordToken: token } },
@@ -132,7 +132,7 @@ export class UserService {
     );
   }
 
-  async updateMe(userId: string, payload: UpdateMeBodyType) {
+  public async updateMe(userId: string, payload: UpdateMeBodyType) {
     const { username } = payload;
 
     if (username) {
@@ -157,7 +157,7 @@ export class UserService {
     return user;
   }
 
-  async follow(userId: string, followedUserId: string) {
+  public async follow(userId: string, followedUserId: string) {
     const user = await User.findById(userId);
 
     if (user?.verify === USER_VERIFY_STATUS.BANNED)
@@ -195,7 +195,7 @@ export class UserService {
     return { success: true };
   }
 
-  async unfollow(userId: string, followedUserId: string) {
+  public async unfollow(userId: string, followedUserId: string) {
     if (userId === followedUserId)
       throw new BadRequestError(USERS_MESSAGES.CANNOT_DO_SELF);
 
@@ -218,7 +218,7 @@ export class UserService {
     return { success: true };
   }
 
-  async getFollowers(userId: string, limit: number, page: number) {
+  public async getFollowers(userId: string, limit: number, page: number) {
     const skip = (page - 1) * limit;
 
     const followers = await Follower.find({ followedId: userId })
@@ -244,7 +244,7 @@ export class UserService {
     };
   }
 
-  async getFollowing(userId: string, limit: number, page: number) {
+  public async getFollowing(userId: string, limit: number, page: number) {
     const skip = (page - 1) * limit;
 
     const following = await Follower.find({ followerId: userId })
@@ -269,7 +269,7 @@ export class UserService {
     };
   }
 
-  async changePassword(userId: string, payload: ChangePasswordBodyType) {
+  public async changePassword(userId: string, payload: ChangePasswordBodyType) {
     const { oldPassword, password } = payload;
 
     const user = await User.findById(userId).select("+password");

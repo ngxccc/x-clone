@@ -10,7 +10,7 @@ export class VideoService {
    * @param inputPath Đường dẫn video đầu vào
    * @param originalName Tên file gốc
    */
-  encodeHLS = async (inputPath: string, originalName: string) => {
+  public async encodeHLS(inputPath: string, originalName: string) {
     const idName = originalName.split(".")[0];
     if (!idName) {
       throw new Error("Invalid original name: cannot extract id");
@@ -95,5 +95,5 @@ export class VideoService {
         reject(err);
       });
     });
-  };
+  }
 }

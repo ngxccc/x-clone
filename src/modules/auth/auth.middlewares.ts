@@ -8,12 +8,16 @@ import type { UserService } from "../users/users.services.js";
 import type { TokenService } from "@/common/utils/jwt.js";
 
 export class AuthMiddleware {
-  constructor(
+  public constructor(
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
   ) {}
 
-  accessTokenValidator = (req: Request, res: Response, next: NextFunction) => {
+  public accessTokenValidator = (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader?.startsWith("Bearer ")) {
@@ -36,7 +40,7 @@ export class AuthMiddleware {
     }
   };
 
-  refreshTokenValidator = async (
+  public refreshTokenValidator = async (
     req: RefreshTokenRequest,
     res: Response,
     next: NextFunction,
@@ -65,7 +69,7 @@ export class AuthMiddleware {
     }
   };
 
-  emailVerifyTokenValidator = async (
+  public emailVerifyTokenValidator = async (
     req: Request<object, object, { emailVerifyToken: string }>,
     res: Response,
     next: NextFunction,
@@ -91,7 +95,7 @@ export class AuthMiddleware {
     }
   };
 
-  forgotPasswordTokenValidator = async (
+  public forgotPasswordTokenValidator = async (
     req: Request<object, object, { forgotPasswordToken: string }>,
     _res: Response,
     next: NextFunction,
@@ -121,7 +125,7 @@ export class AuthMiddleware {
     }
   };
 
-  isUserLoggedInValidator = (
+  public isUserLoggedInValidator = (
     req: Request,
     _res: Response,
     next: NextFunction,

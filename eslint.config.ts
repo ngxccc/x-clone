@@ -31,13 +31,16 @@ export default defineConfig([
     rules: {
       ...eslintConfigPrettier.rules,
 
+      "@typescript-eslint/explicit-member-accessibility": [
+        "error",
+        { accessibility: "explicit" }, // Bắt buộc phải viết public/private
+      ],
+
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unused-vars": [
         "warn",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
       ],
-
-      "prettier/prettier": "warn",
 
       "@typescript-eslint/consistent-type-imports": [
         "error",
@@ -46,6 +49,8 @@ export default defineConfig([
           fixStyle: "separate-type-imports", // Tự động fix thành: import type { Metadata } ...
         },
       ],
+
+      "prettier/prettier": "warn",
     },
   },
 

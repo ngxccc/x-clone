@@ -22,7 +22,7 @@ import type { TokenService } from "@/common/utils/jwt.js";
 import type { GoogleService } from "@/common/utils/google.js";
 
 export class AuthService {
-  constructor(
+  public constructor(
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
     private readonly googleService: GoogleService,
@@ -96,7 +96,7 @@ export class AuthService {
     };
   }
 
-  async login(email: string, password: string, deviceInfo?: string) {
+  public async login(email: string, password: string, deviceInfo?: string) {
     const user = await this.userService.findUserByEmailWithPassword(email);
     if (!user)
       throw new UnauthorizedError(
@@ -125,7 +125,7 @@ export class AuthService {
     return await this.signAccessAndRefreshToken(user.id, deviceInfo);
   }
 
-  async loginGoogle(code: string, deviceInfo?: string) {
+  public async loginGoogle(code: string, deviceInfo?: string) {
     const { access_token } = await this.googleService.getToken(code);
 
     const googleUserInfo = await this.googleService.getUserInfo(access_token);
@@ -165,7 +165,7 @@ export class AuthService {
     }
   }
 
-  async logout(refreshToken: string) {
+  public async logout(refreshToken: string) {
     // Idempotent (Tính lũy đẳng)
     // Dù gọi 1 hay n lần thì kết quả res là như nhau (User đã đăng xuất)
     await RefreshToken.deleteOne({ token: refreshToken });
@@ -173,13 +173,15 @@ export class AuthService {
     return { success: true };
   }
 
-  async verifyEmail(userId: string) {
+  public async verifyEmail(userId: string) {
     await this.userService.updateVerifyStatus(userId);
 
     return { success: true };
   }
 
-  async resendVerificationEmail(payload: ResendVerificationEmailBodyType) {
+  public async resendVerificationEmail(
+    payload: ResendVerificationEmailBodyType,
+  ) {
     const { email } = payload;
 
     const user = await this.userService.findUserByEmail(email);
@@ -217,7 +219,7 @@ export class AuthService {
     return { success: true };
   }
 
-  async forgotPassword(payload: ForgotPasswordBodyType) {
+  public async forgotPassword(payload: ForgotPasswordBodyType) {
     const { email } = payload;
 
     const user = await this.userService.findUserByEmail(email);
@@ -249,7 +251,7 @@ export class AuthService {
     return { success: true };
   }
 
-  async resetPassword(userId: string, password: string) {
+  public async resetPassword(userId: string, password: string) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Implicit Verification (Xác thực ngầm)
@@ -265,7 +267,7 @@ export class AuthService {
     return { success: true };
   }
 
-  async refreshToken(
+  public async refreshToken(
     userId: string,
     refreshToken: string,
     deviceInfo?: string,

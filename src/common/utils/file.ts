@@ -20,7 +20,7 @@ import type { EventEmitter } from "node:events";
 // import { errors as formidableErrors } from "formidable";
 
 export class FileService {
-  initFolder = () => {
+  public initFolder() {
     const uploadsFolder = [UPLOAD_TEMP_DIR, UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR];
 
     uploadsFolder.forEach((dir) => {
@@ -30,9 +30,9 @@ export class FileService {
         });
       }
     });
-  };
+  }
 
-  handleUploadImage = async (req: Request) => {
+  public async handleUploadImage(req: Request) {
     const form = formidable({
       uploadDir: UPLOAD_TEMP_DIR,
       maxFiles: UPLOAD_CONFIG.IMAGE_MAX_FILES,
@@ -99,9 +99,9 @@ export class FileService {
         resolve(images);
       });
     });
-  };
+  }
 
-  handleUploadVideo = async (req: Request) => {
+  public async handleUploadVideo(req: Request) {
     const form = formidable({
       uploadDir: UPLOAD_TEMP_DIR,
       maxFiles: UPLOAD_CONFIG.VIDEO_MAX_FILES,
@@ -206,5 +206,5 @@ export class FileService {
         });
       });
     });
-  };
+  }
 }

@@ -9,7 +9,7 @@ import type {
 import envConfig from "@/common/config/env.js";
 
 export class GoogleService {
-  async getToken(code: string) {
+  public async getToken(code: string) {
     const body = {
       code,
       client_id: envConfig.GOOGLE_CLIENT_ID,
@@ -34,7 +34,7 @@ export class GoogleService {
     return data as GoogleTokenResponse;
   }
 
-  async getUserInfo(access_token: string) {
+  public async getUserInfo(access_token: string) {
     const response = await fetch(`${GOOGLE_APIS.USER_INFO}?alt=json`, {
       method: "GET",
       headers: {

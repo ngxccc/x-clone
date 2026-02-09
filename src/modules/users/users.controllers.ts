@@ -12,9 +12,9 @@ import type { NextFunction, Request, Response } from "express";
 import type { UserService } from "./users.services.js";
 
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  public constructor(private readonly userService: UserService) {}
 
-  getMe = async (req: Request, res: Response, next: NextFunction) => {
+  public getMe = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId } = req.decodedAccessToken!;
 
@@ -29,7 +29,11 @@ export class UserController {
     }
   };
 
-  getProfile = async (req: Request, res: Response, next: NextFunction) => {
+  public getProfile = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const { username } = req.params;
       const myUserId = req.decodedAccessToken?.userId;
@@ -45,7 +49,7 @@ export class UserController {
     }
   };
 
-  updateMe = async (req: Request, res: Response, next: NextFunction) => {
+  public updateMe = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId } = req.decodedAccessToken!;
       const payload = req.body as UpdateMeBodyType;
@@ -61,7 +65,7 @@ export class UserController {
     }
   };
 
-  follow = async (req: Request, res: Response, next: NextFunction) => {
+  public follow = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId } = req.decodedAccessToken!;
       const { followedUserId } = req.body as FollowBodyType;
@@ -77,7 +81,7 @@ export class UserController {
     }
   };
 
-  unfollow = async (req: Request, res: Response, next: NextFunction) => {
+  public unfollow = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { userId } = req.decodedAccessToken!;
       const { followedUserId } = req.params as UnfollowParamsType;
@@ -93,7 +97,11 @@ export class UserController {
     }
   };
 
-  getFollowers = async (req: Request, res: Response, next: NextFunction) => {
+  public getFollowers = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const { userId } = req.params as GetFollowersParamsType;
       const { limit, page } = req.validatedQuery as PaginationQueryType;
@@ -109,7 +117,11 @@ export class UserController {
     }
   };
 
-  getFollowing = async (req: Request, res: Response, next: NextFunction) => {
+  public getFollowing = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const { userId } = req.params as GetFollowersParamsType;
       const { limit, page } = req.validatedQuery as PaginationQueryType;
@@ -125,7 +137,7 @@ export class UserController {
     }
   };
 
-  changePassword = async (
+  public changePassword = async (
     req: Request<object, object, ChangePasswordBodyType>,
     res: Response,
     next: NextFunction,

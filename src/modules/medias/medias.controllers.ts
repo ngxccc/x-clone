@@ -4,9 +4,9 @@ import type { NextFunction, Request, Response } from "express";
 import type { MediaService } from "./medias.services";
 
 export class MediaController {
-  constructor(private readonly mediaService: MediaService) {}
+  public constructor(private readonly mediaService: MediaService) {}
 
-  uploadTweetImage = async (
+  public uploadTweetImage = async (
     req: Request,
     res: Response,
     next: NextFunction,
@@ -26,7 +26,11 @@ export class MediaController {
     }
   };
 
-  uploadAvatar = async (req: Request, res: Response, next: NextFunction) => {
+  public uploadAvatar = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const result = await this.mediaService.uploadImage(
         req,
@@ -42,7 +46,11 @@ export class MediaController {
     }
   };
 
-  uploadCover = async (req: Request, res: Response, next: NextFunction) => {
+  public uploadCover = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const result = await this.mediaService.uploadImage(
         req,
@@ -58,7 +66,11 @@ export class MediaController {
     }
   };
 
-  uploadVideo = async (req: Request, res: Response, next: NextFunction) => {
+  public uploadVideo = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const result = await this.mediaService.uploadVideo(req);
 

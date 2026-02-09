@@ -4,20 +4,23 @@ import { Queue } from "bullmq";
 export class QueueService {
   private videoQueue: Queue;
 
-  constructor() {
+  public constructor() {
     this.videoQueue = new Queue("video-encoding", {
       connection: redisConnection,
     });
   }
 
-  async addVideoToQueue(payload: { videoPath: string; fileName: string }) {
+  public async addVideoToQueue(payload: {
+    videoPath: string;
+    fileName: string;
+  }) {
     await this.videoQueue.add("encode-video", payload, {
       removeOnComplete: true, // Xoá job khỏi Redis khi thành công
       removeOnFail: false, // Giữ lại để debug khi lỗi
     });
   }
 
-  async close() {
+  public async close() {
     await this.videoQueue.close();
   }
 }

@@ -17,12 +17,12 @@ import type { RefreshTokenRequest } from "@/common/types/request.types";
 import type { UserService } from "../users/users.services.js";
 
 export class AuthController {
-  constructor(
+  public constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
   ) {}
 
-  login = async (
+  public login = async (
     req: Request<object, object, LoginBodyType>,
     res: Response,
     next: NextFunction,
@@ -53,7 +53,7 @@ export class AuthController {
     }
   };
 
-  register = async (
+  public register = async (
     req: Request<object, object, RegisterBodyType>,
     res: Response,
     next: NextFunction,
@@ -87,7 +87,7 @@ export class AuthController {
     }
   };
 
-  logout = async (
+  public logout = async (
     req: RefreshTokenRequest,
     res: Response,
     next: NextFunction,
@@ -107,7 +107,11 @@ export class AuthController {
     }
   };
 
-  verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+  public verifyEmail = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const { userId } = req.decodedEmailVerifyToken!;
 
@@ -121,7 +125,7 @@ export class AuthController {
     }
   };
 
-  resendVerificationEmail = async (
+  public resendVerificationEmail = async (
     req: Request<object, object, ResendVerificationEmailBodyType>,
     res: Response,
     next: NextFunction,
@@ -137,7 +141,7 @@ export class AuthController {
     }
   };
 
-  forgotPassword = async (
+  public forgotPassword = async (
     req: Request<object, object, ForgotPasswordBodyType>,
     res: Response,
     next: NextFunction,
@@ -153,7 +157,7 @@ export class AuthController {
     }
   };
 
-  resetPassword = async (
+  public resetPassword = async (
     req: Request<object, object, ResetPasswordBodyType>,
     res: Response,
     next: NextFunction,
@@ -172,7 +176,7 @@ export class AuthController {
     }
   };
 
-  refreshToken = async (
+  public refreshToken = async (
     req: RefreshTokenRequest,
     res: Response,
     next: NextFunction,
@@ -204,7 +208,11 @@ export class AuthController {
     }
   };
 
-  loginGoogle = async (req: Request, res: Response, next: NextFunction) => {
+  public loginGoogle = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
     try {
       const { code } = req.body as LoginGoogleBodyType;
       const deviceInfo = req.headers["user-agent"];

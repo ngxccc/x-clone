@@ -7,11 +7,11 @@ import { CONNECTION_STATES } from "@/common/constants/enums";
 export class DatabaseService {
   private readonly uri: string;
 
-  constructor() {
+  public constructor() {
     this.uri = envConfig.MONGO_URI;
   }
 
-  async connect() {
+  public async connect() {
     try {
       if (!this.uri) {
         throw new Error("MONGO_URI is not defined in .env file");

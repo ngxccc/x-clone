@@ -39,7 +39,7 @@ const TOKEN_CONFIG = {
 } as const;
 
 export class TokenService {
-  signToken = (payload: TokenPayload, type: TokenType) => {
+  public signToken(payload: TokenPayload, type: TokenType) {
     const config = TOKEN_CONFIG[type];
 
     return this.signTokenIn({
@@ -49,9 +49,9 @@ export class TokenService {
         expiresIn: config.expire(),
       },
     });
-  };
+  }
 
-  verifyToken = (token: string, type: TokenType) => {
+  public verifyToken(token: string, type: TokenType) {
     const config = TOKEN_CONFIG[type];
 
     try {
@@ -59,16 +59,16 @@ export class TokenService {
     } catch {
       throw new JsonWebTokenError(config.errorMessage);
     }
-  };
+  }
 
   // Promisification (Biến đổi thành Promise)
   // Để dùng được await (Tránh Callback Hell)
-  private signTokenIn = ({ payload, privateKey, options }: SignTokenParams) => {
+  private signTokenIn({ payload, privateKey, options }: SignTokenParams) {
     return new Promise<string>((resolve, reject) => {
       jwt.sign(payload, privateKey, options ?? {}, (error, token) => {
         if (error) reject(error);
         resolve(token!);
       });
     });
-  };
+  }
 }

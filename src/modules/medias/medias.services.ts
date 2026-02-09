@@ -21,13 +21,13 @@ const getNameFromFullname = (fullname: string) => {
 };
 
 export class MediaService {
-  constructor(
+  public constructor(
     private readonly fileService: FileService,
     private readonly queueService: QueueService,
   ) {}
 
   // TODO: Upload lên Cloud Storage bên thứ 3
-  async uploadImage(req: Request, type: UploadPurposeType) {
+  public async uploadImage(req: Request, type: UploadPurposeType) {
     const files = await this.fileService.handleUploadImage(req);
 
     // FIX LỖI EPERM: Ngăn sharp không giữ file mở khiến bị lock
@@ -69,7 +69,7 @@ export class MediaService {
     return result;
   }
 
-  async uploadVideo(req: Request) {
+  public async uploadVideo(req: Request) {
     const files = await this.fileService.handleUploadVideo(req);
 
     const result = await Promise.all(
