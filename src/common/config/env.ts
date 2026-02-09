@@ -1,5 +1,4 @@
 import { config } from "dotenv";
-import fs from "fs";
 import { resolve } from "node:path";
 import z from "zod";
 import { USERS_MESSAGES } from "../constants/messages.js";
@@ -44,13 +43,14 @@ config({
   quiet: true,
 });
 
-const checkEnv = () => {
-  if (!fs.existsSync(resolve(".env"))) {
-    console.error(USERS_MESSAGES.DOTENV_FILE_NOT_FOUND);
-    process.exit(1);
-  }
-};
-checkEnv();
+// commented bc dont nd it on docker or CI/CD platform
+// const checkEnv = () => {
+//   if (!existsSync(resolve(".env"))) {
+//     console.error(USERS_MESSAGES.DOTENV_FILE_NOT_FOUND);
+//     process.exit(1);
+//   }
+// };
+// checkEnv();
 
 const configSchema = z.object({
   // --- Server ---
