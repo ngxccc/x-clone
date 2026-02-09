@@ -1,4 +1,5 @@
 import { FileService } from "./common/utils/file";
+import { GoogleService } from "./common/utils/google";
 import { TokenService } from "./common/utils/jwt";
 import { VideoService } from "./common/utils/video";
 import { AuthController, AuthMiddleware, AuthService } from "./modules/auth";
@@ -10,8 +11,9 @@ const tokenService = new TokenService();
 const fileService = new FileService();
 const videoService = new VideoService();
 const databaseService = new DatabaseService();
+const googleService = new GoogleService();
 const userService = new UserService(tokenService);
-const authService = new AuthService(userService, tokenService);
+const authService = new AuthService(userService, tokenService, googleService);
 const mediaService = new MediaService(fileService);
 const videoWorker = new VideoWorker(videoService);
 
@@ -25,6 +27,7 @@ export {
   authService,
   mediaService,
   databaseService,
+  googleService,
   tokenService,
   fileService,
   videoService,

@@ -15,16 +15,17 @@ import type {
   ResendVerificationEmailBodyType,
 } from "./auth.schemas.js";
 import envConfig from "@/common/config/env.js";
-import { getGoogleToken, getGoogleUserInfo } from "@/common/utils/google.js";
 import RefreshToken from "./models/RefreshToken.js";
 import User from "../users/models/User.js";
 import type { UserService } from "../users/users.services.js";
 import type { TokenService } from "@/common/utils/jwt.js";
+import type { GoogleService } from "@/common/utils/google.js";
 
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly tokenService: TokenService,
+    private readonly googleService: GoogleService,
   ) {}
 
   private generateRandomPassword() {
@@ -125,9 +126,9 @@ export class AuthService {
   }
 
   async loginGoogle(code: string, deviceInfo?: string) {
-    const { access_token } = await getGoogleToken(code);
+    const { access_token } = await this.googleService.getToken(code);
 
-    const googleUserInfo = await getGoogleUserInfo(access_token);
+    const googleUserInfo = await this.googleService.getUserInfo(access_token);
 
     if (!googleUserInfo.email_verified)
       throw new BadRequestError(USERS_MESSAGES.GMAIL_NOT_VERIFIED);
