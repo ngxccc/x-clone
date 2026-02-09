@@ -1,5 +1,6 @@
+import { VideoService } from "./common/utils/video";
 import { AuthController, AuthMiddleware, AuthService } from "./modules/auth";
-import { MediaController, MediaService } from "./modules/medias";
+import { MediaController, MediaService, VideoWorker } from "./modules/medias";
 import { UserController, UserService } from "./modules/users";
 import { DatabaseService } from "./services/database.services";
 
@@ -7,6 +8,8 @@ const userService = new UserService();
 const authService = new AuthService(userService);
 const mediaService = new MediaService();
 const databaseService = new DatabaseService();
+const videoService = new VideoService();
+const videoWorker = new VideoWorker(videoService);
 
 const userController = new UserController(userService);
 const authController = new AuthController(userService, authService);
@@ -18,6 +21,8 @@ export {
   authService,
   mediaService,
   databaseService,
+  videoService,
+  videoWorker,
   userController,
   authController,
   mediaController,

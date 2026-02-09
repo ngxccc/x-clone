@@ -1,11 +1,10 @@
 import app from "./app.js";
 import { initFolder } from "@/common/utils/file.js";
-import { VideoWorker } from "@/modules/medias";
 import logger from "@/common/utils/logger.js";
 import { setServers } from "node:dns/promises";
 import envConfig from "./common/config/env.js";
 import type { Server } from "node:http";
-import { databaseService } from "./container.js";
+import { databaseService, videoWorker } from "./container.js";
 
 const port = envConfig.PORT;
 
@@ -13,13 +12,11 @@ const port = envConfig.PORT;
 setServers(["1.1.1.1"]);
 
 let httpServer: Server;
-let videoWorker: VideoWorker;
 
 const startServer = async () => {
   try {
     initFolder();
 
-    videoWorker = new VideoWorker();
     videoWorker.init();
 
     await databaseService.connect();

@@ -1,6 +1,6 @@
 import { redisConnection } from "@/common/config/redis";
 import logger from "@/common/utils/logger";
-import { encodeHLSWithFFmpeg } from "@/common/utils/video";
+import { type VideoService } from "@/common/utils/video";
 import type { Job } from "bullmq";
 import { Worker } from "bullmq";
 import { unlink } from "node:fs/promises";
@@ -8,6 +8,8 @@ import { unlink } from "node:fs/promises";
 export class VideoWorker {
   private worker: Worker | undefined;
   private readonly queueName = "video-encoding";
+
+  constructor(private readonly videoService: VideoService) {}
 
   private process = async (
     job: Job<{ videoPath: string; fileName: string }>,
@@ -20,7 +22,7 @@ export class VideoWorker {
     logger.info(`   Path: ${videoPath}`);
 
     try {
-      await encodeHLSWithFFmpeg(videoPath, fileName);
+      await this.videoService.encodeHLS(videoPath, fileName);
 
       const idName = fileName.split(".")[0];
 
