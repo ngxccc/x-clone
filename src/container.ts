@@ -1,3 +1,4 @@
+import { FileService } from "./common/utils/file";
 import { VideoService } from "./common/utils/video";
 import { AuthController, AuthMiddleware, AuthService } from "./modules/auth";
 import { MediaController, MediaService, VideoWorker } from "./modules/medias";
@@ -8,6 +9,7 @@ const userService = new UserService();
 const authService = new AuthService(userService);
 const mediaService = new MediaService();
 const databaseService = new DatabaseService();
+const fileService = new FileService();
 const videoService = new VideoService();
 const videoWorker = new VideoWorker(videoService);
 
@@ -21,6 +23,7 @@ export {
   authService,
   mediaService,
   databaseService,
+  fileService,
   videoService,
   videoWorker,
   userController,

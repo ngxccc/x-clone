@@ -1,10 +1,9 @@
 import app from "./app.js";
-import { initFolder } from "@/common/utils/file.js";
 import logger from "@/common/utils/logger.js";
 import { setServers } from "node:dns/promises";
 import envConfig from "./common/config/env.js";
 import type { Server } from "node:http";
-import { databaseService, videoWorker } from "./container.js";
+import { databaseService, fileService, videoWorker } from "./container.js";
 
 const port = envConfig.PORT;
 
@@ -15,7 +14,7 @@ let httpServer: Server;
 
 const startServer = async () => {
   try {
-    initFolder();
+    fileService.initFolder();
 
     videoWorker.init();
 
