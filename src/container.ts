@@ -1,6 +1,7 @@
 import { FileService } from "./common/utils/file";
 import { GoogleService } from "./common/utils/google";
 import { TokenService } from "./common/utils/jwt";
+import { QueueService } from "./common/utils/queue";
 import { VideoService } from "./common/utils/video";
 import { AuthController, AuthMiddleware, AuthService } from "./modules/auth";
 import { MediaController, MediaService, VideoWorker } from "./modules/medias";
@@ -12,9 +13,10 @@ const fileService = new FileService();
 const videoService = new VideoService();
 const databaseService = new DatabaseService();
 const googleService = new GoogleService();
+const queueService = new QueueService();
 const userService = new UserService(tokenService);
 const authService = new AuthService(userService, tokenService, googleService);
-const mediaService = new MediaService(fileService);
+const mediaService = new MediaService(fileService, queueService);
 const videoWorker = new VideoWorker(videoService);
 
 const userController = new UserController(userService);
@@ -28,6 +30,7 @@ export {
   mediaService,
   databaseService,
   googleService,
+  queueService,
   tokenService,
   fileService,
   videoService,

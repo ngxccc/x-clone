@@ -7,7 +7,7 @@ import {
   VIDEO_STATUS,
 } from "@/common/constants/enums.js";
 import type { FileService } from "@/common/utils/file";
-import { addVideoToQueue } from "@/common/utils/queue.js";
+import type { QueueService } from "@/common/utils/queue";
 import type { Request } from "express";
 import { rename } from "node:fs/promises";
 import { unlink } from "node:fs/promises";
@@ -21,7 +21,10 @@ const getNameFromFullname = (fullname: string) => {
 };
 
 export class MediaService {
-  constructor(private readonly fileService: FileService) {}
+  constructor(
+    private readonly fileService: FileService,
+    private readonly queueService: QueueService,
+  ) {}
 
   // TODO: Upload lên Cloud Storage bên thứ 3
   async uploadImage(req: Request, type: UploadPurposeType) {
@@ -75,7 +78,7 @@ export class MediaService {
 
         await rename(file.filepath, newPath);
 
-        await addVideoToQueue({
+        await this.queueService.addVideoToQueue({
           videoPath: newPath,
           fileName: file.newFilename,
         });
