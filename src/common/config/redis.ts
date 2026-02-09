@@ -14,6 +14,10 @@ export const redisConnection = new Redis({
         }
       : undefined,
   maxRetriesPerRequest: null,
+  retryStrategy(times) {
+    const delay = Math.min(times * 50, 2000); // max delay is 2s
+    return delay;
+  },
 });
 
 redisConnection.on("connect", () => {
