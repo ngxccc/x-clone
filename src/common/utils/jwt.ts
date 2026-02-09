@@ -38,35 +38,37 @@ const TOKEN_CONFIG = {
   },
 } as const;
 
-export const signToken = (payload: TokenPayload, type: TokenType) => {
-  const config = TOKEN_CONFIG[type];
+export class TokenService {
+  signToken = (payload: TokenPayload, type: TokenType) => {
+    const config = TOKEN_CONFIG[type];
 
-  return signTokenIn({
-    payload,
-    privateKey: config.secret(),
-    options: {
-      expiresIn: config.expire(),
-    },
-  });
-};
-
-export const verifyToken = (token: string, type: TokenType) => {
-  const config = TOKEN_CONFIG[type];
-
-  try {
-    return jwt.verify(token, config.secret()) as TokenPayload;
-  } catch {
-    throw new JsonWebTokenError(config.errorMessage);
-  }
-};
-
-// Promisification (Biến đổi thành Promise)
-// Để dùng được await (Tránh Callback Hell)
-const signTokenIn = ({ payload, privateKey, options }: SignTokenParams) => {
-  return new Promise<string>((resolve, reject) => {
-    jwt.sign(payload, privateKey, options ?? {}, (error, token) => {
-      if (error) reject(error);
-      resolve(token!);
+    return this.signTokenIn({
+      payload,
+      privateKey: config.secret(),
+      options: {
+        expiresIn: config.expire(),
+      },
     });
-  });
-};
+  };
+
+  verifyToken = (token: string, type: TokenType) => {
+    const config = TOKEN_CONFIG[type];
+
+    try {
+      return jwt.verify(token, config.secret()) as TokenPayload;
+    } catch {
+      throw new JsonWebTokenError(config.errorMessage);
+    }
+  };
+
+  // Promisification (Biến đổi thành Promise)
+  // Để dùng được await (Tránh Callback Hell)
+  private signTokenIn = ({ payload, privateKey, options }: SignTokenParams) => {
+    return new Promise<string>((resolve, reject) => {
+      jwt.sign(payload, privateKey, options ?? {}, (error, token) => {
+        if (error) reject(error);
+        resolve(token!);
+      });
+    });
+  };
+}

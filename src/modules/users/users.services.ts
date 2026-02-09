@@ -11,14 +11,16 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from "@/common/utils/errors.js";
-import { signToken } from "@/common/utils/jwt.js";
 import bcrypt from "bcrypt";
 import RefreshToken from "../auth/models/RefreshToken.js";
 import User from "./models/User.js";
 import Follower from "./models/Follower.js";
 import type { RegisterBodyType } from "../auth/auth.schemas.js";
+import type { TokenService } from "@/common/utils/jwt.js";
 
 export class UserService {
+  constructor(private readonly tokenService: TokenService) {}
+
   async checkEmailExist(email: string) {
     // Mongoose unique cũng bắt được cái này
     // Nhưng check tay ở đây để trả về message thân thiện hơn.
@@ -29,7 +31,7 @@ export class UserService {
   async register(payload: RegisterBodyType) {
     const { name, username, email, password, dateOfBirth } = payload;
 
-    const emailVerifyToken = await signToken(
+    const emailVerifyToken = await this.tokenService.signToken(
       {
         userId: "",
         tokenType: TOKEN_TYPES.EMAIL_VERIFY_TOKEN,

@@ -2,13 +2,16 @@ import { HTTP_STATUS } from "@/common/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/common/constants/messages.js";
 import type { RefreshTokenRequest } from "@/common/types/request.types";
 import { UnauthorizedError } from "@/common/utils/errors.js";
-import { verifyToken } from "@/common/utils/jwt.js";
 import type { NextFunction, Request, Response } from "express";
 import RefreshToken from "./models/RefreshToken.js";
 import type { UserService } from "../users/users.services.js";
+import type { TokenService } from "@/common/utils/jwt.js";
 
 export class AuthMiddleware {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly tokenService: TokenService,
+  ) {}
 
   accessTokenValidator = (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
@@ -22,7 +25,7 @@ export class AuthMiddleware {
     const token = authHeader.split(" ")[1]!;
 
     try {
-      const decoded = verifyToken(token, "access");
+      const decoded = this.tokenService.verifyToken(token, "access");
 
       // Gán thông tin user vào req để dùng ở Controller sau
       req.decodedAccessToken = decoded;
@@ -44,7 +47,7 @@ export class AuthMiddleware {
       throw new UnauthorizedError(USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED);
 
     try {
-      const decoded = verifyToken(refreshToken, "refresh");
+      const decoded = this.tokenService.verifyToken(refreshToken, "refresh");
       const foundToken = await RefreshToken.findOne({ token: refreshToken });
 
       if (!foundToken) {
@@ -70,7 +73,7 @@ export class AuthMiddleware {
     const { emailVerifyToken } = req.body;
 
     try {
-      const decoded = verifyToken(emailVerifyToken, "email");
+      const decoded = this.tokenService.verifyToken(emailVerifyToken, "email");
       const user =
         await this.userService.findUserByEmailVerifyToken(emailVerifyToken);
 
@@ -96,7 +99,10 @@ export class AuthMiddleware {
     const { forgotPasswordToken } = req.body;
 
     try {
-      const decoded = verifyToken(forgotPasswordToken, "forgotPassword");
+      const decoded = this.tokenService.verifyToken(
+        forgotPasswordToken,
+        "forgotPassword",
+      );
       const user =
         await this.userService.findUserByForgotPasswordToken(
           forgotPasswordToken,
@@ -126,7 +132,7 @@ export class AuthMiddleware {
 
     try {
       const token = authHeader.split(" ")[1]!;
-      const decoded = verifyToken(token, "access");
+      const decoded = this.tokenService.verifyToken(token, "access");
       req.decodedAccessToken = decoded;
       next();
     } catch (error) {

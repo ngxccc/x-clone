@@ -1,28 +1,31 @@
 import { FileService } from "./common/utils/file";
+import { TokenService } from "./common/utils/jwt";
 import { VideoService } from "./common/utils/video";
 import { AuthController, AuthMiddleware, AuthService } from "./modules/auth";
 import { MediaController, MediaService, VideoWorker } from "./modules/medias";
 import { UserController, UserService } from "./modules/users";
 import { DatabaseService } from "./services/database.services";
 
-const userService = new UserService();
+const tokenService = new TokenService();
 const fileService = new FileService();
 const videoService = new VideoService();
 const databaseService = new DatabaseService();
-const authService = new AuthService(userService);
+const userService = new UserService(tokenService);
+const authService = new AuthService(userService, tokenService);
 const mediaService = new MediaService(fileService);
 const videoWorker = new VideoWorker(videoService);
 
 const userController = new UserController(userService);
 const authController = new AuthController(userService, authService);
 const mediaController = new MediaController(mediaService);
-const authMiddleware = new AuthMiddleware(userService);
+const authMiddleware = new AuthMiddleware(userService, tokenService);
 
 export {
   userService,
   authService,
   mediaService,
   databaseService,
+  tokenService,
   fileService,
   videoService,
   videoWorker,

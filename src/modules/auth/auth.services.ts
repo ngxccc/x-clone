@@ -1,6 +1,5 @@
 import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/common/constants/enums.js";
 import { ERROR_CODES, USERS_MESSAGES } from "@/common/constants/messages.js";
-import { signToken } from "@/common/utils/jwt.js";
 import {
   UnauthorizedError,
   ForbiddenError,
@@ -20,9 +19,13 @@ import { getGoogleToken, getGoogleUserInfo } from "@/common/utils/google.js";
 import RefreshToken from "./models/RefreshToken.js";
 import User from "../users/models/User.js";
 import type { UserService } from "../users/users.services.js";
+import type { TokenService } from "@/common/utils/jwt.js";
 
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly tokenService: TokenService,
+  ) {}
 
   private generateRandomPassword() {
     const chars = "abcdefghijklmnopqrstuvwxyz";
@@ -60,14 +63,14 @@ export class AuthService {
     };
 
     const [accessToken, refreshToken] = await Promise.all([
-      signToken(
+      this.tokenService.signToken(
         {
           ...jwtPayload,
           tokenType: TOKEN_TYPES.ACCESS_TOKEN,
         },
         "access",
       ),
-      signToken(
+      this.tokenService.signToken(
         {
           ...jwtPayload,
           tokenType: TOKEN_TYPES.REFRESH_TOKEN,
@@ -197,7 +200,7 @@ export class AuthService {
         ERROR_CODES.ACCOUNT_IS_BANNED,
       );
 
-    const emailVerifyToken = await signToken(
+    const emailVerifyToken = await this.tokenService.signToken(
       {
         userId: user.id,
         tokenType: TOKEN_TYPES.EMAIL_VERIFY_TOKEN,
@@ -226,7 +229,7 @@ export class AuthService {
         ERROR_CODES.ACCOUNT_IS_BANNED,
       );
 
-    const forgotPasswordToken = await signToken(
+    const forgotPasswordToken = await this.tokenService.signToken(
       {
         userId: user.id,
         tokenType: TOKEN_TYPES.FORGOT_PASSWORD_TOKEN,
