@@ -1,11 +1,11 @@
 import { HTTP_STATUS } from "@/common/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/common/constants/messages.js";
 import type { NextFunction, Request, Response } from "express";
-import type { ZodObject } from "zod";
+import type { ZodObject, ZodPipe } from "zod";
 import z from "zod";
 
 export const validate =
-  (schema: ZodObject) =>
+  (schema: ZodObject | ZodPipe) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!req.is("application/json")) {

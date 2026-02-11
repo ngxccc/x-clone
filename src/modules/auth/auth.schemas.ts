@@ -52,17 +52,18 @@ export const RegisterReqBody = z
     message: USERS_MESSAGES.CONFIRM_PASSWORD_NOT_MATCH,
     path: ["confirmPassword"],
   })
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .transform(({ confirmPassword, ...rest }) => rest)
   .openapi("RegisterRequest");
 
-export const RegisterRes = z.object({
-  message: z.string().openapi({ example: "Đăng ký thành công" }),
-  result: z.object({
+export const RegisterData = z
+  .object({
     _id: z.string().openapi({ example: "698c0460284cfeb2d9b6b156" }),
     username: z.string().openapi({ example: "shin_coder.99" }),
     email: z.string().openapi({ example: "user@example.com" }),
     dateOfBirth: z.date().openapi({ example: "2005-01-01T00:00:00.000Z" }),
-  }),
-});
+  })
+  .openapi("RegisterResultData");
 
 export const LoginReqBody = z
   .object({

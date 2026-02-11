@@ -5,7 +5,7 @@ import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 extendZodWithOpenApi(z);
 
 /**
- * @name EmailSchema
+ * Email Schema
  * @usage Login, Register, ForgotPass...
  */
 export const emailSchema = z
@@ -16,7 +16,7 @@ export const emailSchema = z
   });
 
 /**
- * @name BasePassword (Yếu - Chỉ check độ dài)
+ * BasePassword (Yếu - Chỉ check độ dài)
  * @usage Login (Hỗ trợ user cũ pass yếu)
  */
 export const basePasswordSchema = z
@@ -30,7 +30,7 @@ export const basePasswordSchema = z
   });
 
 /**
- * @name StrongPassword (Mạnh - Kế thừa Base + Thêm Regex)
+ * StrongPassword (Mạnh - Kế thừa Base + Thêm Regex)
  * @usage Register, Reset Password, Change Password
  */
 export const passwordSchema = basePasswordSchema
@@ -44,7 +44,7 @@ export const passwordSchema = basePasswordSchema
   });
 
 /**
- * @name Confirm Password Schema
+ * Confirm Password Schema
  */
 export const confirmPasswordSchema = z
   .string(USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED)
@@ -56,8 +56,9 @@ export const confirmPasswordSchema = z
   });
 
 /**
- * @name JWT Token Schema
+ * JWT Token Schema
  * @usage verify email, forgot pass...
+ * @param msg Message
  * @example
  * tokenSchema("Token is required")
  */
@@ -66,3 +67,55 @@ export const tokenSchema = (msg: string) =>
     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     description: "JWT Token (Verify Email / Forgot Password)",
   });
+
+/**
+ * Generic Success Response
+ * @param dataSchema Schema của phần 'result'
+ * @param msg Default message
+ */
+export const BuildSuccessRes = (dataSchema: z.ZodType, msg = "Thành công") =>
+  z.object({
+    message: z.string().openapi({ example: msg }),
+    result: dataSchema,
+  });
+
+/**
+ * Generic Error Response (400, 401, 403, 404...)
+ */
+export const ErrorRes = z
+  .object({
+    message: z.string().openapi({ example: "Lỗi gì đó..." }),
+    errors: z
+      .record(z.string(), z.any())
+      .optional()
+      .openapi({
+        description: "Chi tiết lỗi validation (nếu có)",
+        example: { email: { msg: "Invalid email" } },
+      }),
+  })
+  .openapi("ErrorResponse");
+
+/**
+ * 422 Validation Error Schema
+ * Cấu trúc: { message: string, errors: { [field]: { msg: string, value: any } } }
+ */
+export const EntityErrorRes = z
+  .object({
+    message: z.string().openapi({ example: "Lỗi validation dữ liệu" }),
+    errors: z
+      .record(
+        z.string(), // Key là tên field (vd: email, password)
+        z.object({
+          msg: z.string().openapi({ example: "Email không hợp lệ" }),
+          value: z.any().openapi({ example: "invalid-email" }),
+        }),
+      )
+      .openapi({
+        description: "Chi tiết lỗi validation theo từng trường",
+        example: {
+          email: { msg: "Email không đúng định dạng", value: "abc" },
+          password: { msg: "Mật khẩu phải có chữ hoa", value: "123" },
+        },
+      }),
+  })
+  .openapi("EntityErrorResponse");

@@ -1,5 +1,10 @@
 import { registry } from "@/common/config/openapi.js";
-import { LoginReqBody, RegisterReqBody, RegisterRes } from "./auth.schemas.js";
+import { LoginReqBody, RegisterData, RegisterReqBody } from "./auth.schemas.js";
+import {
+  BuildSuccessRes,
+  EntityErrorRes,
+  ErrorRes,
+} from "@/common/schemas/common.schemas.js";
 
 export const registerAuthDocs = () => {
   // Register
@@ -19,11 +24,38 @@ export const registerAuthDocs = () => {
       },
     },
     responses: {
+      // CREATED
       201: {
         description: "Đăng ký thành công",
         content: {
           "application/json": {
-            schema: RegisterRes,
+            schema: BuildSuccessRes(RegisterData, "Đăng ký thành công"),
+          },
+        },
+      },
+      // Validation Error
+      422: {
+        description: "Lỗi Validation",
+        content: {
+          "application/json": {
+            schema: EntityErrorRes,
+          },
+        },
+      },
+      // Conflict
+      409: {
+        description: "Email đã tồn tại",
+        content: {
+          "application/json": {
+            schema: ErrorRes,
+          },
+        },
+      },
+      500: {
+        description: "Lỗi Server",
+        content: {
+          "application/json": {
+            schema: ErrorRes,
           },
         },
       },
@@ -40,7 +72,7 @@ export const registerAuthDocs = () => {
       body: {
         content: {
           "application/json": {
-            schema: LoginReqBody, // 👈 ĐẤU DÂY
+            schema: LoginReqBody,
           },
         },
       },
