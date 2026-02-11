@@ -9,8 +9,8 @@ export default defineConfig([
   globalIgnores(["**/.bun/", "**/build/", "**/dist/", "**/node_modules/"]),
 
   js.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked, // Check cả type
-  ...tseslint.configs.stylisticTypeChecked, // Check type để quyết định phong cách
+  tseslint.configs.recommendedTypeChecked, // Check cả type
+  tseslint.configs.stylisticTypeChecked, // Check type để quyết định phong cách
   // Tắt các rule xung đột với Prettier
   eslintPluginPrettierRecommended,
 

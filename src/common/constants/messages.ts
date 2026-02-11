@@ -69,6 +69,8 @@ export const USERS_MESSAGES = {
   UPLOAD_IMAGE_SUCCESS: "Tải ảnh lên thành công",
   UPLOAD_VIDEO_SUCCESS: "Tải video lên thành công",
 
+  TOKEN_IS_REQUIRED: "Token là bắt buộc",
+
   ACCESS_TOKEN_IS_REQUIRED: "Yêu cầu Access Token",
   ACCESS_TOKEN_INVALID_OR_EXPIRED: "Access Token không hợp lệ hoặc đã hết hạn",
 

@@ -1,5 +1,11 @@
 import { USERS_MESSAGES } from "@/common/constants/messages.js";
-import { requiredString } from "@/common/utils/validation.js";
+import {
+  basePasswordSchema,
+  confirmPasswordSchema,
+  emailSchema,
+  passwordSchema,
+  tokenSchema,
+} from "@/common/schemas/common.schemas";
 import { z } from "zod";
 
 export const RegisterReqBody = z
@@ -8,85 +14,128 @@ export const RegisterReqBody = z
       .string(USERS_MESSAGES.NAME_IS_REQUIRED)
       .trim()
       .min(1, USERS_MESSAGES.NAME_MIN_LENGTH)
-      .max(100, USERS_MESSAGES.NAME_MAX_LENGTH),
+      .max(100, USERS_MESSAGES.NAME_MAX_LENGTH)
+      .openapi({
+        example: "Nguyễn Văn A",
+        description: "Tên hiển thị người dùng",
+      }),
     username: z
       .string(USERS_MESSAGES.USERNAME_IS_REQUIRED)
       .trim()
       .min(3, USERS_MESSAGES.USERNAME_MIN_LENGTH)
       .max(255, USERS_MESSAGES.USERNAME_MAX_LENGTH)
-      // Regex: Chỉ cho phép chữ, số, _ và .
-      .regex(/^[a-zA-Z0-9._]+$/, USERS_MESSAGES.USERNAME_IS_INVALID),
-    email: z.email(USERS_MESSAGES.EMAIL_INVALID_FORMAT),
-    password: z
-      .string(USERS_MESSAGES.PASSWORD_IS_REQUIRED)
-      .min(6, USERS_MESSAGES.PASSWORD_MIN_LENGTH)
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{6,}$/,
-        USERS_MESSAGES.PASSWORD_NOT_STRONG,
-      ),
-    confirmPassword: requiredString(
-      USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED,
-    ),
-    // z.coerce tự động ép kiểu String -> Date
-    dateOfBirth: z.coerce.date({
-      error: (issue) =>
-        issue.code === "invalid_type"
-          ? USERS_MESSAGES.DATE_OF_BIRTH_INVALID
-          : USERS_MESSAGES.UNKNOWN_ERROR,
+      .regex(/^[a-zA-Z0-9._]+$/, USERS_MESSAGES.USERNAME_IS_INVALID)
+      .openapi({
+        example: "shin_coder.99",
+        description: "Username chỉ chứa chữ, số, dấu gạch dưới và dấu chấm",
+      }),
+    email: emailSchema.openapi({
+      description: "Email đăng ký tài khoản (Dùng để xác thực)",
     }),
+    password: passwordSchema,
+    confirmPassword: confirmPasswordSchema,
+    dateOfBirth: z.coerce
+      .date({
+        error: (issue) =>
+          issue.code === "invalid_type"
+            ? USERS_MESSAGES.DATE_OF_BIRTH_INVALID
+            : USERS_MESSAGES.UNKNOWN_ERROR,
+      })
+      .openapi({
+        example: "2005-01-01T00:00:00.000Z",
+        description: "Ngày sinh theo chuẩn ISO 8601",
+        type: "string",
+        format: "date",
+      }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    error: USERS_MESSAGES.CONFIRM_PASSWORD_NOT_MATCH,
-    path: ["confirmPassword"], // Đánh dấu lỗi sẽ hiện ở trường confirmPassword
-  });
+    message: USERS_MESSAGES.CONFIRM_PASSWORD_NOT_MATCH,
+    path: ["confirmPassword"],
+  })
+  .openapi("RegisterRequest");
 
-export const LoginReqBody = z.object({
-  email: z.email(USERS_MESSAGES.EMAIL_INVALID_FORMAT),
-  password: requiredString(USERS_MESSAGES.PASSWORD_IS_REQUIRED),
+export const RegisterRes = z.object({
+  message: z.string().openapi({ example: "Đăng ký thành công" }),
+  result: z.object({
+    _id: z.string().openapi({ example: "698c0460284cfeb2d9b6b156" }),
+    username: z.string().openapi({ example: "shin_coder.99" }),
+    email: z.string().openapi({ example: "user@example.com" }),
+    dateOfBirth: z.date().openapi({ example: "2005-01-01T00:00:00.000Z" }),
+  }),
 });
 
-export const VerifyEmailReqBody = z.object({
-  emailVerifyToken: requiredString(
-    USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_REQUIRED,
-  ),
-});
+export const LoginReqBody = z
+  .object({
+    email: emailSchema.openapi({
+      description: "Email đăng nhập",
+    }),
+    password: basePasswordSchema.openapi({
+      description: "Mật khẩu người dùng",
+    }),
+  })
+  .openapi("LoginRequest");
 
-export const ResendVerificationEmailReqBody = z.object({
-  email: z.email(USERS_MESSAGES.EMAIL_INVALID_FORMAT),
-});
+export const VerifyEmailReqBody = z
+  .object({
+    emailVerifyToken: tokenSchema(
+      USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_REQUIRED,
+    ).openapi({
+      description: "JWT Token gửi qua email để xác thực tài khoản",
+    }),
+  })
+  .openapi("VerifyEmailRequest");
 
-export const ForgotPasswordReqBody = z.object({
-  email: z.email(USERS_MESSAGES.EMAIL_INVALID_FORMAT),
-});
+export const ResendVerificationEmailReqBody = z
+  .object({
+    email: emailSchema.openapi({
+      description: "Email cần gửi lại mã xác thực",
+    }),
+  })
+  .openapi("ResendVerificationRequest");
+
+export const ForgotPasswordReqBody = z
+  .object({
+    email: emailSchema.openapi({
+      description: "Email của tài khoản bị quên mật khẩu",
+    }),
+  })
+  .openapi("ForgotPasswordRequest");
 
 export const ResetPasswordReqBody = z
   .object({
-    forgotPasswordToken: requiredString(
+    forgotPasswordToken: tokenSchema(
       USERS_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
-    ),
-    password: z
-      .string(USERS_MESSAGES.PASSWORD_IS_REQUIRED)
-      .min(6, USERS_MESSAGES.PASSWORD_MIN_LENGTH)
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{6,}$/,
-        USERS_MESSAGES.PASSWORD_NOT_STRONG,
-      ),
-    confirmPassword: requiredString(
-      USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED,
-    ),
+    ).openapi({
+      description: "Token verify quên mật khẩu (Lấy từ email)",
+    }),
+    password: passwordSchema,
+    confirmPassword: confirmPasswordSchema,
   })
   .refine((data) => data.password === data.confirmPassword, {
-    error: USERS_MESSAGES.CONFIRM_PASSWORD_NOT_MATCH,
+    message: USERS_MESSAGES.CONFIRM_PASSWORD_NOT_MATCH,
     path: ["confirmPassword"],
-  });
+  })
+  .openapi("ResetPasswordRequest");
 
-export const LoginGoogleReqBody = z.object({
-  code: requiredString(USERS_MESSAGES.GOOGLE_CODE_IS_REQUIRED),
-});
+export const LoginGoogleReqBody = z
+  .object({
+    code: tokenSchema(USERS_MESSAGES.GOOGLE_CODE_IS_REQUIRED).openapi({
+      example: "4/0AeaYSH...",
+      description: "Authorization Code nhận được từ Google OAuth2",
+    }),
+  })
+  .openapi("LoginGoogleRequest");
 
-export const RefreshTokenReqCookie = z.object({
-  refresh_token: requiredString(USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED),
-});
+export const RefreshTokenReqCookie = z
+  .object({
+    refresh_token: tokenSchema(
+      USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED,
+    ).openapi({
+      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      description: "Refresh Token lưu trong HttpOnly Cookie",
+    }),
+  })
+  .openapi("RefreshTokenCookie");
 
 export type RefreshTokenCookieType = z.infer<typeof RefreshTokenReqCookie>;
 export type LoginGoogleBodyType = z.infer<typeof LoginGoogleReqBody>;

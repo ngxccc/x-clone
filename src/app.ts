@@ -16,6 +16,8 @@ import {
 import { createAuthRouter } from "./modules/auth";
 import { createUsersRouter } from "./modules/users";
 import { createMediasRouter } from "@/modules/medias";
+import { generateOpenAPIDocument } from "./common/config/openapi";
+import swaggerUi from "swagger-ui-express";
 
 const app = express();
 
@@ -33,6 +35,10 @@ app.use(
     credentials: true,
   }),
 );
+
+// Swagger
+const openApiDocument = generateOpenAPIDocument();
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 // Routes Definition
 app.use("/api/v1/auth", createAuthRouter(authController, authMiddleware));

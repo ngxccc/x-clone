@@ -3,6 +3,7 @@
   "module": "server.ts",
   "private": true,
   "type": "module",
+  "version": "1.0.0",
   "scripts": {
     "dev": "bun --watch src/server.ts",
     "start": "bun src/server.ts",

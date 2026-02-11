@@ -4,3 +4,4 @@ export { default as RefreshToken } from "./models/RefreshToken.js";
 export { AuthService } from "./auth.services.js";
 export { AuthController } from "./auth.controllers";
 export { AuthMiddleware } from "./auth.middlewares";
+export { registerAuthDocs } from "./auth.docs.js";
