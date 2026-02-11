@@ -1,21 +1,23 @@
-import { registry } from "@/common/config/openapi.js";
-import { LoginReqBody, RegisterData, RegisterReqBody } from "./auth.schemas.js";
+import { registerRoute } from "@/common/config/openapi.js";
 import {
-  BuildSuccessRes,
-  EntityErrorRes,
-  ErrorRes,
-} from "@/common/schemas/common.schemas.js";
+  LoginData,
+  LoginReqBody,
+  RegisterData,
+  RegisterReqBody,
+} from "./auth.schemas.js";
+import { BuildSuccessRes } from "@/common/schemas/common.schemas.js";
+import z from "zod";
 
 export const registerAuthDocs = () => {
   // Register
-  registry.registerPath({
+  registerRoute({
     method: "post",
     path: "/api/v1/auth/register",
     tags: ["Auth"],
-    summary: "Đăng ký tài khoản mới",
+    summary: "Đăng ký tài khoản",
+    isPublic: true,
     request: {
       body: {
-        description: "Thông tin đăng ký",
         content: {
           "application/json": {
             schema: RegisterReqBody,
@@ -24,8 +26,7 @@ export const registerAuthDocs = () => {
       },
     },
     responses: {
-      // CREATED
-      201: {
+      200: {
         description: "Đăng ký thành công",
         content: {
           "application/json": {
@@ -33,37 +34,11 @@ export const registerAuthDocs = () => {
           },
         },
       },
-      // Validation Error
-      422: {
-        description: "Lỗi Validation",
-        content: {
-          "application/json": {
-            schema: EntityErrorRes,
-          },
-        },
-      },
-      // Conflict
-      409: {
-        description: "Email đã tồn tại",
-        content: {
-          "application/json": {
-            schema: ErrorRes,
-          },
-        },
-      },
-      500: {
-        description: "Lỗi Server",
-        content: {
-          "application/json": {
-            schema: ErrorRes,
-          },
-        },
-      },
     },
   });
 
   // Login
-  registry.registerPath({
+  registerRoute({
     method: "post",
     path: "/api/v1/auth/login",
     tags: ["Auth"],
@@ -78,7 +53,28 @@ export const registerAuthDocs = () => {
       },
     },
     responses: {
-      200: { description: "Đăng nhập thành công" },
+      200: {
+        description: "Đăng nhập thành công",
+        content: {
+          "application/json": {
+            schema: BuildSuccessRes(LoginData, "Đăng nhập thành công"),
+          },
+        },
+      },
+    },
+  });
+
+  // Logout
+  registerRoute({
+    method: "post",
+    path: "/api/v1/auth/logout",
+    tags: ["Auth"],
+    summary: "Đăng xuất",
+    responses: {
+      200: {
+        description: "Đăng xuất thành công",
+        content: { "application/json": { schema: BuildSuccessRes(z.null()) } },
+      },
     },
   });
 };

@@ -76,6 +76,14 @@ export const LoginReqBody = z
   })
   .openapi("LoginRequest");
 
+export const LoginData = z
+  .object({
+    accessToken: z
+      .string()
+      .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
+  })
+  .openapi("LoginResultData");
+
 export const VerifyEmailReqBody = z
   .object({
     emailVerifyToken: tokenSchema(

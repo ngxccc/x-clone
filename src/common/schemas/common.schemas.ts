@@ -82,6 +82,7 @@ export const BuildSuccessRes = (dataSchema: z.ZodType, msg = "Thành công") =>
 /**
  * Generic Error Response (400, 401, 403, 404...)
  */
+// TODO: Tách ra cấu hình err cho từng res
 export const ErrorRes = z
   .object({
     message: z.string().openapi({ example: "Lỗi gì đó..." }),
@@ -95,26 +96,32 @@ export const ErrorRes = z
   })
   .openapi("ErrorResponse");
 
+export const UnauthorizedErrorRes = z.object({
+  message: z.string().openapi({ example: "Email hoặc mật khẩu không đúng" }),
+  errorCode: z.string().optional().openapi({ example: "PASSWORD_INCORRECT" }),
+});
+
+export const ForbiddenErrorRes = z.object({
+  message: z.string().openapi({ example: "Email chưa được xác thực" }),
+  errorCode: z.string().optional().openapi({ example: "EMAIL_NOT_VERIFIED" }),
+});
+
 /**
  * 422 Validation Error Schema
- * Cấu trúc: { message: string, errors: { [field]: { msg: string, value: any } } }
  */
-export const EntityErrorRes = z
+export const ValidationErrorRes = z
   .object({
     message: z.string().openapi({ example: "Lỗi validation dữ liệu" }),
     errors: z
       .record(
         z.string(), // Key là tên field (vd: email, password)
-        z.object({
-          msg: z.string().openapi({ example: "Email không hợp lệ" }),
-          value: z.any().openapi({ example: "invalid-email" }),
-        }),
+        z.array(z.string()),
       )
       .openapi({
         description: "Chi tiết lỗi validation theo từng trường",
         example: {
-          email: { msg: "Email không đúng định dạng", value: "abc" },
-          password: { msg: "Mật khẩu phải có chữ hoa", value: "123" },
+          email: ["Email không đúng định dạng"],
+          password: ["Mật khẩu phải có chữ hoa"],
         },
       }),
   })
