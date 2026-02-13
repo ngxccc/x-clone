@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HTTP_STATUS } from "@/common/constants/httpStatus.js";
 
 export class ErrorWithStatus<
@@ -24,6 +25,20 @@ export class ErrorWithStatus<
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, this.constructor);
     }
+  }
+}
+
+export class EntityError extends ErrorWithStatus {
+  public override errors: Record<string, any>;
+  public constructor({
+    message = "Lỗi validation",
+    errors,
+  }: {
+    message?: string;
+    errors: Record<string, any>;
+  }) {
+    super(message, HTTP_STATUS.UNPROCESSABLE_ENTITY);
+    this.errors = errors;
   }
 }
 
