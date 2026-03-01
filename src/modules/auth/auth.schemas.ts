@@ -135,6 +135,14 @@ export const LoginGoogleReqBody = z
   })
   .openapi("LoginGoogleRequest");
 
+export const LoginGoogleData = z
+  .object({
+    accessToken: z
+      .string()
+      .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
+  })
+  .openapi("LoginGoogleResultData");
+
 export const RefreshTokenReqCookie = z
   .object({
     refresh_token: tokenSchema(
@@ -145,6 +153,14 @@ export const RefreshTokenReqCookie = z
     }),
   })
   .openapi("RefreshTokenCookie");
+
+export const RefreshTokenData = z
+  .object({
+    accessToken: z
+      .string()
+      .openapi({ example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }),
+  })
+  .openapi("RefreshTokenResultData");
 
 export type RefreshTokenCookieType = z.infer<typeof RefreshTokenReqCookie>;
 export type LoginGoogleBodyType = z.infer<typeof LoginGoogleReqBody>;
