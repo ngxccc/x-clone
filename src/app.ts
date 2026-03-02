@@ -50,7 +50,7 @@ app.use(
 // Routes Definition
 app.use("/api/v1/auth", createAuthRouter(authController, authMiddleware));
 app.use("/api/v1/users", createUsersRouter(userController, authMiddleware));
-app.use("/api/v1/media", createMediasRouter(mediaController, authMiddleware));
+app.use("/api/v1/medias", createMediasRouter(mediaController, authMiddleware));
 
 // Serve static file
 app.use("/static/image", express.static(UPLOAD_IMAGE_DIR));

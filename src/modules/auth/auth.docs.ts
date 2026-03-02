@@ -78,6 +78,7 @@ export const registerAuthDocs = () => {
     path: "/api/v1/auth/logout",
     tags: ["Auth"],
     summary: "Đăng xuất",
+    isPublic: false,
     responses: {
       200: {
         description: "Đăng xuất thành công",
@@ -206,6 +207,7 @@ export const registerAuthDocs = () => {
     path: "/api/v1/auth/refresh-token",
     tags: ["Auth"],
     summary: "Làm mới refresh token",
+    isPublic: false,
     request: {
       body: {
         content: {

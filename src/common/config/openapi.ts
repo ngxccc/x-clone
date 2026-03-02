@@ -7,6 +7,7 @@ import { version } from "../../../package.json";
 import envConfig from "./env";
 import { registerAuthDocs } from "@/modules/auth";
 import { COMMON_ERRORS } from "./http-responses";
+import { registerMediasDocs } from "@/modules/medias";
 
 export const registry = new OpenAPIRegistry();
 
@@ -18,6 +19,7 @@ registry.registerComponent("securitySchemes", "BearerAuth", {
 
 export const generateOpenAPIDocument = () => {
   registerAuthDocs();
+  registerMediasDocs();
 
   const generator = new OpenApiGeneratorV3(registry.definitions);
 
