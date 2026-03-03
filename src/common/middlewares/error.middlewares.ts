@@ -13,15 +13,6 @@ import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
-const omit = <T extends Record<string, any>>(
-  obj: T,
-  keys: string[],
-): Partial<T> => {
-  const result = { ...obj };
-  keys.forEach((key) => delete result[key]);
-  return result;
-};
-
 const handleMongooseValidationError = (err: mongoose.Error.ValidationError) => {
   const errors: Record<string, any> = {};
 
@@ -89,7 +80,13 @@ export const defaultErrorHandler = (
   }
 
   if (finalError instanceof ErrorWithStatus) {
-    return res.status(finalError.status).json(omit(finalError, ["status"]));
+    return res.status(finalError.status).json({
+      message: finalError.message,
+      ...(finalError.errorCode && { errorCode: finalError.errorCode }),
+      ...(finalError.errors && {
+        errors: finalError.errors as Record<string, any>,
+      }),
+    });
   }
 
   console.error("❌ INTERNAL SERVER ERROR:", err);
