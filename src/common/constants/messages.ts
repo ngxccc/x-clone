@@ -68,6 +68,7 @@ export const USERS_MESSAGES = {
   CHANGE_PASSWORD_SUCCESS: "Đổi mật khẩu thành công",
   UPLOAD_IMAGE_SUCCESS: "Tải ảnh lên thành công",
   UPLOAD_VIDEO_SUCCESS: "Tải video lên thành công",
+  CREATE_POST_SUCCESS: "Tạo bài viết thành công",
 
   TOKEN_IS_REQUIRED: "Token là bắt buộc",
 
@@ -153,6 +154,13 @@ export const USERS_MESSAGES = {
   OLD_PASSWORD_NOT_MATCH: "Mật khẩu cũ không đúng",
   CHANGE_PASSWORD_SAME_AS_OLD: "Mật khẩu mới không được trùng với mật khẩu cũ",
   VIDEO_EXTENSION_MISMATCH: "Nội dung file không khớp với file video",
+
+  ORIGINAL_POST_NOT_FOUND_OR_DELETED:
+    "Bài viết gốc không tồn tại hoặc đã bị xóa",
+  MAX_VIDEO_ATTACHMENT_EXCEEDED: "Chỉ được phép đính kèm tối đa 1 Video",
+  MAX_MIXED_ATTACHMENTS_EXCEEDED:
+    "Chỉ được phép đính kèm tối đa 3 ảnh và 1 video",
+  MAX_IMAGE_ATTACHMENTS_EXCEEDED: "Chỉ được phép đính kèm tối đa 4 Ảnh",
 
   FIELD_ALREADY_EXISTS: (field: string) => `${field} đã tồn tại trong hệ thống`,
   FIELD_IS_REQUIRED: (field: string) => `${field} là bắt buộc`,

@@ -53,7 +53,6 @@ const TweetSchema = new Schema(
       },
     ],
 
-    // --- TÍNH NĂNG EDIT ---
     isEdited: {
       type: Boolean,
       default: false,

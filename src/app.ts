@@ -11,6 +11,7 @@ import {
   authController,
   authMiddleware,
   mediaController,
+  tweetController,
   userController,
 } from "./container";
 import { createAuthRouter } from "./modules/auth";
@@ -18,6 +19,7 @@ import { createUsersRouter } from "./modules/users";
 import { createMediasRouter } from "@/modules/medias";
 import { generateOpenAPIDocument } from "./common/config/openapi";
 import { apiReference } from "@scalar/express-api-reference";
+import { createTweetsRouter } from "./modules/tweets";
 
 const app = express();
 
@@ -51,6 +53,7 @@ app.use(
 app.use("/api/v1/auth", createAuthRouter(authController, authMiddleware));
 app.use("/api/v1/users", createUsersRouter(userController, authMiddleware));
 app.use("/api/v1/medias", createMediasRouter(mediaController, authMiddleware));
+app.use("/api/v1/tweets", createTweetsRouter(tweetController, authMiddleware));
 
 // Serve static file
 app.use("/static/image", express.static(UPLOAD_IMAGE_DIR));

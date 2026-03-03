@@ -5,6 +5,7 @@ import { QueueService } from "./common/utils/queue";
 import { VideoService } from "./common/utils/video";
 import { AuthController, AuthMiddleware, AuthService } from "./modules/auth";
 import { MediaController, MediaService, VideoWorker } from "./modules/medias";
+import { TweetController, TweetService } from "./modules/tweets";
 import { UserController, UserService } from "./modules/users";
 import { DatabaseService } from "./services/database.services";
 
@@ -14,6 +15,7 @@ const videoService = new VideoService();
 const databaseService = new DatabaseService();
 const googleService = new GoogleService();
 const queueService = new QueueService();
+const tweetService = new TweetService();
 const userService = new UserService(tokenService);
 const authService = new AuthService(userService, tokenService, googleService);
 const mediaService = new MediaService(fileService, queueService);
@@ -22,6 +24,7 @@ const videoWorker = new VideoWorker(videoService);
 const userController = new UserController(userService);
 const authController = new AuthController(userService, authService);
 const mediaController = new MediaController(mediaService);
+const tweetController = new TweetController(tweetService);
 const authMiddleware = new AuthMiddleware(userService, tokenService);
 
 export {
@@ -38,5 +41,6 @@ export {
   userController,
   authController,
   mediaController,
+  tweetController,
   authMiddleware,
 };

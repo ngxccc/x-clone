@@ -37,6 +37,18 @@ export const CONNECTION_STATES = {
   UNINITIALIZED: 99,
 } as const;
 
+export const TWEET_TYPES = {
+  TWEET: 0,
+  RETWEET: 1,
+  COMMENT: 2,
+  QUOTE: 3,
+} as const;
+
+export const TWEET_AUDIENCE = {
+  EVERYONE: 0,
+  TWEETER_CIRCLE: 1,
+} as const;
+
 export type UploadPurposeType =
   (typeof UPLOAD_PURPOSE)[keyof typeof UPLOAD_PURPOSE];
 

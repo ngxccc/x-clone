@@ -9,6 +9,7 @@ import { registerAuthDocs } from "@/modules/auth";
 import { COMMON_ERRORS } from "./http-responses";
 import { registerMediasDocs } from "@/modules/medias";
 import { registerUsersDocs } from "@/modules/users";
+import { registerTweetsDocs } from "@/modules/tweets";
 
 export const registry = new OpenAPIRegistry();
 
@@ -22,6 +23,7 @@ export const generateOpenAPIDocument = () => {
   registerAuthDocs();
   registerMediasDocs();
   registerUsersDocs();
+  registerTweetsDocs();
 
   const generator = new OpenApiGeneratorV3(registry.definitions);
 
