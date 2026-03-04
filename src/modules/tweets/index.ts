@@ -6,3 +6,4 @@ export { createTweetsRouter } from "./tweets.routes.js";
 export { TweetService } from "./tweets.services.js";
 export { TweetController } from "./tweets.controllers.js";
 export { registerTweetsDocs } from "./tweets.docs.js";
+export { OutboxWorker } from "./workers/outbox.worker.js";

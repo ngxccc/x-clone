@@ -53,11 +53,14 @@ config({
 // checkEnv();
 
 const configSchema = z.object({
-  // --- Server ---
+  // Server
   HOST: z.string(),
   PORT: z.coerce.number().default(4000),
   NODE_ENV: z.enum(ENVIRONMENT_MODES).default("development"),
   LOG_LEVEL: z.enum(LOG_LEVELS).default("debug"),
+
+  // Outbox Worker
+  OUTBOX_WORKER_INTERVAL: z.coerce.number().default(5000),
 
   // Redis
   REDIS_HOST: z.string().default("localhost"),
@@ -65,10 +68,10 @@ const configSchema = z.object({
   REDIS_PASSWORD: z.string().optional(),
   REDIS_USERNAME: z.string().optional(),
 
-  // --- Database ---
+  // Database
   MONGO_URI: z.string(),
 
-  // --- JWT Secret & Expiration ---
+  // JWT Secret & Expiration
   JWT_ACCESS_SECRET: z.string(),
   JWT_ACCESS_EXPIRES_IN: MsDuration.default("15m"),
 
@@ -81,12 +84,12 @@ const configSchema = z.object({
   JWT_FORGOT_PASSWORD_SECRET: z.string(),
   JWT_FORGOT_PASSWORD_EXPIRES_IN: MsDuration.default("10m"),
 
-  // --- Google OAuth ---
+  // Google OAuth
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   GOOGLE_REDIRECT_URI: z.string(),
 
-  // --- Client URL (cho CORS) ---
+  // Client URL (cho CORS)
   CLIENT_URL: z.string().default("http://localhost:3000"),
 });
 

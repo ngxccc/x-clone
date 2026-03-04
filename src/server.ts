@@ -3,7 +3,12 @@ import logger from "@/common/utils/logger.js";
 import { setServers } from "node:dns/promises";
 import envConfig from "./common/config/env.js";
 import type { Server } from "node:http";
-import { databaseService, fileService, videoWorker } from "./container.js";
+import {
+  databaseService,
+  fileService,
+  outboxWorker,
+  videoWorker,
+} from "./container.js";
 
 const port = envConfig.PORT;
 
@@ -17,6 +22,7 @@ const startServer = async () => {
     fileService.initFolder();
 
     videoWorker.init();
+    outboxWorker.init();
 
     await databaseService.connect();
 

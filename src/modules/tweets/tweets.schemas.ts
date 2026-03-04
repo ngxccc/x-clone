@@ -147,6 +147,10 @@ export const TweetData = z
       .openapi({
         example: { likes: 0, retweets: 0, comments: 0, quotes: 0, views: 0 },
       }),
+    processedEvents: z.array(z.string()).openapi({
+      example: ["65f0a...789"],
+      description: "Mảng ObjectId của OutboxEvent",
+    }),
     createdAt: z.date().openapi({
       example: "2026-03-03T12:00:00.000Z",
       type: "string",

@@ -49,6 +49,19 @@ export const TWEET_AUDIENCE = {
   TWEETER_CIRCLE: 1,
 } as const;
 
+export const OUTBOX_STATUS_TYPES = {
+  PENDING: "PENDING",
+  PROCESSING: "PROCESSING",
+  DONE: "DONE",
+  FAILED: "FAILED",
+} as const;
+
+export const OUTBOX_EVENT_TYPES = {
+  TWEET_RETWEETED: "TWEET_RETWEETED",
+  TWEET_COMMENTED: "TWEET_COMMENTED",
+  TWEET_QUOTED: "TWEET_QUOTED",
+} as const;
+
 export type UploadPurposeType =
   (typeof UPLOAD_PURPOSE)[keyof typeof UPLOAD_PURPOSE];
 

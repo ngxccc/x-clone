@@ -62,13 +62,18 @@ const TweetSchema = new Schema(
       default: null,
     },
 
-    // Cache số liệu tương tác (Optimized for Read)
+    // Cache số liệu tương tác
     stats: {
       likes: { type: Number, default: 0 },
       retweets: { type: Number, default: 0 },
       comments: { type: Number, default: 0 },
       quotes: { type: Number, default: 0 },
       views: { type: Number, default: 0 },
+    },
+
+    processedEvents: {
+      type: [Schema.Types.ObjectId],
+      default: [],
     },
   },
   {

@@ -6,6 +6,8 @@ import type { TweetBodyType } from "./tweets.schemas";
 import { USERS_MESSAGES } from "@/common/constants/messages";
 import type { ClientSession } from "mongoose";
 import mongoose from "mongoose";
+import OutboxEvent from "./models/OutboxEvent";
+import { OUTBOX_EVENT_TYPES } from "@/common/constants/enums";
 
 export class TweetService {
   private async checkAndUpsertHashtags(
@@ -69,27 +71,36 @@ export class TweetService {
 
     const session = await mongoose.startSession();
 
+    // NOTE: Tối ưu cho 100k CCU
+    // TRANSACTIONAL OUTBOX PATTERN AND CHANGE DATA CAPTURE
     await session.withTransaction(async () => {
       if (parentId) {
-        const incField =
-          type === 1
-            ? "stats.retweets"
-            : type === 2
-              ? "stats.comments"
-              : "stats.quotes";
-
-        const parentTweet = await Tweet.findByIdAndUpdate(
-          parentId,
-          {
-            $inc: { [incField]: 1 },
-          },
-          { session, new: true }, // Ép chạy trong session
+        const parentExists = await Tweet.exists({ _id: parentId }).session(
+          session,
         );
 
-        if (!parentTweet)
+        if (!parentExists)
           throw new NotFoundError(
             USERS_MESSAGES.ORIGINAL_POST_NOT_FOUND_OR_DELETED,
           );
+
+        const eventType =
+          type === 1
+            ? OUTBOX_EVENT_TYPES.TWEET_RETWEETED
+            : type === 2
+              ? OUTBOX_EVENT_TYPES.TWEET_COMMENTED
+              : OUTBOX_EVENT_TYPES.TWEET_QUOTED;
+
+        await OutboxEvent.create(
+          [
+            {
+              aggregateId: parentId,
+              eventType,
+              payload: { userId, content },
+            },
+          ],
+          { session },
+        );
       }
 
       const [hashtags, mentions] = await Promise.all([
