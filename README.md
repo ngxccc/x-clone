@@ -146,11 +146,11 @@ npm run db:index:node
 | `bun run prettier`      | Kiểm tra format code                            |
 | `bun run prettier:fix`  | Tự động format code                             |
 | `bun run db:index`      | Đồng bộ database indexes                        |
-| `npm run db:index:node` | Giống như `bun run db:index` nhưng dành cho npm |
+| `npm run db:index:node` | Giống như `bun run db:index` nhưng dành cho node runtime |
 
 ## 📚 API Documentation
 
-Chi tiết API endpoints xem tại: [docs/API.md](docs/API.md)
+Chi tiết API endpoints xem tại: [API Docs](https://x-clone-api-docs.ngxc.io.vn)
 
 ## 📁 Cấu trúc dự án
 
@@ -181,7 +181,7 @@ x-clone/
 - ✅ Input validation với Zod
 - ✅ MongoDB injection protection
 - ✅ CORS configuration
-- ⚠️ Cần thêm: Rate limiting, Helmet.js
+- ✅ Cần thêm: Rate limiting, Helmet.js
 
 ## 🤝 Contributing
 
