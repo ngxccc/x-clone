@@ -3,6 +3,9 @@ import { TweetData, TweetReqBody } from "./tweets.schemas";
 import { BuildSuccessRes } from "@/common/schemas/common.schemas";
 
 export const registerTweetsDocs = () => {
+  const TweetRequestSchema = TweetReqBody.openapi("TweetRequest");
+  const TweetResponseSchema = TweetData.openapi("TweetResponseData");
+
   // Tweet
   registerRoute({
     method: "post",
@@ -14,7 +17,7 @@ export const registerTweetsDocs = () => {
       body: {
         content: {
           "application/json": {
-            schema: TweetReqBody,
+            schema: TweetRequestSchema,
           },
         },
       },
@@ -24,7 +27,10 @@ export const registerTweetsDocs = () => {
         description: "Tạo bài viết thành công",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(TweetData, "Tạo bài viết thành công"),
+            schema: BuildSuccessRes(
+              TweetResponseSchema,
+              "Tạo bài viết thành công",
+            ),
           },
         },
       },
