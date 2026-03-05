@@ -1,0 +1,4 @@
+[test]
+# Run tests in a specific test directory
+root = "src"
+preload = ["./src/tests/setup.ts"]

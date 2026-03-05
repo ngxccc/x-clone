@@ -7,6 +7,7 @@ import type { StringValue } from "ms";
 export const ENVIRONMENT_MODES = {
   DEVELOPMENT: "development",
   PRODUCTION: "production",
+  TEST: "test",
 } as const;
 
 export const LOG_LEVELS = {

@@ -4,17 +4,17 @@ import mongoose from "mongoose";
 import z from "zod";
 
 const MediaSchema = z.object({
-  url: z.url(),
+  url: z.url("Đường dẫn không đúng định dạng"),
   type: z.enum(["image", "video"]),
 });
 
 export const TweetReqBody = z
   .object({
     type: z
-      .enum(TWEET_TYPES)
+      .enum(TWEET_TYPES, "type không hợp lệ")
       .openapi({ description: "0: Tweet, 1: Retweet, 2: Comment, 3: Quote" }),
     audience: z
-      .enum(TWEET_AUDIENCE)
+      .enum(TWEET_AUDIENCE, "audience không hợp lệ")
       .default(TWEET_AUDIENCE.EVERYONE)
       .openapi({ description: "0: Everyone, 1: Circle" }),
     content: z.string().trim().openapi({
