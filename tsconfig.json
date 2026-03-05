@@ -3,10 +3,9 @@
     "target": "ESNext", // "ESNext" -> bun | "ES2022" -> nodejs
     "module": "ESNext", // "ESNext" -> bun | "NodeNext" -> nodejs
     "moduleResolution": "bundler", // "bundler" -> bun | "NodeNext" -> nodejs
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "sourceMap": true,
     "lib": ["ESNext"],
+
+    "sourceMap": true,
     "noEmit": true, // Không build ra file js
     "allowJs": true, // Tắt check file js
 
@@ -20,7 +19,6 @@
     "esModuleInterop": true, // Giúp import các thư viện CommonJS cũ (như express) dễ dàng hơn
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": true, // tách type
-
     "noUnusedLocals": true,
     "noUnusedParameters": true,
 
@@ -29,6 +27,4 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts", "dist", "build"]
 }

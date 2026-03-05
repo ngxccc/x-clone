@@ -20,8 +20,8 @@ export default defineConfig([
       parserOptions: {
         projectService: {
           // cấp "Giấy phép tạm trú" để được check bởi tsconfig.json chính
-          allowDefaultProject: ["eslint.config.ts"],
-          defaultProject: "tsconfig.json",
+          // allowDefaultProject: ["eslint.config.ts"],
+          defaultProject: "tsconfig.eslint.json",
         },
         tsconfigRootDir: import.meta.dirname,
       },
