@@ -125,7 +125,7 @@ export const registerUsersDocs = () => {
       }),
       query: z.object({
         limit: z.coerce.number().optional().openapi({ example: 10 }),
-        page: z.coerce.number().optional().openapi({ example: 1 }),
+        curor: z.coerce.string().optional().openapi({ example: "698c046..." }),
       }),
     },
     responses: {

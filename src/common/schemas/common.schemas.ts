@@ -74,7 +74,7 @@ export const tokenSchema = (msg: string) =>
  */
 export const BuildSuccessRes = (dataSchema: z.ZodType) =>
   z.object({
-    success: true,
+    success: z.boolean().default(false).openapi({ example: false }),
     data: dataSchema,
   });
 

@@ -100,11 +100,16 @@ export const PaginationReqQuery = z.object({
     .max(100, USERS_MESSAGES.LIMIT_MAX_LENGTH)
     .default(10)
     .openapi({ example: 10, description: "Số lượng item trên 1 trang" }),
-  page: z.coerce
-    .number()
-    .min(1, USERS_MESSAGES.PAGE_MIN_LENGTH)
-    .default(1)
-    .openapi({ example: 1, description: "Trang hiện tại" }),
+  cursor: z
+    .string()
+    .optional()
+    .refine((val) => mongoose.isValidObjectId(val), {
+      error: USERS_MESSAGES.USER_ID_INVALID,
+    })
+    .openapi({
+      example: "698c0460284cfeb2d9b6b156",
+      description: "ID của user panigation trước đó",
+    }),
 });
 
 export const ChangePasswordReqBody = z
@@ -170,9 +175,7 @@ export const SuccessResData = z
 export const FollowListResData = z
   .object({
     users: z.array(UserProfileResData),
-    total: z.number().openapi({ example: 100 }),
-    page: z.number().openapi({ example: 1 }),
+    nextCursor: z.number().openapi({ example: "698c046..." }),
     limit: z.number().openapi({ example: 10 }),
-    totalPages: z.number().openapi({ example: 10 }),
   })
   .openapi("FollowListResult");

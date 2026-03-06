@@ -20,6 +20,7 @@ import { createMediasRouter } from "@/modules/medias";
 import { generateOpenAPIDocument } from "./common/config/openapi";
 import { apiReference } from "@scalar/express-api-reference";
 import { createTweetsRouter } from "./modules/tweets";
+import { ERROR_CODES } from "./common/constants/error-codes";
 
 const app = express();
 
@@ -62,7 +63,12 @@ app.use("/static/video", express.static(UPLOAD_VIDEO_DIR));
 // Route -> 404 -> Error Handler
 // Error Handling
 app.use((_req, _res, next) => {
-  next(new NotFoundError(USERS_MESSAGES.API_ENDPOINT_NOT_FOUND));
+  next(
+    new NotFoundError({
+      code: ERROR_CODES.API_ENDPOINT_NOT_FOUND,
+      message: USERS_MESSAGES.API_ENDPOINT_NOT_FOUND,
+    }),
+  );
 });
 
 app.use(defaultErrorHandler);

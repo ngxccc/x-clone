@@ -103,9 +103,9 @@ export class UserController {
   ) => {
     try {
       const { userId } = req.params as GetFollowersParamsType;
-      const { limit, page } = req.validatedQuery as PaginationQueryType;
+      const { limit, cursor } = req.validatedQuery as PaginationQueryType;
 
-      const data = await this.userService.getFollowers(userId, limit, page);
+      const data = await this.userService.getFollowers(userId, limit, cursor);
 
       return res.status(HTTP_STATUS.OK).json({
         success: true,
@@ -123,9 +123,9 @@ export class UserController {
   ) => {
     try {
       const { userId } = req.params as GetFollowersParamsType;
-      const { limit, page } = req.validatedQuery as PaginationQueryType;
+      const { limit, cursor } = req.validatedQuery as PaginationQueryType;
 
-      const data = await this.userService.getFollowing(userId, limit, page);
+      const data = await this.userService.getFollowing(userId, limit, cursor);
 
       return res.status(HTTP_STATUS.OK).json({
         success: true,
