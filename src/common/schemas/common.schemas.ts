@@ -70,40 +70,49 @@ export const tokenSchema = (msg: string) =>
 
 /**
  * Generic Success Response
- * @param dataSchema Schema của phần 'result'
- * @param msg Default message
+ * @param dataSchema Schema của phần 'data'
  */
-export const BuildSuccessRes = (dataSchema: z.ZodType, msg = "Thành công") =>
+export const BuildSuccessRes = (dataSchema: z.ZodType) =>
   z.object({
-    message: z.string().openapi({ example: msg }),
-    result: dataSchema,
+    success: true,
+    data: dataSchema,
   });
 
+const ErrorDetailSchema = z.object({
+  code: z.string().openapi({ description: "Mã lỗi chuẩn hóa từ server" }),
+  details: z.record(z.string(), z.unknown()).optional().openapi({
+    description: "Metadata hoặc chi tiết lỗi validation (nếu có)",
+  }),
+});
+
 /**
- * Generic Error Response (400, 401, 403, 404...)
+ * Generic Error Response (Base Envelope Schema)
  */
-// TODO: Tách ra cấu hình err cho từng res
 export const ErrorRes = z
   .object({
-    message: z.string().openapi({ example: "Lỗi gì đó..." }),
-    errors: z
-      .record(z.string(), z.any())
-      .optional()
-      .openapi({
-        description: "Chi tiết lỗi validation (nếu có)",
-        example: { email: { msg: "Invalid email" } },
-      }),
+    success: z.boolean().default(false).openapi({ example: false }),
+    error: ErrorDetailSchema,
   })
   .openapi("ErrorResponse");
 
-export const UnauthorizedErrorRes = z.object({
-  message: z.string().openapi({ example: "Email hoặc mật khẩu không đúng" }),
-  errorCode: z.string().optional().openapi({ example: "PASSWORD_INCORRECT" }),
+export const UnauthorizedErrorRes = ErrorRes.openapi({
+  description: "Lỗi xác thực danh tính (Thiếu token, token hết hạn...)",
+  example: {
+    success: false,
+    error: {
+      code: "ERR_AUTH_MISSING_BEARER_TOKEN",
+    },
+  },
 });
 
-export const ForbiddenErrorRes = z.object({
-  message: z.string().openapi({ example: "Email chưa được xác thực" }),
-  errorCode: z.string().optional().openapi({ example: "EMAIL_NOT_VERIFIED" }),
+export const ForbiddenErrorRes = ErrorRes.openapi({
+  description: "Lỗi phân quyền (Không đủ thẩm quyền truy cập)",
+  example: {
+    success: false,
+    error: {
+      code: "ERR_AUTH_FORBIDDEN_ACCESS",
+    },
+  },
 });
 
 /**
@@ -111,18 +120,33 @@ export const ForbiddenErrorRes = z.object({
  */
 export const ValidationErrorRes = z
   .object({
-    message: z.string().openapi({ example: "Lỗi validation dữ liệu" }),
-    errors: z
-      .record(
-        z.string(), // Key là tên field (vd: email, password)
-        z.array(z.string()),
-      )
-      .openapi({
-        description: "Chi tiết lỗi validation theo từng trường",
-        example: {
-          email: ["Email không đúng định dạng"],
-          password: ["Mật khẩu phải có chữ hoa"],
-        },
-      }),
+    success: z.boolean().default(false).openapi({ example: false }),
+    error: z.object({
+      code: z.string().openapi({ example: "ERR_VALIDATION_FAILED" }),
+      // Định nghĩa gắt gao cấu trúc của details thay vì thả rông
+      details: z
+        .record(
+          z.string(), // Key là tên field (vd: email, content)
+          z.object({
+            code: z.string().optional(),
+            message: z.string(),
+            value: z.unknown().optional(),
+          }),
+        )
+        .openapi({
+          description: "Danh sách lỗi chi tiết theo từng trường dữ liệu",
+          example: {
+            content: {
+              code: "ERR_TWEET_TOO_LONG",
+              message: "Content exceeds 280 characters",
+              value: "A".repeat(300),
+            },
+            type: {
+              code: "ERR_INVALID_ENUM",
+              message: "Invalid tweet type",
+            },
+          },
+        }),
+    }),
   })
   .openapi("EntityErrorResponse");

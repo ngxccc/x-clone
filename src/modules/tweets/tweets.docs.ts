@@ -27,10 +27,7 @@ export const registerTweetsDocs = () => {
         description: "Tạo bài viết thành công",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(
-              TweetResponseSchema,
-              "Tạo bài viết thành công",
-            ),
+            schema: BuildSuccessRes(TweetResponseSchema),
           },
         },
       },

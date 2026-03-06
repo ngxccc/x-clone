@@ -1,12 +1,12 @@
 import { GOOGLE_APIS } from "@/common/constants/googleApi.js";
 import "dotenv/config";
-import { BadRequestError } from "./errors.js";
-import { USERS_MESSAGES } from "@/common/constants/messages.js";
+import { BadRequestError, InternalServerError } from "./errors.js";
 import type {
   GoogleTokenResponse,
   GoogleUserInfo,
 } from "@/common/types/common.types.js";
 import envConfig from "@/common/config/env.js";
+import { ERROR_CODES } from "../constants/error-codes.js";
 
 export class GoogleService {
   public async getToken(code: string) {
@@ -18,33 +18,69 @@ export class GoogleService {
       grant_type: "authorization_code",
     };
 
-    const response = await fetch(GOOGLE_APIS.TOKEN, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams(body),
-    });
+    try {
+      const response = await fetch(GOOGLE_APIS.TOKEN, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(body),
+      });
 
-    // eslint-disable-next-line
-    const data = (await response.json()) as any;
+      const data: unknown = await response.json();
 
-    if (!response.ok)
-      // eslint-disable-next-line
-      throw new BadRequestError(USERS_MESSAGES.GOOGLE_AUTH_FAILED, data.error);
+      if (!response.ok) {
+        throw new BadRequestError({
+          code: ERROR_CODES.THIRD_PARTY.GOOGLE_AUTH_FAILED,
+          details: data as Record<string, unknown>,
+        });
+      }
 
-    return data as GoogleTokenResponse;
+      return data as GoogleTokenResponse;
+    } catch (error) {
+      if (error instanceof BadRequestError) throw error;
+
+      throw new InternalServerError({
+        code: ERROR_CODES.THIRD_PARTY.NETWORK_ERROR,
+        details: {
+          reason:
+            error instanceof Error
+              ? error.message
+              : "Failed to fetch Google Token",
+        },
+      });
+    }
   }
 
   public async getUserInfo(access_token: string) {
-    const response = await fetch(`${GOOGLE_APIS.USER_INFO}?alt=json`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    });
+    try {
+      const response = await fetch(`${GOOGLE_APIS.USER_INFO}?alt=json`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
 
-    if (!response.ok)
-      throw new BadRequestError(USERS_MESSAGES.GOOGLE_GET_USER_INFO_FAILED);
+      const data: unknown = await response.json();
 
-    return (await response.json()) as GoogleUserInfo;
+      if (!response.ok) {
+        throw new BadRequestError({
+          code: ERROR_CODES.THIRD_PARTY.GOOGLE_USER_INFO_FAILED,
+          details: data as Record<string, unknown>,
+        });
+      }
+
+      return data as GoogleUserInfo;
+    } catch (error) {
+      if (error instanceof BadRequestError) throw error;
+
+      throw new InternalServerError({
+        code: ERROR_CODES.THIRD_PARTY.NETWORK_ERROR,
+        details: {
+          reason:
+            error instanceof Error
+              ? error.message
+              : "Failed to fetch Google User Info",
+        },
+      });
+    }
   }
 }

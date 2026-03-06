@@ -1,19 +1,3 @@
-export const ERROR_CODES = {
-  EMAIL_NOT_FOUND: "EMAIL_NOT_FOUND",
-  EMAIL_NOT_VERIFIED: "EMAIL_NOT_VERIFIED",
-  EMAIL_IS_VERIFIED: "EMAIL_IS_VERIFIED",
-  ACCOUNT_IS_BANNED: "ACCOUNT_IS_BANNED",
-  PASSWORD_INCORRECT: "PASSWORD_INCORRECT",
-  USER_NOT_FOUND: "USER_NOT_FOUND",
-  RESEND_EMAIL_TOO_FAST: "RESEND_EMAIL_TOO_FAST",
-  VALIDATION_ERROR: "ValidationError",
-  MONGO_DUPLICATE_KEY: 11000,
-  LIMIT_FILE_SIZE: "LIMIT_FILE_SIZE",
-  FORMIDABLE_MAX_FILE_SIZE: 1016,
-  FORMIDABLE_MAX_FILES: 1015,
-  FORMIDABLE_MAX_TOTAL_FILE_SIZE: 1009,
-} as const;
-
 export const USERS_MESSAGES = {
   NAME_IS_REQUIRED: "Tên là bắt buộc",
   NAME_MIN_LENGTH: "Tên phải có độ dài từ 1 ký tự trở lên",
@@ -50,25 +34,23 @@ export const USERS_MESSAGES = {
   DATE_OF_BIRTH_INVALID: "Ngày sinh không hợp lệ",
   DATE_OF_BIRTH_MUST_BE_ISO8601: "Ngày sinh phải theo chuẩn ISO8601",
 
-  LOGIN_SUCCESS: "Đăng nhập thành công",
-  LOGIN_WITH_GOOGLE_SUCCESS: "Đăng nhập với Google thành công",
-  LOGIN_FAILED: "Đăng nhập thất bại",
-  LOGOUT_SUCCESS: "Đăng xuất thành công",
-  REGISTER_SUCCESS: "Đăng ký thành công",
-  EMAIL_VERIFY_SUCCESS: "Xác thực email thành công",
-  REFRESH_TOKEN_SUCCESS: "Làm mới Refresh Token thành công",
-  PASSWORD_RESET_SUCCESS: "Đặt lại mật khẩu thành công",
-  GET_ME_SUCCESS: "Lấy thông tin người dùng thành công",
-  FOLLOW_SUCCESS: "Theo dõi thành công",
-  GET_PROFILE_SUCCESS: "Lấy thông tin người dùng thành công",
-  UPDATE_ME_SUCCESS: "Cập nhật thông tin thành công",
-  UNFOLLOW_SUCCESS: "Hủy theo dõi thành công",
-  GET_FOLLOWERS_SUCCESS: "Lấy danh sách người theo dõi thành công",
-  GET_FOLLOWING_SUCCESS: "Lấy danh sách người đang theo dõi thành công",
-  CHANGE_PASSWORD_SUCCESS: "Đổi mật khẩu thành công",
-  UPLOAD_IMAGE_SUCCESS: "Tải ảnh lên thành công",
-  UPLOAD_VIDEO_SUCCESS: "Tải video lên thành công",
-  CREATE_POST_SUCCESS: "Tạo bài viết thành công",
+  // LOGIN_SUCCESS: "Đăng nhập thành công",
+  // LOGIN_WITH_GOOGLE_SUCCESS: "Đăng nhập với Google thành công",
+  // LOGOUT_SUCCESS: "Đăng xuất thành công",
+  // REGISTER_SUCCESS: "Đăng ký thành công",
+  // EMAIL_VERIFY_SUCCESS: "Xác thực email thành công",
+  // REFRESH_TOKEN_SUCCESS: "Làm mới Refresh Token thành công",
+  // PASSWORD_RESET_SUCCESS: "Đặt lại mật khẩu thành công",
+  // GET_ME_SUCCESS: "Lấy thông tin người dùng thành công",
+  // FOLLOW_SUCCESS: "Theo dõi thành công",
+  // GET_PROFILE_SUCCESS: "Lấy thông tin người dùng thành công",
+  // UPDATE_ME_SUCCESS: "Cập nhật thông tin thành công",
+  // UNFOLLOW_SUCCESS: "Hủy theo dõi thành công",
+  // GET_FOLLOWERS_SUCCESS: "Lấy danh sách người theo dõi thành công",
+  // GET_FOLLOWING_SUCCESS: "Lấy danh sách người đang theo dõi thành công",
+  // CHANGE_PASSWORD_SUCCESS: "Đổi mật khẩu thành công",
+  // UPLOAD_IMAGE_SUCCESS: "Tải ảnh lên thành công",
+  // UPLOAD_VIDEO_SUCCESS: "Tải video lên thành công",
 
   TOKEN_IS_REQUIRED: "Token là bắt buộc",
 
@@ -84,7 +66,7 @@ export const USERS_MESSAGES = {
     "Email Verify Token không hợp lệ hoặc đã hết hạn",
   EMAIL_VERIFY_TOKEN_IS_USED_OR_NOT_EXIST:
     "Email Verify Token đã được sử dụng hoặc không tồn tại",
-  CHECK_EMAIL_TO_VERIFY: "Đã gửi lại email xác thực, vui lòng kiểm tra hộp thư",
+  // CHECK_EMAIL_TO_VERIFY: "Đã gửi lại email xác thực, vui lòng kiểm tra hộp thư",
 
   FORGOT_PASSWORD_TOKEN_IS_REQUIRED: "Yêu cầu Forgot Password Token",
   FORGOT_PASSWORD_TOKEN_INVALID_OR_EXPIRED:
@@ -97,7 +79,8 @@ export const USERS_MESSAGES = {
 
   REFRESH_TOKEN_IS_USED_OR_NOT_EXIST:
     "Refresh Token đã được sử dụng hoặc không tồn tại",
-  TOKEN_EXPIRED_OR_INVALID: "Token hết hạn hoặc không hợp lệ",
+  TOKEN_EXPIRED: "Token has expired",
+  TOKEN_INVALID_OR_MALFORMED: "Token is invalid or malformed",
 
   GOOGLE_AUTH_FAILED: "Xác thực Google thất bại",
   GOOGLE_CODE_IS_REQUIRED: "Mã xác thực Google là bắt buộc",
@@ -135,8 +118,8 @@ export const USERS_MESSAGES = {
 
   FILE_TYPE_INVALID: "Loại file không hợp lệ",
 
-  VALIDATION_DATA_ERROR: "Lỗi validation dữ liệu (Mongoose)",
-  INTERNAL_SERVER_ERROR: "Lỗi server nội bộ",
+  // VALIDATION_DATA_ERROR: "Lỗi validation dữ liệu (Mongoose)",
+  // INTERNAL_SERVER_ERROR: "Lỗi server nội bộ",
   UNKNOWN_DEVICE: "Thiết bị không xác định",
   UNKNOWN_ERROR: "Lỗi không xác định",
   TOO_MANY_REQUESTS:
@@ -156,7 +139,7 @@ export const USERS_MESSAGES = {
   VIDEO_EXTENSION_MISMATCH: "Nội dung file không khớp với file video",
 
   ORIGINAL_POST_NOT_FOUND_OR_DELETED:
-    "Bài viết gốc không tồn tại hoặc đã bị xóa",
+    "Parent tweet does not exist or has been deleted",
   MAX_VIDEO_ATTACHMENT_EXCEEDED: "Chỉ được phép đính kèm tối đa 1 Video",
   MAX_MIXED_ATTACHMENTS_EXCEEDED:
     "Chỉ được phép đính kèm tối đa 3 ảnh và 1 video",

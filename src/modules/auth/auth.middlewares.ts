@@ -1,11 +1,10 @@
 import { HTTP_STATUS } from "@/common/constants/httpStatus.js";
-import { USERS_MESSAGES } from "@/common/constants/messages.js";
 import type { RefreshTokenRequest } from "@/common/types/request.types";
-import { UnauthorizedError } from "@/common/utils/errors.js";
 import type { NextFunction, Request, Response } from "express";
 import RefreshToken from "./models/RefreshToken.js";
 import type { UserService } from "../users/users.services.js";
 import type { TokenService } from "@/common/utils/jwt.js";
+import { ERROR_CODES } from "@/common/constants/error-codes.js";
 
 export class AuthMiddleware {
   public constructor(
@@ -21,9 +20,14 @@ export class AuthMiddleware {
     const authHeader = req.headers.authorization;
 
     if (!authHeader?.startsWith("Bearer ")) {
-      return res
-        .status(401)
-        .json({ message: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED });
+      res.setHeader("WWW-Authenticate", "Bearer");
+
+      return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+        success: false,
+        error: {
+          code: ERROR_CODES.AUTH.MISSING_BEARER_TOKEN,
+        },
+      });
     }
 
     const token = authHeader.split(" ")[1]!;
@@ -48,7 +52,10 @@ export class AuthMiddleware {
     const refreshToken = req.cookies.refresh_token;
 
     if (!refreshToken)
-      throw new UnauthorizedError(USERS_MESSAGES.REFRESH_TOKEN_IS_REQUIRED);
+      return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+        success: false,
+        error: { code: ERROR_CODES.AUTH.MISSING_REFRESH_TOKEN },
+      });
 
     try {
       const decoded = this.tokenService.verifyToken(refreshToken, "refresh");
@@ -56,7 +63,10 @@ export class AuthMiddleware {
 
       if (!foundToken) {
         return res.status(HTTP_STATUS.UNAUTHORIZED).json({
-          message: USERS_MESSAGES.REFRESH_TOKEN_IS_USED_OR_NOT_EXIST,
+          success: false,
+          error: {
+            code: ERROR_CODES.AUTH.MISSING_REFRESH_TOKEN,
+          },
         });
       }
 
@@ -83,7 +93,8 @@ export class AuthMiddleware {
 
       if (!user) {
         return res.status(HTTP_STATUS.UNAUTHORIZED).json({
-          message: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_USED_OR_NOT_EXIST,
+          success: false,
+          error: { code: ERROR_CODES.AUTH.INVALID_EMAIL_VERIFY_TOKEN },
         });
       }
 
@@ -97,7 +108,7 @@ export class AuthMiddleware {
 
   public forgotPasswordTokenValidator = async (
     req: Request<object, object, { forgotPasswordToken: string }>,
-    _res: Response,
+    res: Response,
     next: NextFunction,
   ) => {
     const { forgotPasswordToken } = req.body;
@@ -112,10 +123,12 @@ export class AuthMiddleware {
           forgotPasswordToken,
         );
 
-      if (!user)
-        throw new UnauthorizedError(
-          USERS_MESSAGES.FORGOT_PASSWORD_TOKEN_INVALID_OR_EXPIRED,
-        );
+      if (!user) {
+        return res.status(HTTP_STATUS.UNAUTHORIZED).json({
+          success: false,
+          error: { code: ERROR_CODES.AUTH.INVALID_FORGOT_PASSWORD_TOKEN },
+        });
+      }
 
       req.decodedForgotPasswordToken = { ...decoded, userId: user.id };
 

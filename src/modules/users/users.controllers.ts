@@ -1,5 +1,4 @@
 import { HTTP_STATUS } from "@/common/constants/httpStatus.js";
-import { USERS_MESSAGES } from "@/common/constants/messages.js";
 import type {
   ChangePasswordBodyType,
   FollowBodyType,
@@ -18,11 +17,11 @@ export class UserController {
     try {
       const { userId } = req.decodedAccessToken!;
 
-      const result = await this.userService.getMe(userId);
+      const data = await this.userService.getMe(userId);
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.GET_ME_SUCCESS,
-        result,
+        success: true,
+        data,
       });
     } catch (error) {
       next(error);
@@ -38,11 +37,11 @@ export class UserController {
       const { username } = req.params;
       const myUserId = req.decodedAccessToken?.userId;
 
-      const result = await this.userService.getProfile(username!, myUserId);
+      const data = await this.userService.getProfile(username!, myUserId);
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
-        result,
+        success: true,
+        data,
       });
     } catch (error) {
       next(error);
@@ -54,11 +53,11 @@ export class UserController {
       const { userId } = req.decodedAccessToken!;
       const payload = req.body as UpdateMeBodyType;
 
-      const result = await this.userService.updateMe(userId, payload);
+      const data = await this.userService.updateMe(userId, payload);
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
-        result,
+        success: true,
+        data,
       });
     } catch (error) {
       next(error);
@@ -70,11 +69,11 @@ export class UserController {
       const { userId } = req.decodedAccessToken!;
       const { followedUserId } = req.body as FollowBodyType;
 
-      const result = await this.userService.follow(userId, followedUserId);
+      const data = await this.userService.follow(userId, followedUserId);
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.FOLLOW_SUCCESS,
-        result,
+        success: true,
+        data,
       });
     } catch (error) {
       next(error);
@@ -86,11 +85,11 @@ export class UserController {
       const { userId } = req.decodedAccessToken!;
       const { followedUserId } = req.params as UnfollowParamsType;
 
-      const result = await this.userService.unfollow(userId, followedUserId);
+      const data = await this.userService.unfollow(userId, followedUserId);
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.UNFOLLOW_SUCCESS,
-        result,
+        success: true,
+        data,
       });
     } catch (error) {
       next(error);
@@ -106,11 +105,11 @@ export class UserController {
       const { userId } = req.params as GetFollowersParamsType;
       const { limit, page } = req.validatedQuery as PaginationQueryType;
 
-      const result = await this.userService.getFollowers(userId, limit, page);
+      const data = await this.userService.getFollowers(userId, limit, page);
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.GET_FOLLOWERS_SUCCESS,
-        result,
+        success: true,
+        data,
       });
     } catch (error) {
       next(error);
@@ -126,11 +125,11 @@ export class UserController {
       const { userId } = req.params as GetFollowersParamsType;
       const { limit, page } = req.validatedQuery as PaginationQueryType;
 
-      const result = await this.userService.getFollowing(userId, limit, page);
+      const data = await this.userService.getFollowing(userId, limit, page);
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.GET_FOLLOWING_SUCCESS,
-        result,
+        success: true,
+        data,
       });
     } catch (error) {
       next(error);
@@ -146,11 +145,11 @@ export class UserController {
       const { userId } = req.decodedAccessToken!;
       const payload = req.body;
 
-      const result = await this.userService.changePassword(userId, payload);
+      const data = await this.userService.changePassword(userId, payload);
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESS,
-        result,
+        success: true,
+        data,
       });
     } catch (error) {
       next(error);

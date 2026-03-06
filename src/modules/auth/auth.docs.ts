@@ -38,7 +38,7 @@ export const registerAuthDocs = () => {
         description: "Đăng ký thành công",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(RegisterData, "Đăng ký thành công"),
+            schema: BuildSuccessRes(RegisterData),
           },
         },
       },
@@ -65,7 +65,7 @@ export const registerAuthDocs = () => {
         description: "Đăng nhập thành công",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(LoginData, "Đăng nhập thành công"),
+            schema: BuildSuccessRes(LoginData),
           },
         },
       },
@@ -107,7 +107,7 @@ export const registerAuthDocs = () => {
         description: "Xác thực email thành công",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(z.null(), "Xác thực email thành công"),
+            schema: BuildSuccessRes(z.null()),
           },
         },
       },
@@ -134,10 +134,7 @@ export const registerAuthDocs = () => {
         description: "Gửi lại email xác thực thành công",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(
-              z.null(),
-              "Đã gửi lại email xác thực, vui lòng kiểm tra hộp thư",
-            ),
+            schema: BuildSuccessRes(z.null()),
           },
         },
       },
@@ -164,10 +161,7 @@ export const registerAuthDocs = () => {
         description: "Gửi email đặt lại mật khẩu thành công",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(
-              z.null(),
-              "Vui lòng kiểm tra email để đặt lại mật khẩu",
-            ),
+            schema: BuildSuccessRes(z.null()),
           },
         },
       },
@@ -194,7 +188,7 @@ export const registerAuthDocs = () => {
         description: "Đặt lại mật khẩu thành công",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(z.null(), "Đặt lại mật khẩu thành công"),
+            schema: BuildSuccessRes(z.null()),
           },
         },
       },
@@ -222,10 +216,7 @@ export const registerAuthDocs = () => {
         description: "Làm mới Refresh Token thành công",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(
-              RefreshTokenData,
-              "Làm mới Refresh Token thành công",
-            ),
+            schema: BuildSuccessRes(RefreshTokenData),
           },
         },
       },
@@ -252,10 +243,7 @@ export const registerAuthDocs = () => {
         description: "Đăng nhập với Google thành công",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(
-              LoginGoogleData,
-              "Đăng nhập với Google thành công",
-            ),
+            schema: BuildSuccessRes(LoginGoogleData),
           },
         },
       },

@@ -3,9 +3,7 @@ import {
   UPLOAD_TEMP_DIR,
   UPLOAD_VIDEO_DIR,
 } from "@/common/constants/dir.js";
-import { ERROR_CODES, USERS_MESSAGES } from "@/common/constants/messages.js";
 import type { Request } from "express";
-import type { File } from "formidable";
 import formidable from "formidable";
 import { existsSync, mkdirSync, unlinkSync } from "node:fs";
 import {
@@ -17,7 +15,42 @@ import {
 import { UPLOAD_CONFIG } from "@/common/config/env.js";
 import { fileTypeFromFile } from "file-type";
 import type { EventEmitter } from "node:events";
+import { ERROR_CODES } from "../constants/error-codes.js";
 // import { errors as formidableErrors } from "formidable";
+
+const handleFormidableError = (err: unknown) => {
+  const e = err as { code: number; message: string };
+
+  if (e.code === ERROR_CODES.FORMIDABLE.MAX_TOTAL_FILE_SIZE) {
+    return new PayloadTooLargeError({
+      code: ERROR_CODES.UPLOAD.TOTAL_SIZE_EXCEEDED,
+    });
+  }
+  if (e.code === formidable.errors.biggerThanMaxFileSize) {
+    return new PayloadTooLargeError({
+      code: ERROR_CODES.UPLOAD.FILE_SIZE_EXCEEDED,
+    });
+  }
+  if (e.code === ERROR_CODES.FORMIDABLE.MAX_FILES) {
+    return new PayloadTooLargeError({
+      code: ERROR_CODES.UPLOAD.MAX_FILES_EXCEEDED,
+    });
+  }
+  if (e.message === ERROR_CODES.UPLOAD.INVALID_FILE_TYPE) {
+    return new UnprocessableEntityError({
+      code: ERROR_CODES.UPLOAD.INVALID_FILE_TYPE,
+    });
+  }
+  if (e.code === ERROR_CODES.FORMIDABLE.MAX_FILE_SIZE) {
+    return new PayloadTooLargeError({
+      code: ERROR_CODES.UPLOAD.MAX_FILES_SIZE_EXCEEDED,
+    });
+  }
+  return new InternalServerError({
+    code: ERROR_CODES.SYSTEM.INTERNAL_SERVER_ERROR,
+    details: e,
+  });
+};
 
 export class FileService {
   public initFolder() {
@@ -52,7 +85,7 @@ export class FileService {
            */
           (form as EventEmitter).emit(
             "error",
-            new UnprocessableEntityError(USERS_MESSAGES.FILE_TYPE_INVALID),
+            new Error(ERROR_CODES.UPLOAD.INVALID_FILE_TYPE),
           );
         }
 
@@ -60,45 +93,19 @@ export class FileService {
       },
     });
 
-    return new Promise<File[]>((resolve, reject) => {
-      // TODO: tạo type chuẩn hơn cho err
-      form.parse(req, (err: { code: number }, _fields, files) => {
-        if (err) {
-          if (err.code === ERROR_CODES.FORMIDABLE_MAX_FILE_SIZE)
-            return reject(
-              new UnprocessableEntityError(
-                USERS_MESSAGES.IMAGE_FILE_SIZE_LIMIT_EXCEEDED,
-              ),
-            );
+    try {
+      const [_, files] = await form.parse(req);
 
-          if (err.code === ERROR_CODES.FORMIDABLE_MAX_FILES)
-            return reject(
-              new PayloadTooLargeError(
-                USERS_MESSAGES.IMAGE_FILE_COUNT_LIMIT_EXCEEDED,
-              ),
-            );
+      if (!files.image || files.image.length === 0) {
+        throw new UnprocessableEntityError({
+          code: ERROR_CODES.UPLOAD.MISSING_IMAGE_KEY,
+        });
+      }
 
-          if (err.code === ERROR_CODES.FORMIDABLE_MAX_TOTAL_FILE_SIZE)
-            return reject(
-              new PayloadTooLargeError(
-                USERS_MESSAGES.IMAGE_TOTAL_FILE_SIZE_LIMIT_EXCEEDED,
-              ),
-            );
-
-          return reject(new Error(JSON.stringify(err)));
-        }
-
-        // key trong Form Data phải là image
-        if (!files.image)
-          return reject(
-            new UnprocessableEntityError(USERS_MESSAGES.IMAGE_FILE_IS_REQUIRED),
-          );
-
-        const images = files.image;
-
-        resolve(images);
-      });
-    });
+      return files.image;
+    } catch (error) {
+      throw handleFormidableError(error);
+    }
   }
 
   public async handleUploadVideo(req: Request) {
@@ -118,7 +125,7 @@ export class FileService {
         if (!valid) {
           (form as EventEmitter).emit(
             "error",
-            new UnprocessableEntityError(USERS_MESSAGES.FILE_TYPE_INVALID),
+            new Error(ERROR_CODES.UPLOAD.INVALID_FILE_TYPE),
           );
         }
 
@@ -126,85 +133,41 @@ export class FileService {
       },
     });
 
-    return new Promise<File[]>((resolve, reject) => {
-      // TODO: tạo type chuẩn hơn cho err
-      form.parse(req, (err: { code: number }, _fields, files) => {
-        if (err) {
-          if (err.code === ERROR_CODES.FORMIDABLE_MAX_FILE_SIZE)
-            return reject(
-              new UnprocessableEntityError(
-                USERS_MESSAGES.VIDEO_FILE_SIZE_LIMIT_EXCEEDED,
-              ),
-            );
+    try {
+      const [_, files] = await form.parse(req);
 
-          if (err.code === ERROR_CODES.FORMIDABLE_MAX_FILES)
-            return reject(
-              new PayloadTooLargeError(
-                USERS_MESSAGES.VIDEO_FILE_COUNT_LIMIT_EXCEEDED,
-              ),
-            );
-
-          if (err.code === ERROR_CODES.FORMIDABLE_MAX_TOTAL_FILE_SIZE)
-            return reject(
-              new PayloadTooLargeError(
-                USERS_MESSAGES.VIDEO_TOTAL_FILE_SIZE_LIMIT_EXCEEDED,
-              ),
-            );
-
-          return reject(new Error(JSON.stringify(err)));
-        }
-
-        // key trong Form Data phải là image
-        if (!files.video)
-          return reject(
-            new UnprocessableEntityError(USERS_MESSAGES.VIDEO_FILE_IS_REQUIRED),
-          );
-
-        const videos = files.video;
-
-        (async () => {
-          // Magic bytes check
-          for (const video of videos) {
-            try {
-              const type = await fileTypeFromFile(video.filepath);
-
-              const isValid =
-                type &&
-                (type.mime === "video/mp4" || type.mime === "video/quicktime");
-              if (!isValid) {
-                try {
-                  unlinkSync(video.filepath);
-                } catch (cleanupError) {
-                  console.error("Cleanup failed", cleanupError);
-                }
-
-                return reject(
-                  new UnprocessableEntityError(
-                    USERS_MESSAGES.VIDEO_EXTENSION_MISMATCH,
-                  ),
-                );
-              }
-            } catch (error) {
-              return reject(
-                error instanceof Error
-                  ? error
-                  : new Error(JSON.stringify(error)),
-              );
-            }
-          }
-
-          resolve(videos);
-        })().catch((error) => {
-          if (error instanceof ErrorWithStatus) {
-            return reject(error);
-          }
-
-          const errorMessage =
-            error instanceof Error ? error.message : "Unknown Error";
-
-          return reject(new InternalServerError(errorMessage));
+      if (!files.video || files.video.length === 0) {
+        throw new UnprocessableEntityError({
+          code: ERROR_CODES.UPLOAD.MISSING_VIDEO_KEY,
         });
-      });
-    });
+      }
+
+      const videos = files.video;
+
+      await Promise.all(
+        videos.map(async (video) => {
+          const type = await fileTypeFromFile(video.filepath);
+          const isValid =
+            type &&
+            (type.mime === "video/mp4" || type.mime === "video/quicktime");
+
+          if (!isValid) {
+            try {
+              unlinkSync(video.filepath);
+            } catch (e) {
+              console.error("Cleanup failed", e);
+            }
+            throw new UnprocessableEntityError({
+              code: ERROR_CODES.UPLOAD.EXTENSION_MISMATCH,
+            });
+          }
+        }),
+      );
+
+      return videos;
+    } catch (error) {
+      if (error instanceof ErrorWithStatus) throw error;
+      throw handleFormidableError(error);
+    }
   }
 }

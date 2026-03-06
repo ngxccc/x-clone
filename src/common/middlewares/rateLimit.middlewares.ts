@@ -3,6 +3,7 @@ import { HTTP_STATUS } from "@/common/constants/httpStatus.js";
 import { USERS_MESSAGES } from "@/common/constants/messages.js";
 import RedisStore from "rate-limit-redis";
 import { redisConnection } from "../config/redis";
+import { ERROR_CODES } from "../constants/error-codes";
 
 type Data = boolean | number | string;
 type RedisReply = Data | Data[];
@@ -21,7 +22,11 @@ export const resendEmailLimiter = rateLimit({
 
   handler: (_req, res, _next) => {
     res.status(HTTP_STATUS.TOO_MANY_REQUESTS).json({
-      message: USERS_MESSAGES.TOO_MANY_REQUESTS,
+      success: false,
+      error: {
+        code: ERROR_CODES.TOO_MANY_REQUESTS,
+        message: USERS_MESSAGES.TOO_MANY_REQUESTS,
+      },
     });
   },
 

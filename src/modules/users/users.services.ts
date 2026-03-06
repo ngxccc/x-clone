@@ -1,5 +1,4 @@
 import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/common/constants/enums.js";
-import { USERS_MESSAGES } from "@/common/constants/messages.js";
 import type {
   ChangePasswordBodyType,
   UpdateMeBodyType,
@@ -17,6 +16,8 @@ import User from "./models/User.js";
 import Follower from "./models/Follower.js";
 import type { RegisterBodyType } from "../auth/auth.schemas.js";
 import type { TokenService } from "@/common/utils/jwt.js";
+import { ERROR_CODES } from "@/common/constants/error-codes.js";
+import mongoose from "mongoose";
 
 export class UserService {
   public constructor(private readonly tokenService: TokenService) {}
@@ -58,7 +59,7 @@ export class UserService {
   public async getMe(userId: string) {
     const user = await User.findById(userId);
 
-    if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
+    if (!user) throw new NotFoundError({ code: ERROR_CODES.USERS.NOT_FOUND });
 
     return user;
   }
@@ -66,7 +67,7 @@ export class UserService {
   public async getProfile(username: string, myUserId?: string) {
     const user = await User.findOne({ username }).select("-email");
 
-    if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
+    if (!user) throw new NotFoundError({ code: ERROR_CODES.USERS.NOT_FOUND });
 
     const isMyProfile = myUserId === user.id;
     let isFollowed = false;
@@ -139,7 +140,9 @@ export class UserService {
       const user = await User.findOne({ username });
 
       if (user && user.id !== userId)
-        throw new ConflictError(USERS_MESSAGES.USERNAME_ALREADY_EXISTS);
+        throw new ConflictError({
+          code: ERROR_CODES.USERS.USERNAME_ALREADY_EXISTS,
+        });
     }
 
     const user = await User.findByIdAndUpdate(
@@ -149,73 +152,119 @@ export class UserService {
           ...payload, // Chỉ update những field có trong payload
         },
       },
-      { new: true, runValidators: true },
+      { returnDocument: "after", runValidators: true },
     );
 
-    if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
+    if (!user) throw new NotFoundError({ code: ERROR_CODES.USERS.NOT_FOUND });
 
     return user;
   }
 
   public async follow(userId: string, followedUserId: string) {
-    const user = await User.findById(userId);
+    if (userId === followedUserId) {
+      throw new BadRequestError({ code: ERROR_CODES.USERS.CANNOT_ACTION_SELF });
+    }
 
-    if (user?.verify === USER_VERIFY_STATUS.BANNED)
-      throw new ForbiddenError(USERS_MESSAGES.ACCOUNT_IS_BANNED);
-
-    if (userId === followedUserId)
-      throw new BadRequestError(USERS_MESSAGES.CANNOT_DO_SELF);
-
-    const followedUser = await User.findById(followedUserId);
-    if (!followedUser) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
-
-    if (followedUser.verify === USER_VERIFY_STATUS.BANNED)
-      throw new BadRequestError(USERS_MESSAGES.ACCOUNT_IS_BANNED);
-
-    // Handle để trả về lỗi thân thiện hơn
-    const isFollowed = await Follower.findOne({
-      followerId: userId,
-      followedId: followedUserId,
-    });
-    if (isFollowed) throw new BadRequestError(USERS_MESSAGES.ALREADY_FOLLOWED);
-
-    await Promise.all([
-      Follower.create({
-        followerId: userId,
-        followedId: followedUserId,
-      }),
-      User.findByIdAndUpdate(userId, {
-        $inc: { "stats.followingCount": 1 },
-      }),
-      User.findByIdAndUpdate(followedUserId, {
-        $inc: { "stats.followersCount": 1 },
-      }),
+    const [user, followedUser] = await Promise.all([
+      User.findById(userId),
+      User.findById(followedUserId),
     ]);
 
-    return { success: true };
+    if (!user || !followedUser)
+      throw new NotFoundError({ code: ERROR_CODES.USERS.NOT_FOUND });
+
+    if (
+      user.verify === USER_VERIFY_STATUS.BANNED ||
+      followedUser.verify === USER_VERIFY_STATUS.BANNED
+    ) {
+      throw new ForbiddenError({ code: ERROR_CODES.USERS.ACCOUNT_IS_BANNED });
+    }
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      await Follower.create(
+        [
+          {
+            followerId: userId,
+            followedId: followedUserId,
+          },
+        ],
+        { session },
+      );
+
+      await User.findByIdAndUpdate(
+        userId,
+        {
+          $inc: { "stats.followingCount": 1 },
+        },
+        { session },
+      );
+
+      await User.findByIdAndUpdate(
+        followedUserId,
+        {
+          $inc: { "stats.followersCount": 1 },
+        },
+        { session },
+      );
+
+      await session.commitTransaction();
+      return { success: true };
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      await session.endSession();
+    }
   }
 
   public async unfollow(userId: string, followedUserId: string) {
-    if (userId === followedUserId)
-      throw new BadRequestError(USERS_MESSAGES.CANNOT_DO_SELF);
+    if (userId === followedUserId) {
+      throw new BadRequestError({ code: ERROR_CODES.USERS.CANNOT_ACTION_SELF });
+    }
 
-    const deletedFollow = await Follower.findOneAndDelete({
-      followerId: userId,
-      followedId: followedUserId,
-    });
-    if (!deletedFollow)
-      throw new BadRequestError(USERS_MESSAGES.ALREADY_UNFOLLOWED);
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-    await Promise.all([
-      User.findByIdAndUpdate(userId, {
-        $inc: { "stats.followingCount": -1 },
-      }),
-      User.findByIdAndUpdate(followedUserId, {
-        $inc: { "stats.followersCount": -1 },
-      }),
-    ]);
+    try {
+      const deletedFollow = await Follower.findOneAndDelete(
+        {
+          followerId: userId,
+          followedId: followedUserId,
+        },
+        { session },
+      );
 
-    return { success: true };
+      if (!deletedFollow) {
+        throw new BadRequestError({ code: ERROR_CODES.USERS.NOT_FOLLOWED_YET });
+      }
+
+      await User.findByIdAndUpdate(
+        userId,
+        {
+          $inc: { "stats.followingCount": -1 },
+        },
+        { session },
+      );
+
+      await User.findByIdAndUpdate(
+        followedUserId,
+        {
+          $inc: { "stats.followersCount": -1 },
+        },
+        { session },
+      );
+
+      await session.commitTransaction();
+      return { success: true };
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      await session.endSession();
+    }
   }
 
   public async getFollowers(userId: string, limit: number, page: number) {
@@ -273,11 +322,13 @@ export class UserService {
     const { oldPassword, password } = payload;
 
     const user = await User.findById(userId).select("+password");
-    if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
+    if (!user) throw new NotFoundError({ code: ERROR_CODES.USERS.NOT_FOUND });
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch)
-      throw new UnauthorizedError(USERS_MESSAGES.OLD_PASSWORD_NOT_MATCH);
+      throw new UnauthorizedError({
+        code: ERROR_CODES.USERS.OLD_PASSWORD_NOT_MATCH,
+      });
 
     user.password = password;
     // Phải gọi hàm save để kích hoạt pre-save hook

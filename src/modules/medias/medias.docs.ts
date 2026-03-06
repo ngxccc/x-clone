@@ -29,10 +29,7 @@ export const registerMediasDocs = () => {
         description: "Tải ảnh lên thành công",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(
-              UploadImageResData,
-              "Tải ảnh lên thành công",
-            ),
+            schema: BuildSuccessRes(UploadImageResData),
           },
         },
       },
@@ -58,10 +55,7 @@ export const registerMediasDocs = () => {
         description: "Tải ảnh đại diện thành công",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(
-              UploadImageResData,
-              "Tải ảnh lên thành công",
-            ),
+            schema: BuildSuccessRes(UploadImageResData),
           },
         },
       },
@@ -87,10 +81,7 @@ export const registerMediasDocs = () => {
         description: "Tải ảnh bìa thành công",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(
-              UploadImageResData,
-              "Tải ảnh lên thành công",
-            ),
+            schema: BuildSuccessRes(UploadImageResData),
           },
         },
       },
@@ -116,10 +107,7 @@ export const registerMediasDocs = () => {
         description: "Tải video lên thành công (Đang chờ xử lý HLS)",
         content: {
           "application/json": {
-            schema: BuildSuccessRes(
-              UploadVideoResData,
-              "Tải video lên thành công",
-            ),
+            schema: BuildSuccessRes(UploadVideoResData),
           },
         },
       },

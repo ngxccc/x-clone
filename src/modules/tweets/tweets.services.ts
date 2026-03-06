@@ -8,6 +8,7 @@ import type { ClientSession } from "mongoose";
 import mongoose from "mongoose";
 import OutboxEvent from "./models/OutboxEvent";
 import { OUTBOX_EVENT_TYPES } from "@/common/constants/enums";
+import { ERROR_CODES } from "@/common/constants/error-codes";
 
 export class TweetService {
   private async checkAndUpsertHashtags(
@@ -80,9 +81,13 @@ export class TweetService {
         );
 
         if (!parentExists)
-          throw new NotFoundError(
-            USERS_MESSAGES.ORIGINAL_POST_NOT_FOUND_OR_DELETED,
-          );
+          throw new NotFoundError({
+            code: ERROR_CODES.TWEETS.PARENT_NOT_FOUND,
+            message: USERS_MESSAGES.ORIGINAL_POST_NOT_FOUND_OR_DELETED,
+            details: {
+              parentId,
+            },
+          });
 
         const eventType =
           type === 1

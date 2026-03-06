@@ -45,8 +45,8 @@ export class AuthController {
       });
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.LOGIN_SUCCESS,
-        result: { accessToken },
+        success: true,
+        data: { accessToken },
       });
     } catch (error) {
       next(error);
@@ -73,8 +73,8 @@ export class AuthController {
       console.log(newUser.emailVerifyToken);
 
       return res.status(HTTP_STATUS.CREATED).json({
-        message: USERS_MESSAGES.REGISTER_SUCCESS,
-        result: {
+        success: true,
+        data: {
           _id: newUser._id,
           username: newUser.username,
           email: newUser.email,
@@ -100,7 +100,7 @@ export class AuthController {
       res.clearCookie("refresh_token");
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.LOGOUT_SUCCESS,
+        success: true,
       });
     } catch (error) {
       next(error);
@@ -118,7 +118,7 @@ export class AuthController {
       await this.authService.verifyEmail(userId);
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.EMAIL_VERIFY_SUCCESS,
+        success: true,
       });
     } catch (error) {
       next(error);
@@ -134,7 +134,7 @@ export class AuthController {
       await this.authService.resendVerificationEmail(req.body);
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.CHECK_EMAIL_TO_VERIFY,
+        success: true,
       });
     } catch (error) {
       next(error);
@@ -169,7 +169,7 @@ export class AuthController {
       await this.authService.resetPassword(userId, password);
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.PASSWORD_RESET_SUCCESS,
+        success: true,
       });
     } catch (error) {
       next(error);
@@ -200,8 +200,8 @@ export class AuthController {
       });
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
-        result: { accessToken },
+        success: true,
+        data: { accessToken },
       });
     } catch (error) {
       next(error);
@@ -230,8 +230,8 @@ export class AuthController {
       });
 
       return res.status(HTTP_STATUS.OK).json({
-        message: USERS_MESSAGES.LOGIN_WITH_GOOGLE_SUCCESS,
-        result: { accessToken },
+        success: true,
+        data: { accessToken },
       });
     } catch (error) {
       next(error);

@@ -1,5 +1,5 @@
 import { TOKEN_TYPES, USER_VERIFY_STATUS } from "@/common/constants/enums.js";
-import { ERROR_CODES, USERS_MESSAGES } from "@/common/constants/messages.js";
+import { USERS_MESSAGES } from "@/common/constants/messages.js";
 import {
   UnauthorizedError,
   ForbiddenError,
@@ -20,6 +20,7 @@ import User from "../users/models/User.js";
 import type { UserService } from "../users/users.services.js";
 import type { TokenService } from "@/common/utils/jwt.js";
 import type { GoogleService } from "@/common/utils/google.js";
+import { ERROR_CODES } from "@/common/constants/error-codes.js";
 
 export class AuthService {
   public constructor(
@@ -99,28 +100,28 @@ export class AuthService {
   public async login(email: string, password: string, deviceInfo?: string) {
     const user = await this.userService.findUserByEmailWithPassword(email);
     if (!user)
-      throw new UnauthorizedError(
-        USERS_MESSAGES.EMAIL_OR_PASSWORD_INCORRECT,
-        ERROR_CODES.EMAIL_NOT_FOUND,
-      );
+      throw new UnauthorizedError({
+        code: ERROR_CODES.EMAIL_NOT_FOUND,
+        message: USERS_MESSAGES.EMAIL_OR_PASSWORD_INCORRECT,
+      });
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
-      throw new UnauthorizedError(
-        USERS_MESSAGES.EMAIL_OR_PASSWORD_INCORRECT,
-        ERROR_CODES.PASSWORD_INCORRECT,
-      );
+      throw new UnauthorizedError({
+        code: ERROR_CODES.PASSWORD_INCORRECT,
+        message: USERS_MESSAGES.EMAIL_OR_PASSWORD_INCORRECT,
+      });
 
     if (user.verify === USER_VERIFY_STATUS.UNVERIFIED)
-      throw new ForbiddenError(
-        USERS_MESSAGES.EMAIL_NOT_VERIFIED,
-        ERROR_CODES.EMAIL_NOT_VERIFIED,
-      );
+      throw new ForbiddenError({
+        code: ERROR_CODES.EMAIL_NOT_VERIFIED,
+        message: USERS_MESSAGES.EMAIL_NOT_VERIFIED,
+      });
     else if (user.verify === USER_VERIFY_STATUS.BANNED)
-      throw new ForbiddenError(
-        USERS_MESSAGES.ACCOUNT_IS_BANNED,
-        ERROR_CODES.ACCOUNT_IS_BANNED,
-      );
+      throw new ForbiddenError({
+        code: ERROR_CODES.ACCOUNT_IS_BANNED,
+        message: USERS_MESSAGES.ACCOUNT_IS_BANNED,
+      });
 
     return await this.signAccessAndRefreshToken(user.id, deviceInfo);
   }
@@ -131,7 +132,10 @@ export class AuthService {
     const googleUserInfo = await this.googleService.getUserInfo(access_token);
 
     if (!googleUserInfo.email_verified)
-      throw new BadRequestError(USERS_MESSAGES.GMAIL_NOT_VERIFIED);
+      throw new BadRequestError({
+        code: ERROR_CODES.GMAIL_NOT_VERIFIED,
+        message: USERS_MESSAGES.GMAIL_NOT_VERIFIED,
+      });
 
     const user = await User.findOne({ email: googleUserInfo.email });
 
@@ -187,21 +191,21 @@ export class AuthService {
     const user = await this.userService.findUserByEmail(email);
 
     if (!user)
-      throw new NotFoundError(
-        USERS_MESSAGES.USER_NOT_FOUND,
-        ERROR_CODES.USER_NOT_FOUND,
-      );
+      throw new NotFoundError({
+        code: ERROR_CODES.USER_NOT_FOUND,
+        message: USERS_MESSAGES.USER_NOT_FOUND,
+      });
 
     if (user.verify === USER_VERIFY_STATUS.VERIFIED)
-      throw new ConflictError(
-        USERS_MESSAGES.EMAIL_ALREADY_VERIFIED_BEFORE,
-        ERROR_CODES.EMAIL_IS_VERIFIED,
-      );
+      throw new ConflictError({
+        code: ERROR_CODES.EMAIL_IS_VERIFIED,
+        message: USERS_MESSAGES.EMAIL_ALREADY_VERIFIED_BEFORE,
+      });
     else if (user.verify === USER_VERIFY_STATUS.BANNED)
-      throw new ForbiddenError(
-        USERS_MESSAGES.ACCOUNT_IS_BANNED,
-        ERROR_CODES.ACCOUNT_IS_BANNED,
-      );
+      throw new ForbiddenError({
+        code: ERROR_CODES.ACCOUNT_IS_BANNED,
+        message: USERS_MESSAGES.ACCOUNT_IS_BANNED,
+      });
 
     const emailVerifyToken = await this.tokenService.signToken(
       {
@@ -224,13 +228,17 @@ export class AuthService {
 
     const user = await this.userService.findUserByEmail(email);
 
-    if (!user) throw new NotFoundError(USERS_MESSAGES.USER_NOT_FOUND);
+    if (!user)
+      throw new NotFoundError({
+        code: ERROR_CODES.USER_NOT_FOUND,
+        message: USERS_MESSAGES.USER_NOT_FOUND,
+      });
 
     if (user.verify === USER_VERIFY_STATUS.BANNED)
-      throw new ForbiddenError(
-        USERS_MESSAGES.ACCOUNT_IS_BANNED,
-        ERROR_CODES.ACCOUNT_IS_BANNED,
-      );
+      throw new ForbiddenError({
+        code: ERROR_CODES.ACCOUNT_IS_BANNED,
+        message: USERS_MESSAGES.ACCOUNT_IS_BANNED,
+      });
 
     const forgotPasswordToken = await this.tokenService.signToken(
       {
@@ -278,9 +286,10 @@ export class AuthService {
     });
 
     if (!oldToken)
-      throw new UnauthorizedError(
-        USERS_MESSAGES.REFRESH_TOKEN_IS_USED_OR_NOT_EXIST,
-      );
+      throw new UnauthorizedError({
+        code: ERROR_CODES.AUTH.INVALID_REFRESH_TOKEN,
+        message: USERS_MESSAGES.REFRESH_TOKEN_IS_USED_OR_NOT_EXIST,
+      });
 
     // Refresh Token Rotation (Xoay vòng token)
     return await this.signAccessAndRefreshToken(userId, deviceInfo);
