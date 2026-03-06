@@ -267,11 +267,15 @@ export class UserService {
     }
   }
 
-  public async getFollowers(userId: string, limit: number, page: number) {
-    const skip = (page - 1) * limit;
+  public async getFollowers(userId: string, limit: number, cursor?: string) {
+    const query: Record<string, unknown> = { followedId: userId };
 
-    const followers = await Follower.find({ followedId: userId })
-      .skip(skip)
+    if (cursor) {
+      query._id = { $lt: cursor };
+    }
+
+    const followers = await Follower.find(query)
+      .sort({ _id: -1 })
       .limit(limit)
       // Chuyển followerId thành cục object User
       // Dữ liệu lớn thì ta dùng aggregate & $lookup
@@ -282,22 +286,27 @@ export class UserService {
         select: "-email",
       });
 
-    const total = await Follower.countDocuments({ followedId: userId });
+    const nextCursor =
+      followers.length > 0
+        ? followers[followers.length - 1]?._id.toString()
+        : null;
 
     return {
       users: followers.map((f) => f.followerId),
-      total,
-      page,
+      nextCursor,
       limit,
-      totalPages: Math.ceil(total / limit),
     };
   }
 
-  public async getFollowing(userId: string, limit: number, page: number) {
-    const skip = (page - 1) * limit;
+  public async getFollowing(userId: string, limit: number, cursor?: string) {
+    const query: Record<string, unknown> = { followerId: userId };
 
-    const following = await Follower.find({ followerId: userId })
-      .skip(skip)
+    if (cursor) {
+      query._id = { $lt: cursor };
+    }
+
+    const following = await Follower.find(query)
+      .sort({ _id: -1 })
       .limit(limit)
       // Dữ liệu lớn thì ta dùng aggregate & $lookup
       .populate({
@@ -307,14 +316,15 @@ export class UserService {
         select: "-email",
       });
 
-    const total = await Follower.countDocuments({ followerId: userId });
+    const nextCursor =
+      following.length > 0
+        ? following[following.length - 1]?._id.toString()
+        : null;
 
     return {
       users: following.map((f) => f.followedId),
-      total,
-      page,
+      nextCursor,
       limit,
-      totalPages: Math.ceil(total / limit),
     };
   }
 
