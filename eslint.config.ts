@@ -1,16 +1,23 @@
 import js from "@eslint/js";
 import globals from "globals";
-import tseslint from "typescript-eslint";
+import { configs } from "typescript-eslint";
 import { defineConfig, globalIgnores } from "eslint/config";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 import eslintConfigPrettier from "eslint-config-prettier";
+import { importX } from "eslint-plugin-import-x";
 
 export default defineConfig([
   globalIgnores(["**/.bun/", "**/build/", "**/dist/", "**/node_modules/"]),
 
   js.configs.recommended,
-  tseslint.configs.recommendedTypeChecked, // Check cả type
-  tseslint.configs.stylisticTypeChecked, // Check type để quyết định phong cách
+  configs.recommendedTypeChecked, // Check cả type
+  configs.stylisticTypeChecked, // Check type để quyết định phong cách
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  importX.flatConfigs.recommended as any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  importX.flatConfigs.typescript as any,
+
   // Tắt các rule xung đột với Prettier
   eslintPluginPrettierRecommended,
 
@@ -26,6 +33,15 @@ export default defineConfig([
         tsconfigRootDir: import.meta.dirname,
       },
       globals: globals.node,
+    },
+
+    settings: {
+      "import-x/resolver": {
+        typescript: {
+          alwaysTryTypes: true,
+          project: "tsconfig.json",
+        },
+      },
     },
 
     rules: {
@@ -51,6 +67,9 @@ export default defineConfig([
       ],
 
       "prettier/prettier": "warn",
+
+      "import-x/no-cycle": ["error", { maxDepth: "∞", ignoreExternal: true }],
+      "import-x/no-unresolved": "off",
     },
   },
 
