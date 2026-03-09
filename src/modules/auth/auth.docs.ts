@@ -1,4 +1,4 @@
-import { registerRoute } from "@/common/config/openapi.js";
+import { registerRoute } from "@/common/config/registry.js";
 import {
   ForgotPasswordReqBody,
   LoginData,
@@ -14,7 +14,7 @@ import {
   VerifyEmailReqBody,
 } from "./auth.schemas.js";
 import { BuildSuccessRes } from "@/common/schemas/common.schemas.js";
-import z from "zod";
+import { z } from "zod";
 
 export const registerAuthDocs = () => {
   // Register

@@ -1,5 +1,5 @@
-import { registerRoute } from "@/common/config/openapi";
-import { TweetData, TweetReqBody } from "./tweets.schemas";
+import { registerRoute } from "@/common/config/registry.js";
+import { TweetData, TweetReqBody } from "./schemas";
 import { BuildSuccessRes } from "@/common/schemas/common.schemas";
 
 export const registerTweetsDocs = () => {

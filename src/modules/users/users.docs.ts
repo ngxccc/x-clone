@@ -1,4 +1,3 @@
-import { registerRoute } from "@/common/config/openapi.js";
 import { BuildSuccessRes } from "@/common/schemas/common.schemas.js";
 import { z } from "zod";
 import {
@@ -9,6 +8,7 @@ import {
   UpdateMeReqBody,
   UserProfileResData,
 } from "./users.schemas.js";
+import { registerRoute } from "@/common/config/registry.js";
 
 export const registerUsersDocs = () => {
   // Me

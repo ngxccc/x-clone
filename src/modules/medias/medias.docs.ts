@@ -1,4 +1,4 @@
-import { registerRoute } from "@/common/config/openapi";
+import { registerRoute } from "@/common/config/registry";
 import {
   UploadImageReqBody,
   UploadImageResData,
