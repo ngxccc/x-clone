@@ -10,7 +10,6 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from "@/common/utils/errors.js";
-import bcrypt from "bcrypt";
 import RefreshToken from "../auth/models/RefreshToken.js";
 import User from "./models/User.js";
 import Follower from "./models/Follower.js";
@@ -18,6 +17,7 @@ import type { RegisterBodyType } from "../auth/auth.schemas.js";
 import type { TokenService } from "@/common/utils/jwt.js";
 import { ERROR_CODES } from "@/common/constants/error-codes.js";
 import mongoose from "mongoose";
+import { compare } from "bcrypt";
 
 export class UserService {
   public constructor(private readonly tokenService: TokenService) {}
@@ -334,7 +334,7 @@ export class UserService {
     const user = await User.findById(userId).select("+password");
     if (!user) throw new NotFoundError({ code: ERROR_CODES.USERS.NOT_FOUND });
 
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    const isMatch = await compare(oldPassword, user.password);
     if (!isMatch)
       throw new UnauthorizedError({
         code: ERROR_CODES.USERS.OLD_PASSWORD_NOT_MATCH,

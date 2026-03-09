@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { TweetReqBody } from "../tweets.schemas";
+import { TweetReqBody } from "../schemas";
 
 const basePayload = {
   type: 0,

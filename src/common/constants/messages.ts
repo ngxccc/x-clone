@@ -129,6 +129,7 @@ export const USERS_MESSAGES = {
   BIO_TOO_LONG: "Bio không được quá 160 ký tự",
   CANNOT_DO_SELF: "Không thể thực hiện với chính mình",
   USER_ID_INVALID: "ID người dùng không hợp lệ",
+  TWEET_ID_INVALID: "Tweet ID không hợp lệ",
   ALREADY_FOLLOWED: "Bạn đã theo dõi người dùng này rồi",
   ALREADY_UNFOLLOWED: "Bạn chưa theo dõi người dùng này",
   LIMIT_MIN_LENGTH: "Giới hạn tối thiểu phải lớn 1",

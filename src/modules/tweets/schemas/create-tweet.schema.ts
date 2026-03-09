@@ -1,7 +1,7 @@
 import { TWEET_AUDIENCE, TWEET_TYPES } from "@/common/constants/enums";
 import { USERS_MESSAGES } from "@/common/constants/messages";
 import mongoose from "mongoose";
-import z from "zod";
+import { z } from "zod";
 
 const MediaSchema = z.object({
   url: z.url("Đường dẫn không đúng định dạng"),
@@ -86,8 +86,6 @@ export const TweetReqBody = z
     },
   );
 
-export type TweetBodyType = z.infer<typeof TweetReqBody>;
-
 export const TweetData = z.object({
   _id: z
     .string()
@@ -160,3 +158,5 @@ export const TweetData = z.object({
     format: "date-time",
   }),
 });
+
+export type TweetBodyType = z.infer<typeof TweetReqBody>;

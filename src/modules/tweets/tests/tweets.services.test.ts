@@ -5,7 +5,7 @@ import { TweetService } from "../tweets.services";
 import Tweet from "../models/Tweet";
 import mongoose from "mongoose";
 import OutboxEvent from "../models/OutboxEvent";
-import type { TweetBodyType } from "../tweets.schemas";
+import type { TweetBodyType } from "../schemas";
 import { ERROR_CODES } from "@/common/constants/error-codes";
 import Hashtag from "../models/Hashtag";
 import User from "@/modules/users/models/User";

@@ -99,32 +99,3 @@ export class OutboxWorker {
     logger.info(`🚀 Outbox Worker [${this.workerId}] is ready!`);
   }
 }
-
-export const processOutboxEvents = async () => {
-  const events = await OutboxEvent.find({
-    status: OUTBOX_STATUS_TYPES.PENDING,
-  }).limit(100);
-
-  if (events.length === 0) return;
-
-  for (const event of events) {
-    const incField =
-      event.eventType === "TWEET_COMMENTED"
-        ? "stats.comments"
-        : "stats.retweets";
-
-    // CONDITIONAL UPDATE (IDEMPOTENCY)
-    await Tweet.updateOne(
-      {
-        _id: event.aggregateId,
-        processedEvents: { $ne: event._id }, // Chỉ update nếu mảng processedEvents CHƯA CÓ cái event._id này
-      },
-      {
-        $inc: { [incField]: 1 },
-        $push: { processedEvents: event._id }, // Thêm vào processedEvents mark đã process
-      },
-    );
-
-    await OutboxEvent.findByIdAndDelete(event._id);
-  }
-};

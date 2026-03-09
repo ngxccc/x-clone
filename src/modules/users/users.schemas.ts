@@ -5,7 +5,7 @@ import {
 } from "@/common/schemas/common.schemas";
 import { requiredString } from "@/common/utils/validation.js";
 import mongoose from "mongoose";
-import z from "zod";
+import { z } from "zod";
 
 export const UpdateMeReqBody = z
   .object({

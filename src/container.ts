@@ -1,3 +1,4 @@
+import { TimelineCacheService } from "./common/services/redis-timeline.service";
 import { FileService } from "./common/utils/file";
 import { GoogleService } from "./common/utils/google";
 import { TokenService } from "./common/utils/jwt";
@@ -15,12 +16,13 @@ const videoService = new VideoService();
 const databaseService = new DatabaseService();
 const googleService = new GoogleService();
 const queueService = new QueueService();
-const tweetService = new TweetService();
 const outboxWorker = new OutboxWorker();
+const timelineCacheService = new TimelineCacheService();
 const userService = new UserService(tokenService);
 const authService = new AuthService(userService, tokenService, googleService);
 const mediaService = new MediaService(fileService, queueService);
 const videoWorker = new VideoWorker(videoService);
+const tweetService = new TweetService(timelineCacheService);
 
 const userController = new UserController(userService);
 const authController = new AuthController(userService, authService);
@@ -38,6 +40,7 @@ export {
   tokenService,
   fileService,
   videoService,
+  timelineCacheService,
   videoWorker,
   outboxWorker,
   userController,

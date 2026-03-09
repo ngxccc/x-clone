@@ -1,16 +1,22 @@
 import { NotFoundError } from "@/common/utils/errors";
-import { User } from "../users";
+import { Follower, User } from "../users";
 import Hashtag from "./models/Hashtag";
 import Tweet from "./models/Tweet";
-import type { TweetBodyType } from "./tweets.schemas";
+import type { TweetBodyType } from "./schemas";
 import { USERS_MESSAGES } from "@/common/constants/messages";
 import type { ClientSession } from "mongoose";
 import mongoose from "mongoose";
 import OutboxEvent from "./models/OutboxEvent";
 import { OUTBOX_EVENT_TYPES } from "@/common/constants/enums";
 import { ERROR_CODES } from "@/common/constants/error-codes";
+import logger from "@/common/utils/logger";
+import type { TimelineCacheService } from "@/common/services/redis-timeline.service";
 
 export class TweetService {
+  public constructor(
+    private readonly timelineCacheService: TimelineCacheService,
+  ) {}
+
   private async checkAndUpsertHashtags(
     content: string,
     session: ClientSession,
@@ -137,5 +143,59 @@ export class TweetService {
     await session.endSession();
 
     return createdTweet;
+  }
+
+  public async getNewsfeed(
+    userId: string,
+    limit = 20,
+    cursorTimestamp?: number,
+  ) {
+    const tweetIds = await this.timelineCacheService.getTweetsTimeline(
+      userId,
+      limit,
+      cursorTimestamp,
+    );
+
+    if (tweetIds.length === 0) {
+      logger.info(
+        `⚠️ Cache Miss cho User ${userId}, tiến hành Fallback xuống DB...`,
+      );
+
+      const followingList = await Follower.find({ followerId: userId }).select(
+        "followedId",
+      );
+      const followingIds = followingList.map((f) => f.followedId.toString());
+
+      followingIds.push(userId);
+
+      const query: Record<string, unknown> = {
+        userId: { $in: followingIds },
+      };
+
+      if (cursorTimestamp) query.createdAt = { $lt: new Date(cursorTimestamp) };
+
+      const fallbackTweets = await Tweet.find(query)
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .lean();
+
+      return fallbackTweets;
+    }
+
+    const dbTweets = await Tweet.find({ _id: { $in: tweetIds } }).lean();
+
+    const tweetDictionary = dbTweets.reduce(
+      (acc, tweet) => {
+        acc[tweet._id.toString()] = tweet;
+        return acc;
+      },
+      {} as Record<string, (typeof dbTweets)[0]>,
+    );
+
+    const sortedTweets = tweetIds
+      .map((id) => tweetDictionary[id])
+      .filter(Boolean); // lọc các tweet undefined
+
+    return sortedTweets;
   }
 }
